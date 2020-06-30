@@ -1,0 +1,12 @@
+
+spring:
+  jpa:
+    show-sql: true
+    generate-ddl: true
+  datasource:
+    url: jdbc:postgresql://localhost:5432/metering
+    username: user
+    hikari:
+      maximum-pool-size: 4
+
+
