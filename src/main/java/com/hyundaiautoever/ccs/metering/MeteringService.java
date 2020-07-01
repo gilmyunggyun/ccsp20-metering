@@ -7,15 +7,17 @@ import java.util.Optional;
 @Service
 public class MeteringService {
 
-    private final BlockedRepository repository;
+    private final BlockedRepository blockedRepository;
+    private final ApiAccessRepository apiAccessRepository;
 
-    public MeteringService(BlockedRepository repository) {
-        this.repository = repository;
+    public MeteringService(BlockedRepository blockedRepository, ApiAccessRepository apiAccessRepository) {
+        this.blockedRepository = blockedRepository;
+        this.apiAccessRepository = apiAccessRepository;
     }
 
     public boolean checkAccess(String serviceNumber, String handPhoneId, String carId, String requestUrl) {
 
-        Optional<Blocked> maybeBlocked = repository.findById(BlockedId.builder()
+        Optional<Blocked> maybeBlocked = blockedRepository.findById(BlockedId.builder()
                 .handPhoneId(handPhoneId)
                 .carId(carId)
                 .build());
@@ -24,34 +26,32 @@ public class MeteringService {
             return false;
         }
 
+        apiAccessRepository.save(ApiAccess.builder()
+                .handPhoneId(handPhoneId)
+                .carId(carId)
+                .requestUrl(requestUrl)
+                .build());
+
         return true;
 
-        //duplicate check
-
-        //delete duplicated data
-
-        //select isol count
-
-        //isol > 0 , return
 
         //select metering detail info
 
-        //if detail info result = null  then insert block DB
+
+        //if detail info result = null  then insert checkAccess DB
 
         //if not null,
-            //set timeIntervalYn , dayInterverYn
+        //set timeIntervalYn , dayInterverYn
 
-            //update metering data
+        //update metering data
 
-            //select time metering standard count
+        //select time metering standard count
 
-            //select day metering standard count
+        //select day metering standard count
 
-            //select exception metering service count
+        //select exception metering service count
 
-                //if cnt overs, insert isol table
-
-
+        //if cnt overs, insert isol table
 
 
     }
