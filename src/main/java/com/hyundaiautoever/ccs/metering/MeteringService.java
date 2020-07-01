@@ -2,6 +2,8 @@ package com.hyundaiautoever.ccs.metering;
 
 import org.springframework.stereotype.Service;
 
+import java.time.Clock;
+import java.time.OffsetDateTime;
 import java.util.Optional;
 
 @Service
@@ -9,10 +11,12 @@ public class MeteringService {
 
     private final BlockedRepository blockedRepository;
     private final ApiAccessRepository apiAccessRepository;
+    private final Clock clock;
 
-    public MeteringService(BlockedRepository blockedRepository, ApiAccessRepository apiAccessRepository) {
+    public MeteringService(BlockedRepository blockedRepository, ApiAccessRepository apiAccessRepository, Clock clock) {
         this.blockedRepository = blockedRepository;
         this.apiAccessRepository = apiAccessRepository;
+        this.clock = clock;
     }
 
     public boolean checkAccess(String serviceNumber, String handPhoneId, String carId, String requestUrl) {
@@ -30,6 +34,7 @@ public class MeteringService {
                 .handPhoneId(handPhoneId)
                 .carId(carId)
                 .requestUrl(requestUrl)
+                .accessTime(OffsetDateTime.now(clock))
                 .build());
 
         return true;

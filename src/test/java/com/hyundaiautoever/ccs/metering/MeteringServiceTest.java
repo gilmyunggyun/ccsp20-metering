@@ -1,11 +1,12 @@
 package com.hyundaiautoever.ccs.metering;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.Clock;
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -13,17 +14,24 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
 class MeteringServiceTest {
 
-    @Mock
     private BlockedRepository blockedRepository;
-
-    @Mock
     private ApiAccessRepository apiAccessRepository;
+    private Clock clock;
 
-    @InjectMocks
     private MeteringService subject;
+
+    @BeforeEach
+    void setUp() {
+        blockedRepository = mock(BlockedRepository.class);
+        apiAccessRepository = mock(ApiAccessRepository.class);
+        clock = Clock.fixed(Instant.now(), ZoneId.systemDefault());
+
+        subject = new MeteringService(blockedRepository,
+                apiAccessRepository,
+                clock);
+    }
 
     @Test
     void checkAccess_allowsAccess() {
@@ -46,10 +54,9 @@ class MeteringServiceTest {
                 .handPhoneId("HP1234")
                 .carId("CAR1234")
                 .requestUrl("/ccsp/window.do")
+                .accessTime(OffsetDateTime.now(clock))
                 .build()));
-
     }
-
 
 
     @Test
