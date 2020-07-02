@@ -144,11 +144,44 @@ class MeteringServiceTest {
 
     @Test
     void checkAccess_with299RequestsToday_allowsAccess() {
+        when(apiAccessRepository.dailyAccessCount(
+                "HP1234",
+                "CAR1234",
+                "/ccsp/window.do"
+        )).thenReturn(299L);
 
+        boolean hasAccess = subject.checkAccess("HP1234", "CAR1234", "/ccsp/window.do");
+
+        assertThat(hasAccess).isTrue();
     }
 
     @Test
     void checkAccess_with300RequestsToday_deniesAccess() {
-//if cnt overs, insert isol table
+        when(apiAccessRepository.dailyAccessCount(
+                "HP1234",
+                "CAR1234",
+                "/ccsp/window.do"
+        )).thenReturn(300L);
+
+        boolean hasAccess = subject.checkAccess("HP1234", "CAR1234", "/ccsp/window.do");
+
+        assertThat(hasAccess).isFalse();
+    }
+
+    @Test
+    void checkAccess_with300RequestsToday_blocksCustomer() {
+        when(apiAccessRepository.dailyAccessCount(
+                "HP1234",
+                "CAR1234",
+                "/ccsp/window.do"
+        )).thenReturn(300L);
+
+        subject.checkAccess("HP1234", "CAR1234", "/ccsp/window.do");
+
+        verify(blockedRepository).save(Blocked.builder()
+                .handPhoneId("HP1234")
+                .carId("CAR1234")
+                .blockedTime(OffsetDateTime.now(clock))
+                .build());
     }
 }

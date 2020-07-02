@@ -1,6 +1,5 @@
 package com.hyundaiautoever.ccs.metering;
 
-import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +13,6 @@ import java.time.ZoneId;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.util.Lists.list;
-import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
 @DataJpaTest
@@ -27,6 +25,7 @@ class ApiAccessRepositoryTest {
     private final OffsetDateTime now = OffsetDateTime.now(clock);
     private final OffsetDateTime nineMinutesAgo = OffsetDateTime.now(clock).minusMinutes(9L);
     private final OffsetDateTime tenMinutesAgo = OffsetDateTime.now(clock).minusMinutes(10L);
+    private final OffsetDateTime yesterday = OffsetDateTime.now(clock).minusDays(1L);
 
     @Test
     void count_countsOnlyRecordsAfterPassedInTime() {
@@ -64,6 +63,20 @@ class ApiAccessRepositoryTest {
                 "CAR1234",
                 "/ccsp/window.do",
                 tenMinutesAgo
+        );
+
+        assertThat(count).isEqualTo(1L);
+    }
+
+    @Test
+    void dailyAccessCount_countsRecordsToday() {
+        subject.save(apiAccessRecord(now));
+        subject.save(apiAccessRecord(yesterday));
+
+        long count = subject.dailyAccessCount(
+                "HP1234",
+                "CAR1234",
+                "/ccsp/window.do"
         );
 
         assertThat(count).isEqualTo(1L);

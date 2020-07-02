@@ -13,6 +13,9 @@ public class MeteringService {
     @Value("${metering.max-ten-minute-access-count}")
     private int maxTenMinuteAccessCount = 200;
 
+    @Value("${metering.max-day-access-count}")
+    private int maxDayAccessCount = 300;
+
     private final BlockedRepository blockedRepository;
     private final ApiAccessRepository apiAccessRepository;
     private final Clock clock;
@@ -23,58 +26,58 @@ public class MeteringService {
         this.clock = clock;
     }
 
-    public boolean checkAccess(String serviceNumber, String handPhoneId, String carId, String requestUrl) {
+    public boolean checkAccess(String handPhoneId, String carId, String requestUrl) {
+        if (isCustomerBlocked(handPhoneId, carId)) {
+            return false;
+        }
 
+        boolean shouldHaveAccess = shouldHaveAccess(handPhoneId, carId, requestUrl);
+
+        recordAccess(handPhoneId, carId, requestUrl);
+
+        if (!shouldHaveAccess) {
+            blockCustomer(handPhoneId, carId);
+        }
+
+        return shouldHaveAccess;
+
+        //select exception metering service count
+    }
+
+    private boolean shouldHaveAccess(String handPhoneId, String carId, String requestUrl) {
+        long attemptsInLast10Minutes = apiAccessRepository.countByHandPhoneIdAndCarIdAndRequestUrlAndAccessTimeAfter(
+                handPhoneId, carId, requestUrl, OffsetDateTime.now(clock).minusMinutes(10)
+        );
+
+        long attemptsToday = apiAccessRepository.dailyAccessCount(handPhoneId, carId, requestUrl);
+
+        return attemptsInLast10Minutes < maxTenMinuteAccessCount
+                && attemptsToday < maxDayAccessCount;
+    }
+
+    private boolean isCustomerBlocked(String handPhoneId, String carId) {
         Optional<Blocked> maybeBlocked = blockedRepository.findById(BlockedId.builder()
                 .handPhoneId(handPhoneId)
                 .carId(carId)
                 .build());
 
-        if (maybeBlocked.isPresent()) {
-            return false;
-        }
+        return maybeBlocked.isPresent();
+    }
 
-        long attemptsInLast10Minutes = apiAccessRepository.countByHandPhoneIdAndCarIdAndRequestUrlAndAccessTimeAfter(
-                handPhoneId, carId, requestUrl, OffsetDateTime.now(clock).minusMinutes(10)
-        );
-
+    private void recordAccess(String handPhoneId, String carId, String requestUrl) {
         apiAccessRepository.save(ApiAccess.builder()
                 .handPhoneId(handPhoneId)
                 .carId(carId)
                 .requestUrl(requestUrl)
                 .accessTime(OffsetDateTime.now(clock))
                 .build());
+    }
 
-        if (attemptsInLast10Minutes >= maxTenMinuteAccessCount) {
-            blockedRepository.save(Blocked.builder()
-                    .handPhoneId(handPhoneId)
-                    .carId(carId)
-                    .blockedTime(OffsetDateTime.now(clock))
-                    .build());
-            return false;
-        }
-
-        return true;
-
-
-        //select metering detail info
-
-
-        //if detail info result = null  then insert checkAccess DB
-
-        //if not null,
-        //set timeIntervalYn , dayInterverYn
-
-        //update metering data
-
-        //select time metering standard count
-
-        //select day metering standard count
-
-        //select exception metering service count
-
-        //if cnt overs, insert isol table
-
-
+    private void blockCustomer(String handPhoneId, String carId) {
+        blockedRepository.save(Blocked.builder()
+                .handPhoneId(handPhoneId)
+                .carId(carId)
+                .blockedTime(OffsetDateTime.now(clock))
+                .build());
     }
 }
