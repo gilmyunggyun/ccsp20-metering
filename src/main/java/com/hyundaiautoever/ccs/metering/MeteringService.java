@@ -1,5 +1,6 @@
 package com.hyundaiautoever.ccs.metering;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.Clock;
@@ -8,6 +9,9 @@ import java.util.Optional;
 
 @Service
 public class MeteringService {
+
+    @Value("${metering.max-ten-minute-access-count}")
+    private int maxTenMinuteAccessCount = 200;
 
     private final BlockedRepository blockedRepository;
     private final ApiAccessRepository apiAccessRepository;
@@ -30,12 +34,25 @@ public class MeteringService {
             return false;
         }
 
+        long attemptsInLast10Minutes = apiAccessRepository.countByHandPhoneIdAndCarIdAndRequestUrlAndAccessTimeAfter(
+                handPhoneId, carId, requestUrl, OffsetDateTime.now(clock).minusMinutes(10)
+        );
+
         apiAccessRepository.save(ApiAccess.builder()
                 .handPhoneId(handPhoneId)
                 .carId(carId)
                 .requestUrl(requestUrl)
                 .accessTime(OffsetDateTime.now(clock))
                 .build());
+
+        if (attemptsInLast10Minutes >= maxTenMinuteAccessCount) {
+            blockedRepository.save(Blocked.builder()
+                    .handPhoneId(handPhoneId)
+                    .carId(carId)
+                    .blockedTime(OffsetDateTime.now(clock))
+                    .build());
+            return false;
+        }
 
         return true;
 

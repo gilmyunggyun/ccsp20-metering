@@ -5,9 +5,11 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
+import java.time.OffsetDateTime;
 
 @Data
 @Entity
@@ -22,5 +24,7 @@ public class Blocked {
     @Id
     private String carId;
 
+    @Column(columnDefinition = "TIMESTAMP WITH TIME ZONE")
+    private OffsetDateTime blockedTime;
 
 }

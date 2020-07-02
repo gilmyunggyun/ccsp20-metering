@@ -1,4 +1,5 @@
-
+metering:
+  max-ten-minute-access-count: 200
 spring:
   jpa:
     show-sql: true

@@ -58,7 +58,6 @@ class MeteringServiceTest {
                 .build()));
     }
 
-
     @Test
     void checkAccess_withBlockedCustomer_deniesAccess() {
 
@@ -92,12 +91,20 @@ class MeteringServiceTest {
         assertThat(hasAccess).isFalse();
 
         verifyNoInteractions(apiAccessRepository);
-
     }
 
     @Test
     void checkAccess_with199RequestsInLast10Mins_allowsAccess() {
+        when(apiAccessRepository.countByHandPhoneIdAndCarIdAndRequestUrlAndAccessTimeAfter(
+                "HP1234",
+                "CAR1234",
+                "/ccsp/window.do",
+                OffsetDateTime.now(clock).minusMinutes(10)
+        )).thenReturn(199L);
 
+        boolean hasAccess = subject.checkAccess("V1", "HP1234", "CAR1234", "/ccsp/window.do");
+
+        assertThat(hasAccess).isTrue();
     }
 
     @Test
@@ -105,6 +112,34 @@ class MeteringServiceTest {
         //check except metering service and if cnt overs, insert isol table
             // data sync with legacy
         // max count can be changed ( declare constant?)
+        when(apiAccessRepository.countByHandPhoneIdAndCarIdAndRequestUrlAndAccessTimeAfter(
+                "HP1234",
+                "CAR1234",
+                "/ccsp/window.do",
+                OffsetDateTime.now(clock).minusMinutes(10)
+        )).thenReturn(200L);
+
+        boolean hasAccess = subject.checkAccess("V1", "HP1234", "CAR1234", "/ccsp/window.do");
+
+        assertThat(hasAccess).isFalse();
+    }
+
+    @Test
+    void checkAccess_with200RequestsInLast10Mins_blocksCustomer() {
+        when(apiAccessRepository.countByHandPhoneIdAndCarIdAndRequestUrlAndAccessTimeAfter(
+                "HP1234",
+                "CAR1234",
+                "/ccsp/window.do",
+                OffsetDateTime.now(clock).minusMinutes(10)
+        )).thenReturn(200L);
+
+        subject.checkAccess("V1", "HP1234", "CAR1234", "/ccsp/window.do");
+
+        verify(blockedRepository).save(Blocked.builder()
+                .handPhoneId("HP1234")
+                .carId("CAR1234")
+                .blockedTime(OffsetDateTime.now(clock))
+                .build());
     }
 
     @Test

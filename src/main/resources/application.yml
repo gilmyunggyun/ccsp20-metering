@@ -1,9 +1,10 @@
+metering:
+  max-ten-minute-access-count: 200
+
 server:
   port: 8080
   servlet:
     context-path: /metering/v1/
-
-
 spring:
   jpa:
     show-sql: true
