@@ -18,17 +18,23 @@ public class MeteringService {
 
     private final BlockedRepository blockedRepository;
     private final ApiAccessRepository apiAccessRepository;
+    private final AllowedApiRepository allowedApiRepository;
     private final Clock clock;
 
-    public MeteringService(BlockedRepository blockedRepository, ApiAccessRepository apiAccessRepository, Clock clock) {
+    public MeteringService(BlockedRepository blockedRepository, ApiAccessRepository apiAccessRepository, AllowedApiRepository allowedApiRepository, Clock clock) {
         this.blockedRepository = blockedRepository;
         this.apiAccessRepository = apiAccessRepository;
+        this.allowedApiRepository = allowedApiRepository;
         this.clock = clock;
     }
 
     public boolean checkAccess(String handPhoneId, String carId, String requestUrl) {
         if (isCustomerBlocked(handPhoneId, carId)) {
             return false;
+        }
+
+        if (isAllowedUrl(requestUrl)) {
+            return true;
         }
 
         boolean shouldHaveAccess = shouldHaveAccess(handPhoneId, carId, requestUrl);
@@ -40,8 +46,12 @@ public class MeteringService {
         }
 
         return shouldHaveAccess;
+    }
 
-        //select exception metering service count
+    private boolean isAllowedUrl(String requestUrl) {
+        long foundResultCount = allowedApiRepository.countByRequestUrl(requestUrl);
+
+        return foundResultCount > 0;
     }
 
     private boolean shouldHaveAccess(String handPhoneId, String carId, String requestUrl) {

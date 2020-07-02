@@ -18,6 +18,7 @@ class MeteringServiceTest {
 
     private BlockedRepository blockedRepository;
     private ApiAccessRepository apiAccessRepository;
+    private AllowedApiRepository allowedApiRepository;
     private Clock clock;
 
     private MeteringService subject;
@@ -26,10 +27,12 @@ class MeteringServiceTest {
     void setUp() {
         blockedRepository = mock(BlockedRepository.class);
         apiAccessRepository = mock(ApiAccessRepository.class);
+        allowedApiRepository = mock(AllowedApiRepository.class);
         clock = Clock.fixed(Instant.now(), ZoneId.systemDefault());
 
         subject = new MeteringService(blockedRepository,
                 apiAccessRepository,
+                allowedApiRepository,
                 clock);
     }
 
@@ -181,5 +184,17 @@ class MeteringServiceTest {
                 .carId("CAR1234")
                 .blockedTime(OffsetDateTime.now(clock))
                 .build());
+    }
+
+    @Test
+    void checkAccess_withRequestUrlInExceptionList_allowsAccess_withoutCheckingOrRecording() {
+        when(allowedApiRepository.countByRequestUrl("/versionCheck.do")).thenReturn(1L);
+
+        boolean hasAccess = subject.checkAccess("HP1234", "CAR1234", "/versionCheck.do");
+
+        assertThat(hasAccess).isTrue();
+        verify(blockedRepository, atLeastOnce()).findById(any());
+        verifyNoInteractions(apiAccessRepository);
+        verify(blockedRepository, never()).save(any());
     }
 }
