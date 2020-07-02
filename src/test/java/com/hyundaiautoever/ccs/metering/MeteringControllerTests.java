@@ -1,7 +1,6 @@
 package com.hyundaiautoever.ccs.metering;
 
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -27,7 +26,7 @@ public class MeteringControllerTests {
     @Test
     public void checkAccess_callsUseCase_withApiRequestDataFromBody() throws Exception {
         // Arrange
-        when(meteringService.checkAccess(any(), any(), any(), any()))
+        when(meteringService.checkAccess(any(), any(), any()))
                 .thenReturn(true);
 
         // Act
@@ -43,13 +42,13 @@ public class MeteringControllerTests {
                 .andExpect(status().isOk())
                 .andExpect(content().json("{\"serviceNo\":\"V1\",\"retCode\":\"S\",\"resCode\":\"S000\"}"));
 
-        verify(meteringService).checkAccess("V1", "HP1234", "CAR1234", "/ccsp/window.do");
+        verify(meteringService).checkAccess("HP1234", "CAR1234", "/ccsp/window.do");
     }
 
     @Test
     public void checkAccess_whenServiceDeniesAccess_returnsFailureResponse() throws Exception {
         // Arrange
-        when(meteringService.checkAccess(any(), any(), any(), any()))
+        when(meteringService.checkAccess(any(), any(), any()))
                 .thenReturn(false);
 
         // Act

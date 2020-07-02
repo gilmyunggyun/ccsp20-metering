@@ -36,7 +36,6 @@ class MeteringServiceTest {
     @Test
     void checkAccess_allowsAccess() {
         assertThat(subject.checkAccess(
-                "V1",
                 "HP1234",
                 "CAR1234",
                 "/ccsp/window.do")).isTrue();
@@ -45,7 +44,6 @@ class MeteringServiceTest {
     @Test
     void checkAccess_addApiAccessRecords() {
         subject.checkAccess(
-                "V1",
                 "HP1234",
                 "CAR1234",
                 "/ccsp/window.do");
@@ -66,7 +64,7 @@ class MeteringServiceTest {
                 .thenReturn(Optional.of(Blocked.builder().build()));
 
         //Action
-        boolean hasAccess = subject.checkAccess("V1", "HP1234", "CAR1234", "/ccsp/window.do");
+        boolean hasAccess = subject.checkAccess("HP1234", "CAR1234", "/ccsp/window.do");
 
         //Assert
         assertThat(hasAccess).isFalse();
@@ -85,7 +83,7 @@ class MeteringServiceTest {
                 .thenReturn(Optional.of(Blocked.builder().build()));
 
         //Action
-        boolean hasAccess = subject.checkAccess("V1", "HP1234", "CAR1234", "/ccsp/window.do");
+        boolean hasAccess = subject.checkAccess("HP1234", "CAR1234", "/ccsp/window.do");
 
         //Assert
         assertThat(hasAccess).isFalse();
@@ -102,7 +100,7 @@ class MeteringServiceTest {
                 OffsetDateTime.now(clock).minusMinutes(10)
         )).thenReturn(199L);
 
-        boolean hasAccess = subject.checkAccess("V1", "HP1234", "CAR1234", "/ccsp/window.do");
+        boolean hasAccess = subject.checkAccess("HP1234", "CAR1234", "/ccsp/window.do");
 
         assertThat(hasAccess).isTrue();
     }
@@ -110,7 +108,7 @@ class MeteringServiceTest {
     @Test
     void checkAccess_with200RequestsInLast10Mins_deniesAccess() {
         //check except metering service and if cnt overs, insert isol table
-            // data sync with legacy
+        // data sync with legacy
         // max count can be changed ( declare constant?)
         when(apiAccessRepository.countByHandPhoneIdAndCarIdAndRequestUrlAndAccessTimeAfter(
                 "HP1234",
@@ -119,7 +117,7 @@ class MeteringServiceTest {
                 OffsetDateTime.now(clock).minusMinutes(10)
         )).thenReturn(200L);
 
-        boolean hasAccess = subject.checkAccess("V1", "HP1234", "CAR1234", "/ccsp/window.do");
+        boolean hasAccess = subject.checkAccess("HP1234", "CAR1234", "/ccsp/window.do");
 
         assertThat(hasAccess).isFalse();
     }
@@ -133,7 +131,7 @@ class MeteringServiceTest {
                 OffsetDateTime.now(clock).minusMinutes(10)
         )).thenReturn(200L);
 
-        subject.checkAccess("V1", "HP1234", "CAR1234", "/ccsp/window.do");
+        subject.checkAccess("HP1234", "CAR1234", "/ccsp/window.do");
 
         verify(blockedRepository).save(Blocked.builder()
                 .handPhoneId("HP1234")

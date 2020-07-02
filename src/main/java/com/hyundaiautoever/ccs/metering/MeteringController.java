@@ -19,7 +19,6 @@ public class MeteringController {
     public MeteringCheckResponse checkAPIAccess(@RequestBody MeteringCheckRequest request) {
 
         boolean hasAccess = meteringService.checkAccess(
-                request.getServiceNo(),
                 request.getHpId(),
                 request.getCarId(),
                 request.getReqUrl()
