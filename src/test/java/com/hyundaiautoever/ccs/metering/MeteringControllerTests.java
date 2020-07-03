@@ -6,6 +6,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
@@ -30,17 +31,13 @@ public class MeteringControllerTests {
                 .thenReturn(true);
 
         // Act
-        mockMvc.perform(post("/metering").content("{\n" +
-                "\"serviceNo\":  \"V1\",\n" +
-                "  \"hpId\":  \"HP1234\",\n" +
-                "  \"carId\":  \"CAR1234\",\n" +
-                "  \"reqUrl\":  \"/ccsp/window.do\",\n" +
-                "  \"resObj\" :  null\n" +
-                "}").contentType(MediaType.APPLICATION_JSON))
+        makeRequest()
 
         // Assert
                 .andExpect(status().isOk())
-                .andExpect(content().json("{\"serviceNo\":\"V1\",\"retCode\":\"S\",\"resCode\":\"S000\"}"));
+                .andExpect(content().json(
+                        "{\"serviceNo\":\"V1\",\"retCode\":\"S\",\"resCode\":\"S000\"}"
+                ));
 
         verify(meteringService).checkAccess("HP1234", "CAR1234", "/ccsp/window.do");
     }
@@ -52,18 +49,24 @@ public class MeteringControllerTests {
                 .thenReturn(false);
 
         // Act
-        mockMvc.perform(post("/metering").content("{\n" +
+        makeRequest()
+
+        // Assert
+                .andExpect(status().isTooManyRequests())
+                .andExpect(content().json(
+                        "{\"serviceNo\":\"V1\",\"retCode\":\"F\",\"resCode\":\"BK02\"}"
+                ));
+    }
+
+    // TODO: Validation check, or in service?
+
+    private ResultActions makeRequest() throws Exception {
+        return mockMvc.perform(post("/metering").content("{\n" +
                 "\"serviceNo\":  \"V1\",\n" +
                 "  \"hpId\":  \"HP1234\",\n" +
                 "  \"carId\":  \"CAR1234\",\n" +
                 "  \"reqUrl\":  \"/ccsp/window.do\",\n" +
                 "  \"resObj\" :  null\n" +
-                "}").contentType(MediaType.APPLICATION_JSON))
-
-        // Assert
-                .andExpect(status().isOk())
-                .andExpect(content().json("{\"serviceNo\":\"V1\",\"retCode\":\"F\",\"resCode\":\"BK02\"}"));
+                "}").contentType(MediaType.APPLICATION_JSON));
     }
-
-    // TODO: Validation check, or in service?
 }
