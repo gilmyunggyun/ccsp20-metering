@@ -1,7 +1,10 @@
 package com.hyundaiautoever.ccs.metering;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -30,29 +33,42 @@ public class MeteringController {
         );
 
         MeteringCheckResponse.MeteringCheckResponseBuilder responseBuilder = MeteringCheckResponse.builder()
-                .serviceNo(request.getServiceNo());
+                .ServiceNo(request.getServiceNo());
 
         if (!hasAccess) {
             return status(TOO_MANY_REQUESTS).body(
-                    responseBuilder.retCode("F").resCode("BK02").build()
+                    responseBuilder.ServiceNo(request.getServiceNo()).retCode("F").resCode("BK02").build()
             );
         }
 
-        return ok(responseBuilder.retCode("S").resCode("S000").build());
+        return ok(responseBuilder.ServiceNo(request.getServiceNo()).retCode("S").resCode("S000").build());
     }
 
+
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
     @Data
     public static class MeteringCheckRequest {
+        @JsonProperty("ServiceNo")
         private String serviceNo;
+
+        @JsonProperty("CCID")
         private String hpId;
+
+        @JsonProperty("carID")
         private String carId;
+
         private String reqUrl;
     }
 
+    @NoArgsConstructor
+    @AllArgsConstructor
     @Builder
     @Data
     public static class MeteringCheckResponse {
-        private String serviceNo;
+        @JsonProperty("serviceNo")
+        private String ServiceNo;
         private String retCode;
         private String resCode;
     }

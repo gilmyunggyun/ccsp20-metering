@@ -33,7 +33,7 @@ public class MeteringControllerTests {
         // Act
         makeRequest()
 
-        // Assert
+                // Assert
                 .andExpect(status().isOk())
                 .andExpect(content().json(
                         "{\"serviceNo\":\"V1\",\"retCode\":\"S\",\"resCode\":\"S000\"}"
@@ -51,7 +51,7 @@ public class MeteringControllerTests {
         // Act
         makeRequest()
 
-        // Assert
+                // Assert
                 .andExpect(status().isTooManyRequests())
                 .andExpect(content().json(
                         "{\"serviceNo\":\"V1\",\"retCode\":\"F\",\"resCode\":\"BK02\"}"
@@ -62,9 +62,9 @@ public class MeteringControllerTests {
 
     private ResultActions makeRequest() throws Exception {
         return mockMvc.perform(post("/metering").content("{\n" +
-                "\"serviceNo\":  \"V1\",\n" +
-                "  \"hpId\":  \"HP1234\",\n" +
-                "  \"carId\":  \"CAR1234\",\n" +
+                "\"ServiceNo\":  \"V1\",\n" +
+                "  \"CCID\":  \"HP1234\",\n" +
+                "  \"carID\":  \"CAR1234\",\n" +
                 "  \"reqUrl\":  \"/ccsp/window.do\",\n" +
                 "  \"resObj\" :  null\n" +
                 "}").contentType(MediaType.APPLICATION_JSON));
