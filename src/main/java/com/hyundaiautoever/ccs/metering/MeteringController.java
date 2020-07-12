@@ -49,7 +49,7 @@ public class MeteringController {
 
         try {
             //validation check
-            if (request.getServiceNo().isBlank() || request.getCarId().isBlank() || request.getHpId().isBlank() || request.getReqUrl().isBlank()) {
+            if (request.getServiceNo().isEmpty() || request.getCarId().isEmpty() || request.getHpId().isEmpty() || request.getReqUrl().isEmpty()) {
 
                 LOGGER.warn("미터링 ValidationCheck 전문형식오류 서비스ID[" + request.getServiceNo() + "] carID[" + request.getCarId() + "] CCID[" + request.getHpId() + "] requestURL[" + request.getReqUrl() + "]");
 
