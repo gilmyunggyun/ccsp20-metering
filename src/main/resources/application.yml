@@ -1,6 +1,17 @@
 metering:
   max-ten-minute-access-count: 200
   max-day-access-count : 300
+  BLOCK_BY_API: BK02      # 서비스 요청 횟수 초과로 인한 차단(API미터링 관련 코드)
+  SERVICE_SUCCESS: "0000"   #서비스요청성공
+  MSG_FORMAT_INVALID: S999 #전문 형식 에러
+  BLOCKED_RSON_10MIN: 1004 #CCSP PI미터링 차단(1004:10분, 1005:당일)
+  BLOCKED_RSON_DAY: 1005   #CCSP API미터링 차단(1004:10분, 1005:당일)
+
+RETURN_CODE_TYPE:
+  FAIL: F
+  SUCCESS: S
+  BLOCKED: B
+
 server:
   port: 8080
   servlet:

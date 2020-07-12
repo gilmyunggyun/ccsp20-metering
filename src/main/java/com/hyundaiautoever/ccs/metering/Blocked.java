@@ -24,6 +24,8 @@ public class Blocked {
     @Id
     private String carId;
 
+    private String blockedRsonCd;
+
     @Column(columnDefinition = "TIMESTAMP WITH TIME ZONE")
     private OffsetDateTime blockedTime;
 

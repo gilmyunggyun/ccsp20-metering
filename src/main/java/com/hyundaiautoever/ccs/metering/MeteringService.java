@@ -1,5 +1,8 @@
 package com.hyundaiautoever.ccs.metering;
 
+import com.hyundaiautoever.ccs.metering.VO.MeteringCheckRequest;
+import com.hyundaiautoever.ccs.metering.VO.MeteringCheckResponse;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +19,32 @@ public class MeteringService {
     @Value("${metering.max-day-access-count}")
     private int maxDayAccessCount = 300;
 
+    @Value("${RETURN_CODE_TYPE.FAIL}")
+    private String result_fail = "F";
+
+    @Value("${RETURN_CODE_TYPE.SUCCESS}")
+    private String result_success = "S";
+
+    @Value("${RETURN_CODE_TYPE.BLOCKED}")
+    private String result_blocked = "B";
+
+    @Value("${metering.BLOCK_BY_API}")
+    private String BLOCK_BY_API = "BK02";
+
+    @Value("${metering.SERVICE_SUCCESS}")
+    private String SERVICE_SUCCESS = "0000";
+
+    @Value("${metering.MSG_FORMAT_INVALID}")
+    private String MSG_FORMAT_INVALID = "S999";
+
+    @Value("${metering.BLOCKED_RSON_DAY}")
+    private String BLOCKED_RSON_DAY = "1005";
+
+    @Value("${metering.BLOCKED_RSON_10MIN}")
+    private String BLOCKED_RSON_10MIN = "1004";
+
+
+    private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(MeteringService.class);
     private final BlockedRepository blockedRepository;
     private final ApiAccessRepository apiAccessRepository;
     private final AllowedApiRepository allowedApiRepository;
@@ -28,24 +57,52 @@ public class MeteringService {
         this.clock = clock;
     }
 
-    public boolean checkAccess(String handPhoneId, String carId, String requestUrl) {
-        if (isCustomerBlocked(handPhoneId, carId)) {
-            return false;
+    public MeteringCheckResponse checkAccess(MeteringCheckRequest request) {
+
+        String serviceNo = request.getServiceNo();
+        String handPhoneId = request.getHpId();
+        String carId = request.getCarId();
+        String requestUrl = request.getReqUrl();
+
+        try {
+            MeteringCheckResponse meteringCheckResponse = MeteringCheckResponse.builder()
+                    .ServiceNo(serviceNo)
+                    .RetCode(result_success)
+                    .resCode(SERVICE_SUCCESS)
+                    .build();
+
+            Optional<Blocked> blockedCustomer = isCustomerBlocked(handPhoneId, carId);
+            if (blockedCustomer.isPresent()) {
+                LOGGER.warn("미터링 차단된 유저 : CCID[" + handPhoneId + "] carID[" + carId + "]");
+                return MeteringCheckResponse.builder()
+                        .ServiceNo(serviceNo)
+                        .RetCode(result_blocked)
+                        .resCode(BLOCK_BY_API)
+                        .build();
+
+            }
+
+            if (isAllowedUrl(requestUrl)) {
+                return meteringCheckResponse;
+            }
+
+            //count check
+            MeteringCheckResponse shouldHaveAccess = shouldHaveAccess(serviceNo, handPhoneId, carId, requestUrl);
+
+            recordAccess(handPhoneId, carId, requestUrl);
+
+            if (!shouldHaveAccess.getRetCode().equals(result_success)) {
+                String blockedRsonCd = shouldHaveAccess.getResCode();
+                blockCustomer(handPhoneId, carId, blockedRsonCd);
+            }
+
+            return meteringCheckResponse;
+
+        } catch (Exception e) {
+            LOGGER.warn("CCSP 미터링 Service [checkAccess] EXCEPTION 발생, serviceNo[\"" + request.getServiceNo() + "\"], CCID[\"" + request.getHpId() + "\"], CARID[\"" + request.getCarId() + "]  에러[" + getExceptionDetailMsg(e) + "]");
+            throw e;
         }
 
-        if (isAllowedUrl(requestUrl)) {
-            return true;
-        }
-
-        boolean shouldHaveAccess = shouldHaveAccess(handPhoneId, carId, requestUrl);
-
-        recordAccess(handPhoneId, carId, requestUrl);
-
-        if (!shouldHaveAccess) {
-            blockCustomer(handPhoneId, carId);
-        }
-
-        return shouldHaveAccess;
     }
 
     private boolean isAllowedUrl(String requestUrl) {
@@ -54,24 +111,48 @@ public class MeteringService {
         return foundResultCount > 0;
     }
 
-    private boolean shouldHaveAccess(String handPhoneId, String carId, String requestUrl) {
+    private MeteringCheckResponse shouldHaveAccess(String serviceNo, String handPhoneId, String carId, String requestUrl) {
+
+        MeteringCheckResponse resToInsertBlocked = MeteringCheckResponse.builder()
+                .ServiceNo(serviceNo)
+                .RetCode(result_fail)
+                .resCode(BLOCK_BY_API)
+                .build();
+
         long attemptsInLast10Minutes = apiAccessRepository.countByHandPhoneIdAndCarIdAndRequestUrlAndAccessTimeAfter(
                 handPhoneId, carId, requestUrl, OffsetDateTime.now(clock).minusMinutes(10)
         );
 
         long attemptsToday = apiAccessRepository.dailyAccessCount(handPhoneId, carId, requestUrl);
 
-        return attemptsInLast10Minutes < maxTenMinuteAccessCount
-                && attemptsToday < maxDayAccessCount;
+        if (attemptsInLast10Minutes >= maxTenMinuteAccessCount) {
+            resToInsertBlocked.setResCode(BLOCKED_RSON_10MIN);
+            LOGGER.info("CCSP API미터링 차단(1004:10분, 1005:당일), 서비스코드[" + serviceNo + "], CCID[" + handPhoneId + "], CARID[" + carId + "], 차단코드[" + BLOCKED_RSON_10MIN + "] ");
+            return resToInsertBlocked;
+
+        }
+
+        if (attemptsToday >= maxDayAccessCount) {
+
+            resToInsertBlocked.setResCode(BLOCKED_RSON_DAY);
+            LOGGER.info("CCSP API미터링 차단(1004:10분, 1005:당일), 서비스코드[" + serviceNo + "], CCID[" + handPhoneId + "], CARID[" + carId + "], 차단코드[" + BLOCKED_RSON_DAY + "] ");
+            return resToInsertBlocked;
+        }
+
+        return MeteringCheckResponse.builder()
+                .ServiceNo(serviceNo)
+                .RetCode(result_success)
+                .resCode(SERVICE_SUCCESS)
+                .build();
     }
 
-    private boolean isCustomerBlocked(String handPhoneId, String carId) {
+    private Optional<Blocked> isCustomerBlocked(String handPhoneId, String carId) {
         Optional<Blocked> maybeBlocked = blockedRepository.findById(BlockedId.builder()
                 .handPhoneId(handPhoneId)
                 .carId(carId)
                 .build());
 
-        return maybeBlocked.isPresent();
+        return maybeBlocked;
     }
 
     private void recordAccess(String handPhoneId, String carId, String requestUrl) {
@@ -83,11 +164,26 @@ public class MeteringService {
                 .build());
     }
 
-    private void blockCustomer(String handPhoneId, String carId) {
+    private void blockCustomer(String handPhoneId, String carId, String blockedRsonCd) {
         blockedRepository.save(Blocked.builder()
                 .handPhoneId(handPhoneId)
                 .carId(carId)
+                .blockedRsonCd(blockedRsonCd)
                 .blockedTime(OffsetDateTime.now(clock))
                 .build());
+    }
+
+    public String getExceptionDetailMsg(Exception e) {
+
+        StringBuffer sbErrMsg = new StringBuffer();
+
+        StackTraceElement[] elem = e.getStackTrace();
+
+        for (int i = 0; i < elem.length; i++) {
+            sbErrMsg.append(elem[i]);
+            sbErrMsg.append("\n");
+        }
+
+        return sbErrMsg.toString();
     }
 }

@@ -1,7 +1,10 @@
 package com.hyundaiautoever.ccs.metering;
 
+import com.hyundaiautoever.ccs.metering.VO.MeteringCheckRequest;
+import com.hyundaiautoever.ccs.metering.VO.MeteringCheckResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.time.Clock;
 import java.time.Instant;
@@ -36,20 +39,43 @@ class MeteringServiceTest {
                 clock);
     }
 
+    @Value("${metering.BLOCK_BY_API}")
+    private String BLOCK_BY_API;
+
+    @Value("${metering.SERVICE_SUCCESS}")
+    private String SERVICE_SUCCESS;
+
+    @Value("${metering.MSG_FORMAT_INVALID}")
+    private String MSG_FORMAT_INVALID;
+
+    MeteringCheckRequest meteringCheckRequest = MeteringCheckRequest.builder()
+            .serviceNo("V1")
+            .carId("CAR1234")
+            .hpId("HP1234")
+            .reqUrl("/ccsp/window.do")
+            .build();
+
+    MeteringCheckResponse returnValue = MeteringCheckResponse.builder()
+            .ServiceNo("V1")
+            .RetCode("S")
+            .resCode("0000")
+            .build();
+
+    MeteringCheckResponse blockedReturn = MeteringCheckResponse.builder()
+            .ServiceNo("V1")
+            .RetCode("B")
+            .resCode("BK02")
+            .build();
+
     @Test
     void checkAccess_allowsAccess() {
-        assertThat(subject.checkAccess(
-                "HP1234",
-                "CAR1234",
-                "/ccsp/window.do")).isTrue();
+        assertThat(subject.checkAccess(meteringCheckRequest)).isEqualTo(returnValue);
     }
+
 
     @Test
     void checkAccess_addApiAccessRecords() {
-        subject.checkAccess(
-                "HP1234",
-                "CAR1234",
-                "/ccsp/window.do");
+        subject.checkAccess(meteringCheckRequest);
 
         verify(apiAccessRepository).save(eq(ApiAccess.builder()
                 .handPhoneId("HP1234")
@@ -65,12 +91,17 @@ class MeteringServiceTest {
         //Arrange
         when(blockedRepository.findById(any()))
                 .thenReturn(Optional.of(Blocked.builder().build()));
+        Blocked chkdata = new Blocked("HP1234", "CAR1234", "1004", OffsetDateTime.now(clock));
 
+        when(blockedRepository.findById(BlockedId.builder()
+                .handPhoneId("HP1234")
+                .carId("CAR1234")
+                .build())).thenReturn(Optional.of(chkdata));
         //Action
-        boolean hasAccess = subject.checkAccess("HP1234", "CAR1234", "/ccsp/window.do");
+        MeteringCheckResponse hasAccess = subject.checkAccess(meteringCheckRequest);
 
         //Assert
-        assertThat(hasAccess).isFalse();
+        assertThat(hasAccess).isEqualTo(blockedReturn);
 
         verify(blockedRepository).findById(eq(BlockedId.builder()
                 .handPhoneId("HP1234")
@@ -86,10 +117,10 @@ class MeteringServiceTest {
                 .thenReturn(Optional.of(Blocked.builder().build()));
 
         //Action
-        boolean hasAccess = subject.checkAccess("HP1234", "CAR1234", "/ccsp/window.do");
+        MeteringCheckResponse hasAccess = subject.checkAccess(meteringCheckRequest);
 
         //Assert
-        assertThat(hasAccess).isFalse();
+        assertThat(hasAccess).isEqualTo(blockedReturn);
 
         verifyNoInteractions(apiAccessRepository);
     }
@@ -103,9 +134,9 @@ class MeteringServiceTest {
                 OffsetDateTime.now(clock).minusMinutes(10)
         )).thenReturn(199L);
 
-        boolean hasAccess = subject.checkAccess("HP1234", "CAR1234", "/ccsp/window.do");
+        MeteringCheckResponse hasAccess = subject.checkAccess(meteringCheckRequest);
 
-        assertThat(hasAccess).isTrue();
+        assertThat(hasAccess).isEqualTo(returnValue);
     }
 
     @Test
@@ -120,9 +151,16 @@ class MeteringServiceTest {
                 OffsetDateTime.now(clock).minusMinutes(10)
         )).thenReturn(200L);
 
-        boolean hasAccess = subject.checkAccess("HP1234", "CAR1234", "/ccsp/window.do");
+        Blocked chkdata = new Blocked("HP1234", "CAR1234", "1004", OffsetDateTime.now(clock));
 
-        assertThat(hasAccess).isFalse();
+        when(blockedRepository.findById(BlockedId.builder()
+                .handPhoneId("HP1234")
+                .carId("CAR1234")
+                .build())).thenReturn(Optional.of(chkdata));
+
+        MeteringCheckResponse hasAccess = subject.checkAccess(meteringCheckRequest);
+
+        assertThat(hasAccess).isEqualTo(blockedReturn);
     }
 
     @Test
@@ -134,12 +172,18 @@ class MeteringServiceTest {
                 OffsetDateTime.now(clock).minusMinutes(10)
         )).thenReturn(200L);
 
-        subject.checkAccess("HP1234", "CAR1234", "/ccsp/window.do");
+        when(blockedRepository.findById(BlockedId.builder()
+                .handPhoneId("HP1234")
+                .carId("CAR1234")
+                .build())).thenReturn(Optional.empty());
+
+        subject.checkAccess(meteringCheckRequest);
 
         verify(blockedRepository).save(Blocked.builder()
                 .handPhoneId("HP1234")
                 .carId("CAR1234")
                 .blockedTime(OffsetDateTime.now(clock))
+                .blockedRsonCd("1004")
                 .build());
     }
 
@@ -151,22 +195,28 @@ class MeteringServiceTest {
                 "/ccsp/window.do"
         )).thenReturn(299L);
 
-        boolean hasAccess = subject.checkAccess("HP1234", "CAR1234", "/ccsp/window.do");
+        MeteringCheckResponse hasAccess = subject.checkAccess(meteringCheckRequest);
 
-        assertThat(hasAccess).isTrue();
+        assertThat(hasAccess).isEqualTo(returnValue);
     }
 
     @Test
-    void checkAccess_with300RequestsToday_deniesAccess() {
+    void checkAccess_with301RequestsToday_deniesAccess() {
         when(apiAccessRepository.dailyAccessCount(
                 "HP1234",
                 "CAR1234",
                 "/ccsp/window.do"
-        )).thenReturn(300L);
+        )).thenReturn(301L);
 
-        boolean hasAccess = subject.checkAccess("HP1234", "CAR1234", "/ccsp/window.do");
+        Blocked chkData = new Blocked("HP1234", "CAR1234", "1005", OffsetDateTime.now(clock));
+        when(blockedRepository.findById(BlockedId.builder()
+                .handPhoneId("HP1234")
+                .carId("CAR1234")
+                .build())).thenReturn(Optional.of(chkData));
 
-        assertThat(hasAccess).isFalse();
+        MeteringCheckResponse hasAccess = subject.checkAccess(meteringCheckRequest);
+
+        assertThat(hasAccess).isEqualTo(blockedReturn);
     }
 
     @Test
@@ -176,13 +226,17 @@ class MeteringServiceTest {
                 "CAR1234",
                 "/ccsp/window.do"
         )).thenReturn(300L);
-
-        subject.checkAccess("HP1234", "CAR1234", "/ccsp/window.do");
+        when(blockedRepository.findById(BlockedId.builder()
+                .handPhoneId("HP1234")
+                .carId("CAR1234")
+                .build())).thenReturn(Optional.empty());
+        subject.checkAccess(meteringCheckRequest);
 
         verify(blockedRepository).save(Blocked.builder()
                 .handPhoneId("HP1234")
                 .carId("CAR1234")
                 .blockedTime(OffsetDateTime.now(clock))
+                .blockedRsonCd("1005")
                 .build());
     }
 
@@ -190,9 +244,19 @@ class MeteringServiceTest {
     void checkAccess_withRequestUrlInExceptionList_allowsAccess_withoutCheckingOrRecording() {
         when(allowedApiRepository.countByRequestUrl("/versionCheck.do")).thenReturn(1L);
 
-        boolean hasAccess = subject.checkAccess("HP1234", "CAR1234", "/versionCheck.do");
+        when(blockedRepository.findById(BlockedId.builder()
+                .handPhoneId("HP1234")
+                .carId("CAR1234")
+                .build())).thenReturn(Optional.empty());
 
-        assertThat(hasAccess).isTrue();
+        MeteringCheckResponse hasAccess = subject.checkAccess(MeteringCheckRequest.builder()
+                .serviceNo("V1")
+                .carId("CAR1234")
+                .hpId("HP1234")
+                .reqUrl("/versionCheck.do")
+                .build());
+
+        assertThat(hasAccess).isEqualTo(returnValue);
         verify(blockedRepository, atLeastOnce()).findById(any());
         verifyNoInteractions(apiAccessRepository);
         verify(blockedRepository, never()).save(any());
