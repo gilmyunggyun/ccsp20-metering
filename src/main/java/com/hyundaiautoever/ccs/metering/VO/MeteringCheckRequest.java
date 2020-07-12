@@ -19,12 +19,12 @@ public class MeteringCheckRequest {
     @JsonAlias({"ServiceNo","serviceNo"})
     private String serviceNo;
 
-    @NonNull
-    @JsonProperty("CCID")
+    @NotBlank
+    @JsonAlias({"CCID","hpId"})
     private String hpId;
 
     @NotBlank
-    @JsonProperty("carID")
+    @JsonAlias({"carID","carId"})
     private String carId;
 
     @NotBlank

@@ -48,15 +48,25 @@ public class MeteringController {
         //TODO: Need to Add circuitBreaker --> for the 500 error etc
 
         try {
-            //validation check
-            if (request.getServiceNo().isEmpty() || request.getCarId().isEmpty() || request.getHpId().isEmpty() || request.getReqUrl().isEmpty()) {
 
-                LOGGER.warn("미터링 ValidationCheck 전문형식오류 서비스ID[" + request.getServiceNo() + "] carID[" + request.getCarId() + "] CCID[" + request.getHpId() + "] requestURL[" + request.getReqUrl() + "]");
+            try {
+                //validation check
+                if (request.getServiceNo().isEmpty() || request.getCarId().isEmpty() || request.getHpId().isEmpty() || request.getReqUrl().isEmpty()) {
 
+                    LOGGER.warn("미터링 ValidationCheck 전문형식오류 서비스ID[" + request.getServiceNo() + "] carID[" + request.getCarId() + "] CCID[" + request.getHpId() + "] requestURL[" + request.getReqUrl() + "]");
+
+                    return status(400).body(MeteringCheckResponse.builder()
+                            .RetCode(result_fail)
+                            .resCode(MSG_FORMAT_INVALID)
+                            .ServiceNo(request.getServiceNo())
+                            .build());
+                }
+            }catch(Exception e){
+                LOGGER.warn("CCSP 미터링 Controller EXCEPTION 발생, serviceNo[\"" + request.getServiceNo() + "\"], CCID[\"" + request.getHpId() + "\"], CARID[\"" + request.getCarId() + "]  에러[" + getExceptionDetailMsg(e) + "]");
                 return status(400).body(MeteringCheckResponse.builder()
                         .RetCode(result_fail)
                         .resCode(MSG_FORMAT_INVALID)
-                        .ServiceNo(request.getServiceNo())
+                        .ServiceNo("REQUEST FORMAT ERROR")
                         .build());
             }
 
