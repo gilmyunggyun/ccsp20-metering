@@ -1,7 +1,7 @@
 package com.hyundaiautoever.ccs.metering;
 
+import com.hyundaiautoever.ccs.metering.MeteringService.AccessCheckResult;
 import com.hyundaiautoever.ccs.metering.VO.MeteringCheckRequest;
-import com.hyundaiautoever.ccs.metering.VO.MeteringCheckResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -33,20 +33,19 @@ public class MeteringControllerTests {
             .reqUrl("/ccsp/window.do")
             .build();
 
-    MeteringCheckResponse returnValue = MeteringCheckResponse.builder()
-            .ServiceNo("V1")
+    AccessCheckResult success = AccessCheckResult.builder()
             .RetCode("S")
             .resCode("0000")
             .build();
-    MeteringCheckResponse blockedReturn = MeteringCheckResponse.builder()
+
+    AccessCheckResult blocked = AccessCheckResult.builder()
             .RetCode("B")
             .resCode("BK02")
-            .ServiceNo("V1")
             .build();
 
     @Test
     void checkAccess_whenControllerAllowsAccess_thenReturnSuccess() throws Exception {
-        when(meteringService.checkAccess(any())).thenReturn(returnValue);
+        when(meteringService.checkAccess(any())).thenReturn(success);
 
         makeRequest().andExpect(status().isOk())
                 .andExpect(content().json(
@@ -56,30 +55,27 @@ public class MeteringControllerTests {
 
 
     @Test
-    void validationCheck_whenControllerDeniesAccess_thenReturnFailandResponse() throws Exception {
-
-        MeteringCheckRequest validReq = MeteringCheckRequest.builder()
-                .serviceNo("V1")
-                .carId("CAR123456")
-                .hpId("")
-                .reqUrl("/ccsp/window.do")
-                .build();
-
+    void validationCheck_whenAnyFieldIsBlank_thenReturnFailandResponse() throws Exception {
 
         mockMvc.perform(post("/metering")
-                .content(validReq.toString())
+                .content("{\n" +
+                        "  \"serviceNo\": \"V1\",\n" +
+                        "  \"carId\":  \"CAR123456\",\n" +
+                        "  \"hpId\": \"\",\n" +
+                        "  \"reqUrl\": \"/ccsp/window.do\"\n" +
+                        "  \n" +
+                        "}")
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
-//
-//        .andExpect(content().json(
-//                "{\"serviceNo\":\"V1\",\"retCode\":\"F\",\"resCode\":\"S999\"}"
-//        ));
+                .andExpect(status().isBadRequest())
+                .andExpect(content().json(
+                        "{\"serviceNo\":\"V1\",\"retCode\":\"F\",\"resCode\":\"S999\"}"
+                ));
 
     }
 
     @Test
     void checkAccess_whenControllerDeniesAccess_forBlockedCustomer_thenReturnFailandResponse() throws Exception {
-        when(meteringService.checkAccess(any())).thenReturn(blockedReturn);
+        when(meteringService.checkAccess(any())).thenReturn(blocked);
 
         makeRequest().andExpect(status().isTooManyRequests())
                 .andExpect(content().json(
@@ -89,7 +85,7 @@ public class MeteringControllerTests {
 
     @Test
     public void checkAccess_callsUseCase_withApiRequestDataFromBody() throws Exception {
-        when(meteringService.checkAccess(any())).thenReturn(returnValue);
+        when(meteringService.checkAccess(any())).thenReturn(success);
 
         // Act
         makeRequest()
@@ -105,7 +101,7 @@ public class MeteringControllerTests {
     @Test
     public void checkAccess_whenServiceDeniesAccess_returnsFailureResponse() throws Exception {
         // Arrange
-        when(meteringService.checkAccess(meteringCheckRequest)).thenReturn(blockedReturn);
+        when(meteringService.checkAccess(meteringCheckRequest)).thenReturn(blocked);
 
         // Act
         makeRequest()

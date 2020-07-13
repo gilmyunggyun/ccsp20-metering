@@ -1,7 +1,8 @@
 package com.hyundaiautoever.ccs.metering;
 
 import com.hyundaiautoever.ccs.metering.VO.MeteringCheckRequest;
-import com.hyundaiautoever.ccs.metering.VO.MeteringCheckResponse;
+import lombok.Builder;
+import lombok.Data;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -57,7 +58,7 @@ public class MeteringService {
         this.clock = clock;
     }
 
-    public MeteringCheckResponse checkAccess(MeteringCheckRequest request) {
+    public AccessCheckResult checkAccess(MeteringCheckRequest request) {
 
         String serviceNo = request.getServiceNo();
         String handPhoneId = request.getHpId();
@@ -65,8 +66,7 @@ public class MeteringService {
         String requestUrl = request.getReqUrl();
 
         try {
-            MeteringCheckResponse meteringCheckResponse = MeteringCheckResponse.builder()
-                    .ServiceNo(serviceNo)
+            AccessCheckResult accessCheckResult = AccessCheckResult.builder()
                     .RetCode(result_success)
                     .resCode(SERVICE_SUCCESS)
                     .build();
@@ -74,8 +74,7 @@ public class MeteringService {
             Optional<Blocked> blockedCustomer = isCustomerBlocked(handPhoneId, carId);
             if (blockedCustomer.isPresent()) {
                 LOGGER.warn("미터링 차단된 유저 : CCID[" + handPhoneId + "] carID[" + carId + "]");
-                return MeteringCheckResponse.builder()
-                        .ServiceNo(serviceNo)
+                return AccessCheckResult.builder()
                         .RetCode(result_blocked)
                         .resCode(BLOCK_BY_API)
                         .build();
@@ -83,11 +82,11 @@ public class MeteringService {
             }
 
             if (isAllowedUrl(requestUrl)) {
-                return meteringCheckResponse;
+                return accessCheckResult;
             }
 
             //count check
-            MeteringCheckResponse shouldHaveAccess = shouldHaveAccess(serviceNo, handPhoneId, carId, requestUrl);
+            AccessCheckResult shouldHaveAccess = shouldHaveAccess(serviceNo, handPhoneId, carId, requestUrl);
 
             recordAccess(handPhoneId, carId, requestUrl);
 
@@ -96,7 +95,7 @@ public class MeteringService {
                 blockCustomer(handPhoneId, carId, blockedRsonCd);
             }
 
-            return meteringCheckResponse;
+            return shouldHaveAccess;
 
         } catch (Exception e) {
             LOGGER.warn("CCSP 미터링 Service [checkAccess] EXCEPTION 발생, serviceNo[\"" + request.getServiceNo() + "\"], CCID[\"" + request.getHpId() + "\"], CARID[\"" + request.getCarId() + "]  에러[" + getExceptionDetailMsg(e) + "]");
@@ -111,10 +110,9 @@ public class MeteringService {
         return foundResultCount > 0;
     }
 
-    private MeteringCheckResponse shouldHaveAccess(String serviceNo, String handPhoneId, String carId, String requestUrl) {
+    private AccessCheckResult shouldHaveAccess(String serviceNo, String handPhoneId, String carId, String requestUrl) {
 
-        MeteringCheckResponse resToInsertBlocked = MeteringCheckResponse.builder()
-                .ServiceNo(serviceNo)
+        AccessCheckResult resToInsertBlocked = AccessCheckResult.builder()
                 .RetCode(result_fail)
                 .resCode(BLOCK_BY_API)
                 .build();
@@ -139,8 +137,7 @@ public class MeteringService {
             return resToInsertBlocked;
         }
 
-        return MeteringCheckResponse.builder()
-                .ServiceNo(serviceNo)
+        return AccessCheckResult.builder()
                 .RetCode(result_success)
                 .resCode(SERVICE_SUCCESS)
                 .build();
@@ -185,5 +182,12 @@ public class MeteringService {
         }
 
         return sbErrMsg.toString();
+    }
+
+    @Data
+    @Builder
+    public static class AccessCheckResult {
+        String RetCode;
+        String resCode;
     }
 }

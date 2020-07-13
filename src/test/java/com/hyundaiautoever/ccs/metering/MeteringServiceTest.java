@@ -1,7 +1,7 @@
 package com.hyundaiautoever.ccs.metering;
 
+import com.hyundaiautoever.ccs.metering.MeteringService.AccessCheckResult;
 import com.hyundaiautoever.ccs.metering.VO.MeteringCheckRequest;
-import com.hyundaiautoever.ccs.metering.VO.MeteringCheckResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Value;
@@ -55,21 +55,19 @@ class MeteringServiceTest {
             .reqUrl("/ccsp/window.do")
             .build();
 
-    MeteringCheckResponse returnValue = MeteringCheckResponse.builder()
-            .ServiceNo("V1")
+    AccessCheckResult success = AccessCheckResult.builder()
             .RetCode("S")
             .resCode("0000")
             .build();
 
-    MeteringCheckResponse blockedReturn = MeteringCheckResponse.builder()
-            .ServiceNo("V1")
+    AccessCheckResult blocked = AccessCheckResult.builder()
             .RetCode("B")
             .resCode("BK02")
             .build();
 
     @Test
     void checkAccess_allowsAccess() {
-        assertThat(subject.checkAccess(meteringCheckRequest)).isEqualTo(returnValue);
+        assertThat(subject.checkAccess(meteringCheckRequest)).isEqualTo(success);
     }
 
 
@@ -98,10 +96,10 @@ class MeteringServiceTest {
                 .carId("CAR1234")
                 .build())).thenReturn(Optional.of(chkdata));
         //Action
-        MeteringCheckResponse hasAccess = subject.checkAccess(meteringCheckRequest);
+        AccessCheckResult hasAccess = subject.checkAccess(meteringCheckRequest);
 
         //Assert
-        assertThat(hasAccess).isEqualTo(blockedReturn);
+        assertThat(hasAccess).isEqualTo(blocked);
 
         verify(blockedRepository).findById(eq(BlockedId.builder()
                 .handPhoneId("HP1234")
@@ -117,10 +115,10 @@ class MeteringServiceTest {
                 .thenReturn(Optional.of(Blocked.builder().build()));
 
         //Action
-        MeteringCheckResponse hasAccess = subject.checkAccess(meteringCheckRequest);
+        AccessCheckResult hasAccess = subject.checkAccess(meteringCheckRequest);
 
         //Assert
-        assertThat(hasAccess).isEqualTo(blockedReturn);
+        assertThat(hasAccess).isEqualTo(blocked);
 
         verifyNoInteractions(apiAccessRepository);
     }
@@ -134,9 +132,9 @@ class MeteringServiceTest {
                 OffsetDateTime.now(clock).minusMinutes(10)
         )).thenReturn(199L);
 
-        MeteringCheckResponse hasAccess = subject.checkAccess(meteringCheckRequest);
+        AccessCheckResult hasAccess = subject.checkAccess(meteringCheckRequest);
 
-        assertThat(hasAccess).isEqualTo(returnValue);
+        assertThat(hasAccess).isEqualTo(success);
     }
 
     @Test
@@ -158,9 +156,9 @@ class MeteringServiceTest {
                 .carId("CAR1234")
                 .build())).thenReturn(Optional.of(chkdata));
 
-        MeteringCheckResponse hasAccess = subject.checkAccess(meteringCheckRequest);
+        AccessCheckResult hasAccess = subject.checkAccess(meteringCheckRequest);
 
-        assertThat(hasAccess).isEqualTo(blockedReturn);
+        assertThat(hasAccess).isEqualTo(blocked);
     }
 
     @Test
@@ -195,9 +193,9 @@ class MeteringServiceTest {
                 "/ccsp/window.do"
         )).thenReturn(299L);
 
-        MeteringCheckResponse hasAccess = subject.checkAccess(meteringCheckRequest);
+        AccessCheckResult hasAccess = subject.checkAccess(meteringCheckRequest);
 
-        assertThat(hasAccess).isEqualTo(returnValue);
+        assertThat(hasAccess).isEqualTo(success);
     }
 
     @Test
@@ -214,9 +212,9 @@ class MeteringServiceTest {
                 .carId("CAR1234")
                 .build())).thenReturn(Optional.of(chkData));
 
-        MeteringCheckResponse hasAccess = subject.checkAccess(meteringCheckRequest);
+        AccessCheckResult hasAccess = subject.checkAccess(meteringCheckRequest);
 
-        assertThat(hasAccess).isEqualTo(blockedReturn);
+        assertThat(hasAccess).isEqualTo(blocked);
     }
 
     @Test
@@ -249,14 +247,14 @@ class MeteringServiceTest {
                 .carId("CAR1234")
                 .build())).thenReturn(Optional.empty());
 
-        MeteringCheckResponse hasAccess = subject.checkAccess(MeteringCheckRequest.builder()
+        AccessCheckResult hasAccess = subject.checkAccess(MeteringCheckRequest.builder()
                 .serviceNo("V1")
                 .carId("CAR1234")
                 .hpId("HP1234")
                 .reqUrl("/versionCheck.do")
                 .build());
 
-        assertThat(hasAccess).isEqualTo(returnValue);
+        assertThat(hasAccess).isEqualTo(success);
         verify(blockedRepository, atLeastOnce()).findById(any());
         verifyNoInteractions(apiAccessRepository);
         verify(blockedRepository, never()).save(any());

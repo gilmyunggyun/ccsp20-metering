@@ -5,6 +5,7 @@ import com.hyundaiautoever.ccs.metering.VO.MeteringCheckResponse;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -43,50 +44,40 @@ public class MeteringController {
     }
 
     @PostMapping("/metering")
-    public ResponseEntity<MeteringCheckResponse> checkAPIAccess(@Valid @RequestBody MeteringCheckRequest request) throws Exception {
+    public ResponseEntity<MeteringCheckResponse> checkAPIAccess(@Valid @RequestBody MeteringCheckRequest request,
+                                                                BindingResult result) throws Exception {
 
         //TODO: Need to Add circuitBreaker --> for the 500 error etc
 
         try {
 
-            try {
-                //validation check
-                if (request.getServiceNo().isEmpty() || request.getCarId().isEmpty() || request.getHpId().isEmpty() || request.getReqUrl().isEmpty()) {
+            if (result.hasErrors()) {
+                LOGGER.warn("미터링 ValidationCheck 전문형식오류 서비스ID[" + request.getServiceNo() + "] carID[" + request.getCarId() + "] CCID[" + request.getHpId() + "] requestURL[" + request.getReqUrl() + "]");
 
-                    LOGGER.warn("미터링 ValidationCheck 전문형식오류 서비스ID[" + request.getServiceNo() + "] carID[" + request.getCarId() + "] CCID[" + request.getHpId() + "] requestURL[" + request.getReqUrl() + "]");
-
-                    return status(400).body(MeteringCheckResponse.builder()
-                            .RetCode(result_fail)
-                            .resCode(MSG_FORMAT_INVALID)
-                            .ServiceNo(request.getServiceNo())
-                            .build());
-                }
-            }catch(Exception e){
-                LOGGER.warn("CCSP 미터링 Controller EXCEPTION 발생, serviceNo[\"" + request.getServiceNo() + "\"], CCID[\"" + request.getHpId() + "\"], CARID[\"" + request.getCarId() + "]  에러[" + getExceptionDetailMsg(e) + "]");
                 return status(400).body(MeteringCheckResponse.builder()
                         .RetCode(result_fail)
                         .resCode(MSG_FORMAT_INVALID)
-                        .ServiceNo("REQUEST FORMAT ERROR")
+                        .ServiceNo(request.getServiceNo())
                         .build());
             }
 
             //accessCheck
-            MeteringCheckResponse hasAccess = meteringService.checkAccess(request);
+            MeteringService.AccessCheckResult hasAccess = meteringService.checkAccess(request);
 
-            String hassAccessResCode = hasAccess.getResCode();
+            String hasAccessResCode = hasAccess.getResCode();
 
-            if (hassAccessResCode.equals(BLOCK_BY_API)) {
+            if (hasAccessResCode.equals(BLOCK_BY_API)) {
                 return status(TOO_MANY_REQUESTS).body(
                         MeteringCheckResponse.builder()
                                 .RetCode(result_fail)
-                                .ServiceNo(hasAccess.getServiceNo())
+                                .ServiceNo(request.getServiceNo())
                                 .resCode(hasAccess.getResCode())
                                 .build()
                 );
 
             }
 
-            if (!hassAccessResCode.equals(SERVICE_SUCCESS)) {
+            if (!hasAccessResCode.equals(SERVICE_SUCCESS)) {
                 //circuit breaker?
                 return status(SERVICE_UNAVAILABLE).body(
                         MeteringCheckResponse.builder()
@@ -95,7 +86,12 @@ public class MeteringController {
                                 .build());
 
             }
-            return ok(hasAccess);
+
+            return ok(MeteringCheckResponse.builder()
+                    .ServiceNo(request.getServiceNo())
+                    .RetCode(result_success)
+                    .resCode(SERVICE_SUCCESS)
+                    .build());
 
         } catch (Exception e) {
             LOGGER.warn("CCSP 미터링 Controller EXCEPTION 발생, serviceNo[\"" + request.getServiceNo() + "\"], CCID[\"" + request.getHpId() + "\"], CARID[\"" + request.getCarId() + "]  에러[" + getExceptionDetailMsg(e) + "]");
