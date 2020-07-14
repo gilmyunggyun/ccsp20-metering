@@ -16,18 +16,14 @@ import javax.validation.constraints.NotBlank;
 public class MeteringCheckRequest {
 
     @NotBlank
-    @JsonAlias({"ServiceNo","serviceNo"})
     private String serviceNo;
 
     @NotBlank
-    @JsonAlias({"CCID","hpId"})
     private String hpId;
 
     @NotBlank
-    @JsonAlias({"carID","carId"})
     private String carId;
 
     @NotBlank
     private String reqUrl;
-
 }
