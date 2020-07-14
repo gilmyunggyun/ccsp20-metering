@@ -115,9 +115,9 @@ public class MeteringControllerTests {
 
     private ResultActions makeRequest() throws Exception {
         return mockMvc.perform(post("/metering").content("{\n" +
-                "\"ServiceNo\":  \"V1\",\n" +
-                "  \"CCID\":  \"HP123456\",\n" +
-                "  \"carID\":  \"CAR123456\",\n" +
+                "\"serviceNo\":  \"V1\",\n" +
+                "  \"hpId\":  \"HP123456\",\n" +
+                "  \"carId\":  \"CAR123456\",\n" +
                 "  \"reqUrl\":  \"/ccsp/window.do\",\n" +
                 "  \"resObj\" :  null\n" +
                 "}").contentType(MediaType.APPLICATION_JSON));
