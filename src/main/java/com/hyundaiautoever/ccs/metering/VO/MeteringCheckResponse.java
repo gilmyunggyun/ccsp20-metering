@@ -1,6 +1,5 @@
 package com.hyundaiautoever.ccs.metering.VO;
 
-import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,14 +12,11 @@ import lombok.NoArgsConstructor;
 @Data
 public class MeteringCheckResponse {
 
+    @JsonProperty("ServiceNo")
+    private String serviceNo;
 
-    @JsonAlias({"serviceNo","ServiceNo"})
-    private String ServiceNo;
-
-    @JsonProperty("retCode")
-    private String RetCode;
+    @JsonProperty("RetCode")
+    private String retCode;
 
     private String resCode;
-
-
 }

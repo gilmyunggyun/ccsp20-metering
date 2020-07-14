@@ -49,7 +49,7 @@ public class MeteringControllerTests {
 
         makeRequest().andExpect(status().isOk())
                 .andExpect(content().json(
-                        "{\"serviceNo\":\"V1\",\"retCode\":\"S\",\"resCode\":\"0000\"}"
+                        "{\"ServiceNo\":\"V1\",\"RetCode\":\"S\",\"resCode\":\"0000\"}"
                 ));
     }
 
@@ -68,7 +68,7 @@ public class MeteringControllerTests {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().json(
-                        "{\"serviceNo\":\"V1\",\"retCode\":\"F\",\"resCode\":\"S999\"}"
+                        "{\"ServiceNo\":\"V1\",\"RetCode\":\"F\",\"resCode\":\"S999\"}"
                 ));
 
     }
@@ -79,7 +79,7 @@ public class MeteringControllerTests {
 
         makeRequest().andExpect(status().isTooManyRequests())
                 .andExpect(content().json(
-                        "{\"serviceNo\":\"V1\",\"retCode\":\"F\",\"resCode\":\"BK02\"}"
+                        "{\"ServiceNo\":\"V1\",\"RetCode\":\"F\",\"resCode\":\"BK02\"}"
                 ));
     }
 
@@ -92,7 +92,7 @@ public class MeteringControllerTests {
                 // Assert
                 .andExpect(status().isOk())
                 .andExpect(content().json(
-                        "{\"serviceNo\":\"V1\",\"retCode\":\"S\",\"resCode\":\"0000\"}"
+                        "{\"ServiceNo\":\"V1\",\"RetCode\":\"S\",\"resCode\":\"0000\"}"
                 ));
 
         verify(meteringService).checkAccess(meteringCheckRequest);
@@ -106,7 +106,7 @@ public class MeteringControllerTests {
         // Act
         makeRequest()
                 .andExpect(content().json(
-                        "{\"serviceNo\":\"V1\",\"retCode\":\"F\",\"resCode\":\"BK02\"}"
+                        "{\"ServiceNo\":\"V1\",\"RetCode\":\"F\",\"resCode\":\"BK02\"}"
                 ));
     }
 

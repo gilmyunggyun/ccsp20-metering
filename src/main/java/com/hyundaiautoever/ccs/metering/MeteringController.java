@@ -55,9 +55,9 @@ public class MeteringController {
                 LOGGER.warn("미터링 ValidationCheck 전문형식오류 서비스ID[" + request.getServiceNo() + "] carID[" + request.getCarId() + "] CCID[" + request.getHpId() + "] requestURL[" + request.getReqUrl() + "]");
 
                 return status(400).body(MeteringCheckResponse.builder()
-                        .RetCode(result_fail)
+                        .retCode(result_fail)
                         .resCode(MSG_FORMAT_INVALID)
-                        .ServiceNo(request.getServiceNo())
+                        .serviceNo(request.getServiceNo())
                         .build());
             }
 
@@ -69,8 +69,8 @@ public class MeteringController {
             if (hasAccessResCode.equals(BLOCK_BY_API)) {
                 return status(TOO_MANY_REQUESTS).body(
                         MeteringCheckResponse.builder()
-                                .RetCode(result_fail)
-                                .ServiceNo(request.getServiceNo())
+                                .retCode(result_fail)
+                                .serviceNo(request.getServiceNo())
                                 .resCode(hasAccess.getResCode())
                                 .build()
                 );
@@ -81,15 +81,15 @@ public class MeteringController {
                 //circuit breaker?
                 return status(SERVICE_UNAVAILABLE).body(
                         MeteringCheckResponse.builder()
-                                .RetCode(result_fail)
+                                .retCode(result_fail)
                                 .resCode("Server Error")
                                 .build());
 
             }
 
             return ok(MeteringCheckResponse.builder()
-                    .ServiceNo(request.getServiceNo())
-                    .RetCode(result_success)
+                    .serviceNo(request.getServiceNo())
+                    .retCode(result_success)
                     .resCode(SERVICE_SUCCESS)
                     .build());
 
