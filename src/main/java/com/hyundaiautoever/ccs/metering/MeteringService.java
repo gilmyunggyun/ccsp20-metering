@@ -3,6 +3,7 @@ package com.hyundaiautoever.ccs.metering;
 import com.hyundaiautoever.ccs.metering.VO.MeteringCheckRequest;
 import lombok.Builder;
 import lombok.Data;
+import org.hibernate.dialect.pagination.AbstractLimitHandler;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -51,6 +52,16 @@ public class MeteringService {
     private final AllowedApiRepository allowedApiRepository;
     private final Clock clock;
 
+    private final AccessCheckResult success = AccessCheckResult.builder()
+            .RetCode(result_success)
+            .resCode(SERVICE_SUCCESS)
+            .build();
+
+    private final AccessCheckResult blocked = AccessCheckResult.builder()
+            .RetCode(result_blocked)
+            .resCode(BLOCK_BY_API)
+            .build();
+
     public MeteringService(BlockedRepository blockedRepository, ApiAccessRepository apiAccessRepository, AllowedApiRepository allowedApiRepository, Clock clock) {
         this.blockedRepository = blockedRepository;
         this.apiAccessRepository = apiAccessRepository;
@@ -66,23 +77,14 @@ public class MeteringService {
         String requestUrl = request.getReqUrl();
 
         try {
-            AccessCheckResult accessCheckResult = AccessCheckResult.builder()
-                    .RetCode(result_success)
-                    .resCode(SERVICE_SUCCESS)
-                    .build();
-
             Optional<Blocked> blockedCustomer = isCustomerBlocked(handPhoneId, carId);
             if (blockedCustomer.isPresent()) {
                 LOGGER.warn("미터링 차단된 유저 : CCID[" + handPhoneId + "] carID[" + carId + "]");
-                return AccessCheckResult.builder()
-                        .RetCode(result_blocked)
-                        .resCode(BLOCK_BY_API)
-                        .build();
-
+                return blocked;
             }
 
             if (isAllowedUrl(requestUrl)) {
-                return accessCheckResult;
+                return success;
             }
 
             //count check
@@ -93,9 +95,11 @@ public class MeteringService {
             if (!shouldHaveAccess.getRetCode().equals(result_success)) {
                 String blockedRsonCd = shouldHaveAccess.getResCode();
                 blockCustomer(handPhoneId, carId, blockedRsonCd);
+
+                return blocked;
             }
 
-            return shouldHaveAccess;
+            return success;
 
         } catch (Exception e) {
             LOGGER.warn("CCSP 미터링 Service [checkAccess] EXCEPTION 발생, serviceNo[\"" + request.getServiceNo() + "\"], CCID[\"" + request.getHpId() + "\"], CARID[\"" + request.getCarId() + "]  에러[" + getExceptionDetailMsg(e) + "]");
@@ -112,11 +116,6 @@ public class MeteringService {
 
     private AccessCheckResult shouldHaveAccess(String serviceNo, String handPhoneId, String carId, String requestUrl) {
 
-        AccessCheckResult resToInsertBlocked = AccessCheckResult.builder()
-                .RetCode(result_fail)
-                .resCode(BLOCK_BY_API)
-                .build();
-
         long attemptsInLast10Minutes = apiAccessRepository.countByHandPhoneIdAndCarIdAndRequestUrlAndAccessTimeAfter(
                 handPhoneId, carId, requestUrl, OffsetDateTime.now(clock).minusMinutes(10)
         );
@@ -124,17 +123,13 @@ public class MeteringService {
         long attemptsToday = apiAccessRepository.dailyAccessCount(handPhoneId, carId, requestUrl);
 
         if (attemptsInLast10Minutes >= maxTenMinuteAccessCount) {
-            resToInsertBlocked.setResCode(BLOCKED_RSON_10MIN);
             LOGGER.info("CCSP API미터링 차단(1004:10분, 1005:당일), 서비스코드[" + serviceNo + "], CCID[" + handPhoneId + "], CARID[" + carId + "], 차단코드[" + BLOCKED_RSON_10MIN + "] ");
-            return resToInsertBlocked;
-
+            return AccessCheckResult.builder().resCode(BLOCKED_RSON_10MIN).RetCode(result_fail).build();
         }
 
         if (attemptsToday >= maxDayAccessCount) {
-
-            resToInsertBlocked.setResCode(BLOCKED_RSON_DAY);
             LOGGER.info("CCSP API미터링 차단(1004:10분, 1005:당일), 서비스코드[" + serviceNo + "], CCID[" + handPhoneId + "], CARID[" + carId + "], 차단코드[" + BLOCKED_RSON_DAY + "] ");
-            return resToInsertBlocked;
+            return AccessCheckResult.builder().resCode(BLOCKED_RSON_DAY).RetCode(result_fail).build();
         }
 
         return AccessCheckResult.builder()

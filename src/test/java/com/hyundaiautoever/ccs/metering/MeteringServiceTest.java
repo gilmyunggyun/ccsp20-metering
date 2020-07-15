@@ -149,13 +149,6 @@ class MeteringServiceTest {
                 OffsetDateTime.now(clock).minusMinutes(10)
         )).thenReturn(200L);
 
-        Blocked chkdata = new Blocked("HP1234", "CAR1234", "1004", OffsetDateTime.now(clock));
-
-        when(blockedRepository.findById(BlockedId.builder()
-                .handPhoneId("HP1234")
-                .carId("CAR1234")
-                .build())).thenReturn(Optional.of(chkdata));
-
         AccessCheckResult hasAccess = subject.checkAccess(meteringCheckRequest);
 
         assertThat(hasAccess).isEqualTo(blocked);
@@ -169,11 +162,6 @@ class MeteringServiceTest {
                 "/ccsp/window.do",
                 OffsetDateTime.now(clock).minusMinutes(10)
         )).thenReturn(200L);
-
-        when(blockedRepository.findById(BlockedId.builder()
-                .handPhoneId("HP1234")
-                .carId("CAR1234")
-                .build())).thenReturn(Optional.empty());
 
         subject.checkAccess(meteringCheckRequest);
 
@@ -206,12 +194,6 @@ class MeteringServiceTest {
                 "/ccsp/window.do"
         )).thenReturn(301L);
 
-        Blocked chkData = new Blocked("HP1234", "CAR1234", "1005", OffsetDateTime.now(clock));
-        when(blockedRepository.findById(BlockedId.builder()
-                .handPhoneId("HP1234")
-                .carId("CAR1234")
-                .build())).thenReturn(Optional.of(chkData));
-
         AccessCheckResult hasAccess = subject.checkAccess(meteringCheckRequest);
 
         assertThat(hasAccess).isEqualTo(blocked);
@@ -224,10 +206,7 @@ class MeteringServiceTest {
                 "CAR1234",
                 "/ccsp/window.do"
         )).thenReturn(300L);
-        when(blockedRepository.findById(BlockedId.builder()
-                .handPhoneId("HP1234")
-                .carId("CAR1234")
-                .build())).thenReturn(Optional.empty());
+
         subject.checkAccess(meteringCheckRequest);
 
         verify(blockedRepository).save(Blocked.builder()
@@ -241,11 +220,6 @@ class MeteringServiceTest {
     @Test
     void checkAccess_withRequestUrlInExceptionList_allowsAccess_withoutCheckingOrRecording() {
         when(allowedApiRepository.countByRequestUrl("/versionCheck.do")).thenReturn(1L);
-
-        when(blockedRepository.findById(BlockedId.builder()
-                .handPhoneId("HP1234")
-                .carId("CAR1234")
-                .build())).thenReturn(Optional.empty());
 
         AccessCheckResult hasAccess = subject.checkAccess(MeteringCheckRequest.builder()
                 .serviceNo("V1")
