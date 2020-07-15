@@ -74,7 +74,7 @@ public class MeteringService {
             return true;
 
         } catch (Exception e) {
-            LOGGER.warn("CCSP 미터링 Service [checkAccess] EXCEPTION 발생, serviceNo[\"" + request.getServiceNo() + "\"], CCID[\"" + request.getHpId() + "\"], CARID[\"" + request.getCarId() + "]  에러[" + getExceptionDetailMsg(e) + "]");
+            LOGGER.warn("CCSP 미터링 Service [checkAccess] EXCEPTION 발생, serviceNo[\"" + request.getServiceNo() + "\"], CCID[\"" + request.getHpId() + "\"], CARID[\"" + request.getCarId() + "]", e);
             throw e;
         }
     }
@@ -129,19 +129,5 @@ public class MeteringService {
                 .blockedRsonCd(accessCheckResult.getResCode())
                 .blockedTime(OffsetDateTime.now(clock))
                 .build());
-    }
-
-    public String getExceptionDetailMsg(Exception e) {
-
-        StringBuffer sbErrMsg = new StringBuffer();
-
-        StackTraceElement[] elem = e.getStackTrace();
-
-        for (int i = 0; i < elem.length; i++) {
-            sbErrMsg.append(elem[i]);
-            sbErrMsg.append("\n");
-        }
-
-        return sbErrMsg.toString();
     }
 }

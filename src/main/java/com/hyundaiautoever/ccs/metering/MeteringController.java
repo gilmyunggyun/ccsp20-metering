@@ -78,22 +78,8 @@ public class MeteringController {
                     .build());
 
         } catch (Exception e) {
-            LOGGER.warn("CCSP 미터링 Controller EXCEPTION 발생, serviceNo[\"" + request.getServiceNo() + "\"], CCID[\"" + request.getHpId() + "\"], CARID[\"" + request.getCarId() + "]  에러[" + getExceptionDetailMsg(e) + "]");
+            LOGGER.warn("CCSP 미터링 Controller EXCEPTION 발생, serviceNo[\"" + request.getServiceNo() + "\"], CCID[\"" + request.getHpId() + "\"], CARID[\"" + request.getCarId() + "]", e);
             throw e;
         }
-    }
-
-    private String getExceptionDetailMsg(Exception e) {
-
-        StringBuffer sbErrMsg = new StringBuffer();
-
-        StackTraceElement[] elem = e.getStackTrace();
-
-        for (int i = 0; i < elem.length; i++) {
-            sbErrMsg.append(elem[i]);
-            sbErrMsg.append("\n");
-        }
-
-        return sbErrMsg.toString();
     }
 }
