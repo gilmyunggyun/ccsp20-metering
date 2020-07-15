@@ -1,6 +1,5 @@
 package com.hyundaiautoever.ccs.metering;
 
-import com.hyundaiautoever.ccs.metering.MeteringService.AccessCheckResult;
 import com.hyundaiautoever.ccs.metering.VO.MeteringCheckRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,26 +32,15 @@ public class MeteringControllerTests {
             .reqUrl("/ccsp/window.do")
             .build();
 
-    AccessCheckResult success = AccessCheckResult.builder()
-            .RetCode("S")
-            .resCode("0000")
-            .build();
-
-    AccessCheckResult blocked = AccessCheckResult.builder()
-            .RetCode("B")
-            .resCode("BK02")
-            .build();
-
     @Test
     void checkAccess_whenControllerAllowsAccess_thenReturnSuccess() throws Exception {
-        when(meteringService.checkAccess(any())).thenReturn(success);
+        when(meteringService.checkAccess(any())).thenReturn(true);
 
         makeRequest().andExpect(status().isOk())
                 .andExpect(content().json(
                         "{\"ServiceNo\":\"V1\",\"RetCode\":\"S\",\"resCode\":\"0000\"}"
                 ));
     }
-
 
     @Test
     void validationCheck_whenAnyFieldIsBlank_thenReturnFailandResponse() throws Exception {
@@ -75,7 +63,7 @@ public class MeteringControllerTests {
 
     @Test
     void checkAccess_whenControllerDeniesAccess_forBlockedCustomer_thenReturnFailandResponse() throws Exception {
-        when(meteringService.checkAccess(any())).thenReturn(blocked);
+        when(meteringService.checkAccess(any())).thenReturn(false);
 
         makeRequest().andExpect(status().isTooManyRequests())
                 .andExpect(content().json(
@@ -85,7 +73,7 @@ public class MeteringControllerTests {
 
     @Test
     public void checkAccess_callsUseCase_withApiRequestDataFromBody() throws Exception {
-        when(meteringService.checkAccess(any())).thenReturn(success);
+        when(meteringService.checkAccess(any())).thenReturn(true);
 
         // Act
         makeRequest()
@@ -101,7 +89,7 @@ public class MeteringControllerTests {
     @Test
     public void checkAccess_whenServiceDeniesAccess_returnsFailureResponse() throws Exception {
         // Arrange
-        when(meteringService.checkAccess(meteringCheckRequest)).thenReturn(blocked);
+        when(meteringService.checkAccess(meteringCheckRequest)).thenReturn(false);
 
         // Act
         makeRequest()
