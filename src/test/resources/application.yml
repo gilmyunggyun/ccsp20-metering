@@ -1,3 +1,7 @@
+server:
+  servlet:
+    context-path: /metering/v1/
+
 metering:
   max-ten-minute-access-count: 200
   max-day-access-count: 300
