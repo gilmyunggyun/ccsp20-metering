@@ -1,5 +1,6 @@
 package com.hyundaiautoever.ccs.metering;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hyundaiautoever.ccs.metering.VO.MeteringCheckRequest;
 import com.hyundaiautoever.ccs.metering.VO.MeteringCheckResponse;
 import org.slf4j.LoggerFactory;
@@ -48,6 +49,8 @@ public class MeteringController {
                                                                 BindingResult result) throws Exception {
 
         //TODO: Need to Add circuitBreaker --> for the 500 error etc
+
+        LOGGER.debug("Received Metering Check Request: " + new ObjectMapper().writeValueAsString(request));
 
         try {
 
