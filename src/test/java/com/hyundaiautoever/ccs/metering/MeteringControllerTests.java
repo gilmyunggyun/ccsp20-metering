@@ -2,7 +2,9 @@ package com.hyundaiautoever.ccs.metering;
 
 import com.hyundaiautoever.ccs.metering.VO.MeteringCheckRequest;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
@@ -24,6 +26,10 @@ public class MeteringControllerTests {
 
     @MockBean
     MeteringService meteringService;
+
+    @MockBean
+    @Qualifier("requestResponseLogger")
+    Logger requestResponseLogger;
 
     MeteringCheckRequest meteringCheckRequest = MeteringCheckRequest.builder()
             .serviceNo("V1")
