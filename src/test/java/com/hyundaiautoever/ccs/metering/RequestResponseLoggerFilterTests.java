@@ -48,7 +48,7 @@ public class RequestResponseLoggerFilterTests {
         String requestBody = "{\"foo\":\"bar\"}";
 
         HttpHeaders requestHeaders = new HttpHeaders();
-        requestHeaders.set("X-TID".toLowerCase(), "TESTTID");
+        requestHeaders.set("XTID".toLowerCase(), "TESTTID");
         requestHeaders.set(CONTENT_TYPE.toLowerCase(), APPLICATION_JSON_VALUE);
         requestHeaders.set(CONTENT_LENGTH.toLowerCase(), Integer.toString(requestBody.length()));
         requestHeaders.set(AUTHORIZATION.toLowerCase(), "testauth");
@@ -56,7 +56,7 @@ public class RequestResponseLoggerFilterTests {
         mockMvc.perform(post("/test")
                 .content(requestBody)
                 .contentType(APPLICATION_JSON)
-                .header("X-TID", "TESTTID")
+                .header("XTID", "TESTTID")
                 .header(AUTHORIZATION, "testauth")
         ).andExpect(status().isOk());
 
@@ -74,12 +74,12 @@ public class RequestResponseLoggerFilterTests {
     void logsRequestsWithoutBody() throws Exception {
 
         mockMvc.perform(get("/test")
-                .header("X-TID", "TESTTID")
+                .header("XTID", "TESTTID")
                 .header(AUTHORIZATION, "testauth")
         ).andExpect(status().isOk());;
 
         HttpHeaders requestHeaders = new HttpHeaders();
-        requestHeaders.add("X-TID".toLowerCase(), "TESTTID");
+        requestHeaders.add("XTID".toLowerCase(), "TESTTID");
         requestHeaders.add(AUTHORIZATION.toLowerCase(), "testauth");
         verify(logger, times(1))
                 .info("Logging Request {}:: Method : {}, URI : {}, Headers: {}, Body: {}",
@@ -97,7 +97,7 @@ public class RequestResponseLoggerFilterTests {
         mockMvc.perform(post("/test")
                 .content(requestBody)
                 .contentType(APPLICATION_JSON)
-                .header("X-TID", "TESTTID")
+                .header("XTID", "TESTTID")
                 .header(AUTHORIZATION, "testauth")
         ).andExpect(status().isOk());;
 
@@ -111,7 +111,7 @@ public class RequestResponseLoggerFilterTests {
     @Test
     void logResponseForErrors() throws Exception {
         mockMvc.perform(post("/test/error")
-                .header("X-TID", "TESTTID")
+                .header("XTID", "TESTTID")
         ).andExpect(status().isInternalServerError());;
 
         verify(logger, times(1))

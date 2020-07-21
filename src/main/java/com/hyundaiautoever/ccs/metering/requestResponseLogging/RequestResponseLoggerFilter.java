@@ -21,7 +21,7 @@ import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 @Component
 public class RequestResponseLoggerFilter implements Filter {
     private final Logger log;
-    public static final String TID_HEADER_NAME = "x-tid";
+    public static final String TID_HEADER_NAME = "xtid";
 
     public RequestResponseLoggerFilter(@Qualifier("requestResponseLogger") Logger log) {
         this.log = log;
