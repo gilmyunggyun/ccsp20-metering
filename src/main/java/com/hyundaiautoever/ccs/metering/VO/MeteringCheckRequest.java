@@ -1,5 +1,6 @@
 package com.hyundaiautoever.ccs.metering.VO;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,12 +17,15 @@ import javax.validation.constraints.NotBlank;
 public class MeteringCheckRequest {
 
     @NotBlank
+    @JsonAlias({"serviceNo","ServiceNo"})
     private String serviceNo;
 
     @NotBlank
+    @JsonAlias({"hpId","ccid","ccId","CCID"})
     private String hpId;
 
     @NotBlank
+    @JsonAlias({"carId", "carid"})
     private String carId;
 
     @NotBlank
