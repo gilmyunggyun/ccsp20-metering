@@ -1,4 +1,4 @@
-package com.hyundaiautoever.ccs.metering.VO;
+package com.hyundaiautoever.ccs.metering.models.vo;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;

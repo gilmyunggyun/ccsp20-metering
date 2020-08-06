@@ -1,6 +1,9 @@
 package com.hyundaiautoever.ccs.metering;
 
-import com.hyundaiautoever.ccs.metering.VO.MeteringCheckRequest;
+import com.hyundaiautoever.ccs.metering.models.entity.ApiAccess;
+import com.hyundaiautoever.ccs.metering.models.entity.Blocked;
+import com.hyundaiautoever.ccs.metering.models.entity.BlockedId;
+import com.hyundaiautoever.ccs.metering.models.vo.MeteringCheckRequest;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.slf4j.LoggerFactory;

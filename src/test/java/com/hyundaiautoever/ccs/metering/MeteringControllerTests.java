@@ -1,6 +1,6 @@
 package com.hyundaiautoever.ccs.metering;
 
-import com.hyundaiautoever.ccs.metering.VO.MeteringCheckRequest;
+import com.hyundaiautoever.ccs.metering.models.vo.MeteringCheckRequest;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;

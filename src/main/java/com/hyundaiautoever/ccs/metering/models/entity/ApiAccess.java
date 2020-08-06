@@ -1,4 +1,4 @@
-package com.hyundaiautoever.ccs.metering;
+package com.hyundaiautoever.ccs.metering.models.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

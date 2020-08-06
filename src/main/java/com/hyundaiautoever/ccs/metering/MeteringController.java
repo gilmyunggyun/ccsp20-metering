@@ -1,7 +1,7 @@
 package com.hyundaiautoever.ccs.metering;
 
-import com.hyundaiautoever.ccs.metering.VO.MeteringCheckRequest;
-import com.hyundaiautoever.ccs.metering.VO.MeteringCheckResponse;
+import com.hyundaiautoever.ccs.metering.models.vo.MeteringCheckRequest;
+import com.hyundaiautoever.ccs.metering.models.vo.MeteringCheckResponse;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;

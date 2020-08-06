@@ -1,5 +1,6 @@
 package com.hyundaiautoever.ccs.metering;
 
+import com.hyundaiautoever.ccs.metering.models.entity.ApiAccess;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
