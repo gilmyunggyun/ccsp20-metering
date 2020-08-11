@@ -44,7 +44,7 @@ class MeteringServiceTest {
             .serviceNo("V1")
             .carId("CAR1234")
             .hpId("HP1234")
-            .reqUrl("/ccsp/window.do")
+            .reqUrl("/was1/tmc/ccsp/window.do")
             .build();
 
     @Test
@@ -59,7 +59,7 @@ class MeteringServiceTest {
         verify(apiAccessRepository).save(eq(ApiAccess.builder()
                 .handPhoneId("HP1234")
                 .carId("CAR1234")
-                .requestUrl("/ccsp/window.do")
+                .requestUrl("/window.do")
                 .accessTime(OffsetDateTime.now(clock))
                 .build()));
     }
@@ -110,7 +110,7 @@ class MeteringServiceTest {
         when(apiAccessRepository.countByHandPhoneIdAndCarIdAndRequestUrlAndAccessTimeAfter(
                 "HP1234",
                 "CAR1234",
-                "/ccsp/window.do",
+                "/was1/tmc/ccsp/window.do",
                 OffsetDateTime.now(clock).minusMinutes(10)
         )).thenReturn(199L);
 
@@ -124,7 +124,7 @@ class MeteringServiceTest {
         when(apiAccessRepository.countByHandPhoneIdAndCarIdAndRequestUrlAndAccessTimeAfter(
                 "HP1234",
                 "CAR1234",
-                "/ccsp/window.do",
+                "/was1/tmc/ccsp/window.do",
                 OffsetDateTime.now(clock).minusMinutes(10)
         )).thenReturn(200L);
 
@@ -138,7 +138,7 @@ class MeteringServiceTest {
         when(apiAccessRepository.countByHandPhoneIdAndCarIdAndRequestUrlAndAccessTimeAfter(
                 "HP1234",
                 "CAR1234",
-                "/ccsp/window.do",
+                "/was1/tmc/ccsp/window.do",
                 OffsetDateTime.now(clock).minusMinutes(10)
         )).thenReturn(200L);
 
@@ -157,7 +157,7 @@ class MeteringServiceTest {
         when(apiAccessRepository.dailyAccessCount(
                 "HP1234",
                 "CAR1234",
-                "/ccsp/window.do"
+                "/was1/tmc/ccsp/window.do"
         )).thenReturn(299L);
 
         boolean hasAccess = subject.checkAccess(meteringCheckRequest);
@@ -170,7 +170,7 @@ class MeteringServiceTest {
         when(apiAccessRepository.dailyAccessCount(
                 "HP1234",
                 "CAR1234",
-                "/ccsp/window.do"
+                "/was1/tmc/ccsp/window.do"
         )).thenReturn(301L);
 
         boolean hasAccess = subject.checkAccess(meteringCheckRequest);
@@ -183,7 +183,7 @@ class MeteringServiceTest {
         when(apiAccessRepository.dailyAccessCount(
                 "HP1234",
                 "CAR1234",
-                "/ccsp/window.do"
+                "/was1/tmc/ccsp/window.do"
         )).thenReturn(300L);
 
         subject.checkAccess(meteringCheckRequest);
@@ -198,13 +198,13 @@ class MeteringServiceTest {
 
     @Test
     void checkAccess_withRequestUrlInExceptionList_allowsAccess_withoutCheckingOrRecording() {
-        when(allowedApiRepository.countByRequestUrl("/versionCheck.do")).thenReturn(1L);
+        when(allowedApiRepository.countByRequestUrl("/pushVersion.do")).thenReturn(1L);
 
         boolean hasAccess = subject.checkAccess(MeteringCheckRequest.builder()
                 .serviceNo("V1")
                 .carId("CAR1234")
                 .hpId("HP1234")
-                .reqUrl("/versionCheck.do")
+                .reqUrl("/pushVersion.do")
                 .build());
 
         assertThat(hasAccess).isTrue();

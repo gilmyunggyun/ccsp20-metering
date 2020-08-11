@@ -41,7 +41,7 @@ class ApiAccessRepositoryTest {
         long count = subject.countByHandPhoneIdAndCarIdAndRequestUrlAndAccessTimeAfter(
                 "HP1234",
                 "CAR1234",
-                "/ccsp/window.do",
+                "/was1/tmc/ccsp/window.do",
                 tenMinutesAgo
         );
 
@@ -55,14 +55,14 @@ class ApiAccessRepositoryTest {
         subject.save(ApiAccess.builder()
                 .handPhoneId("OTHERHP")
                 .carId("OTHERCAR")
-                .requestUrl("/ccsp/window.do")
+                .requestUrl("/was1/tmc/ccsp/window.do")
                 .accessTime(now)
                 .build());
 
         long count = subject.countByHandPhoneIdAndCarIdAndRequestUrlAndAccessTimeAfter(
                 "HP1234",
                 "CAR1234",
-                "/ccsp/window.do",
+                "/was1/tmc/ccsp/window.do",
                 tenMinutesAgo
         );
 
@@ -77,13 +77,13 @@ class ApiAccessRepositoryTest {
         long count = subject.dailyAccessCount(
                 "HP1234",
                 "CAR1234",
-                "/ccsp/window.do"
+                "/was1/tmc/ccsp/window.do"
         );
 
         assertThat(count).isEqualTo(1L);
     }
 
     private ApiAccess apiAccessRecord(OffsetDateTime accessTime) {
-        return ApiAccess.builder().handPhoneId("HP1234").carId("CAR1234").requestUrl("/ccsp/window.do").accessTime(accessTime).build();
+        return ApiAccess.builder().handPhoneId("HP1234").carId("CAR1234").requestUrl("/was1/tmc/ccsp/window.do").accessTime(accessTime).build();
     }
 }

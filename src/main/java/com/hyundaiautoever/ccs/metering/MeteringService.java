@@ -65,8 +65,15 @@ public class MeteringService {
 
             //count check
             AccessCheckResult accessCheckResult = shouldHaveAccess(serviceNo, handPhoneId, carId, requestUrl);
+            String reqUrl = "";
 
-            recordAccess(handPhoneId, carId, requestUrl);
+            if(!requestUrl.equals("/pushVersion.do")){
+                reqUrl = requestUrl.substring(requestUrl.indexOf("tmc/ccsp")+8,requestUrl.length());
+            }else{
+                reqUrl = requestUrl;
+            }
+
+            recordAccess(handPhoneId, carId, reqUrl);
 
             if (accessCheckResult != AccessCheckResult.SERVICE_SUCCESS) {
                 blockCustomer(handPhoneId, carId, accessCheckResult);

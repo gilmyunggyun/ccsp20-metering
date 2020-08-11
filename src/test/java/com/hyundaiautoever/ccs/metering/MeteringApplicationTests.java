@@ -38,7 +38,7 @@ class MeteringApplicationTests {
         headers.add(CONTENT_TYPE, APPLICATION_JSON_VALUE);
 
         RequestEntity<String> request = new RequestEntity<>(
-                "{\"serviceNo\": \"V1\", \"hpId\": \"HP1234\", \"carId\": \"CAR1234\", \"reqUrl\": \"/ccsp/window.do\"}",
+                "{\"serviceNo\": \"V1\", \"hpId\": \"HP1234\", \"carId\": \"CAR1234\", \"reqUrl\": \"/was1/tmc/ccsp/window.do\"}",
                 headers,
                 HttpMethod.POST,
                 URI.create("http://localhost:" + port + "/metering/v1/metering")

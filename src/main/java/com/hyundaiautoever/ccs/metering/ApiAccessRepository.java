@@ -21,8 +21,9 @@ public interface ApiAccessRepository extends JpaRepository<ApiAccess, UUID> {
     @Query("select count(a) from ApiAccess a \n" +
             "where a.handPhoneId = :handPhoneId\n" +
             "and a.carId = :carId\n" +
-            "and a.requestUrl = substring(:requestUrl, position('tmc/ccsp' in reqeustUrl)+8)\n" +
-            "and a.accessTime >= CURRENT_DATE")
+            "and a.requestUrl = :requestUrl \n" +
+            "and a.accessTime >= CURRENT_DATE "
+    )
     long dailyAccessCount(
             @Param("handPhoneId") String handPhoneId,
             @Param("carId") String carId,
