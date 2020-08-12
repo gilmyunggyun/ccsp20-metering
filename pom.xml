@@ -65,7 +65,7 @@
 		<dependency>
 			<groupId>com.hyundaiautoever</groupId>
 			<artifactId>transaction-logger</artifactId>
-			<version>1.0.0</version>
+			<version>1.0.1</version>
 		</dependency>
     </dependencies>
 
@@ -81,7 +81,7 @@
 				<version>0.8.5</version>
 				<configuration>
 					<propertyName>argLine</propertyName>
-					<destfile>${project.basedir}/target/jacoco.exec</destfile>
+					<destFile>${project.basedir}/target/jacoco.exec</destFile>
 				</configuration>
 				<executions>
 					<execution>
