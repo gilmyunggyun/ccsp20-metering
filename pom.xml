@@ -62,14 +62,12 @@
             <artifactId>commons-io</artifactId>
             <version>2.5</version>
         </dependency>
-
 		<dependency>
 			<groupId>com.hyundaiautoever</groupId>
 			<artifactId>transaction-logger</artifactId>
 			<version>1.0.2</version>
 		</dependency>
     </dependencies>
-
 
 	<build>
 		<plugins>
