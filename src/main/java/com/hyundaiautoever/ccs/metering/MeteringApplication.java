@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Import;
 
 import java.time.Clock;
 
+
 @SpringBootApplication
 @Import(TransactionLoggerConfiguration.class)
 public class MeteringApplication {
