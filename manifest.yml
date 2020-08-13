@@ -10,3 +10,4 @@ applications:
        - stgregistry
      env:
        TZ: Asia/Seoul
+       JBP_CONFIG_OPEN_JDK_JRE: '{ jre: { version: 13.0.+ } }'
