@@ -25,4 +25,6 @@ spring:
     url: jdbc:postgresql://10.11.53.64:5432/meteringdb
     hikari:
       maximum-pool-size: 4
+  zipkin:
+    base-url: http://10.11.53.1:9411
 
