@@ -25,6 +25,8 @@ spring:
     username: user
     hikari:
       maximum-pool-size: 4
+  zipkin:
+    base-url: http://10.11.53.1:9411
 
 logging:
   level:
