@@ -25,3 +25,5 @@ spring:
     driverClassName: org.h2.Driver
     username: sa
     database-platform: org.hibernate.dialect.H2Dialect
+  zipkin:
+    base-url: http://10.11.53.1:9411
