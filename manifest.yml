@@ -1,7 +1,12 @@
 applications:
-   - name: metering
+   - name: ccsp20-metering
      disk_quota: 1G
      instances: 1
      memory: 1G
      path: target/metering-0.0.1-SNAPSHOT.jar
+     buildpack: java_buildpack_offline_v200728dev
      stack: cflinuxfs3
+     services:
+       - stgregistry
+     env:
+       TZ: Asia/Seoul
