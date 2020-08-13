@@ -1,5 +1,5 @@
 applications:
-  - name: ccsp20-metering
+  - name: metering
     disk_quota: 1G
     instances: 1
     memory: 1G
