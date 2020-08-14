@@ -21,8 +21,11 @@ spring:
     show-sql: true
     generate-ddl: true
   datasource:
-    url: jdbc:postgresql://localhost:5432/metering
-    username: user
+#    url: jdbc:postgresql://localhost:5432/metering
+#    username: user
+    url: jdbc:postgresql://10.11.53.64:5432/meteringdb
+    username: meteringwas
+    password: P!ssw0rd
     hikari:
       maximum-pool-size: 4
   zipkin:
