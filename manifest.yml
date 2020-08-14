@@ -9,5 +9,5 @@ applications:
      env:
        TZ: Asia/Seoul
        JBP_CONFIG_OPEN_JDK_JRE: '{ jre: { version: 13.0.+ } }'
-     services:
-       - stgregistry
+#     services:
+#       - stgregistry
