@@ -17,6 +17,8 @@ RETURN_CODE_TYPE:
   BLOCKED: B
 
 spring:
+  application:
+    name: ccsp20-metering
   jpa:
     show-sql: true
     generate-ddl: true

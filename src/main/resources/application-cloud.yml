@@ -18,6 +18,8 @@ server:
   servlet:
     context-path: /metering/v1/
 spring:
+  application:
+    name: ccsp20-metering
   jpa:
     show-sql: true
     generate-ddl: true
