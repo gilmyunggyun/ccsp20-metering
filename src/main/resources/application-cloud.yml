@@ -23,10 +23,10 @@ spring:
     generate-ddl: true
   datasource:
     url: jdbc:postgresql://10.11.53.64:5432/meteringdb
-    username: meteringwas
-    password: P!ssw0rd
     hikari:
       maximum-pool-size: 4
+      username: meteringwas
+      password: P!ssw0rd
   zipkin:
     base-url: http://10.11.53.1:9411
 
