@@ -111,7 +111,7 @@ public class MeteringControllerTests {
         return mockMvc.perform(post("/metering").content("{\n" +
                 "\"serviceNo\":  \"V1\",\n" +
                 "  \"hpId\":  \"HP123456\",\n" +
-                "  \"carId\":  \"CAR123456\",\n" +
+                "  \"carID\":  \"CAR123456\",\n" +
                 "  \"reqUrl\":  \"/ccsp/window.do\",\n" +
                 "  \"resObj\" :  null\n" +
                 "}").contentType(MediaType.APPLICATION_JSON));

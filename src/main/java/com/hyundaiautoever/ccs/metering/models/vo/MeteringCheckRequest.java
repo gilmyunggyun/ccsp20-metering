@@ -25,7 +25,7 @@ public class MeteringCheckRequest {
     private String hpId;
 
     @NotBlank
-    @JsonAlias({"carId", "carid"})
+    @JsonAlias({"carId", "carid","carID"})
     private String carId;
 
     @NotBlank
