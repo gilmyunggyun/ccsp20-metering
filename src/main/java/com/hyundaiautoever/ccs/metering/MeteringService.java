@@ -59,19 +59,19 @@ public class MeteringService {
                 return false;
             }
 
+            String reqUrl = "";
+            if(!requestUrl.equals("/pushVersion.do")){
+                reqUrl = requestUrl.substring(requestUrl.indexOf("tmc/ccsp")+8,requestUrl.length());
+            }else{
+                reqUrl = requestUrl;
+            }
+
             if (isAllowedUrl(requestUrl)) {
                 return true;
             }
 
             //count check
             AccessCheckResult accessCheckResult = shouldHaveAccess(serviceNo, handPhoneId, carId, requestUrl);
-            String reqUrl = "";
-
-            if(!requestUrl.equals("/pushVersion.do")){
-                reqUrl = requestUrl.substring(requestUrl.indexOf("tmc/ccsp")+8,requestUrl.length());
-            }else{
-                reqUrl = requestUrl;
-            }
 
             recordAccess(handPhoneId, carId, reqUrl);
 
