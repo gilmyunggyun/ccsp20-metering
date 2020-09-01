@@ -19,6 +19,7 @@ server:
     context-path: /metering/v1/
   tomcat:
     max-threads: 50000
+    min-spare-threads: 100
 spring:
   application:
     name: ccsp20-metering
