@@ -17,6 +17,8 @@ server:
     url: https://metering.apps.dev.hkccs.kr
   servlet:
     context-path: /metering/v1/
+  tomcat:
+    max-threads: 50000
 spring:
   application:
     name: ccsp20-metering
