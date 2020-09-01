@@ -43,18 +43,5 @@ spring:
 
 logging:
   level:
-    com.hyundaiautoever.ccs.metering: ERROR
+    com.hyundaiautoever.ccs.metering: DEBUG
 
-#feign:
-#  httpclient:
-#    enabled: true
-#    #feign client max connection 수
-#    max-connections: 200000
-#    #동일 한구간 최대 connection 수
-#    max-connections-per-route: 150000
-#  client:
-#    congfig:
-#      default:
-#        connectionTimeout: 120000
-#        readTimeout: 120000
-#        loggerLever: headers

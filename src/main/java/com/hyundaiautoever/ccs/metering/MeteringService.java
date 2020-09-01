@@ -55,7 +55,7 @@ public class MeteringService {
         try {
             Optional<Blocked> blockedCustomer = isCustomerBlocked(handPhoneId, carId);
             if (blockedCustomer.isPresent()) {
-                //LOGGER.warn("미터링 차단된 유저 : CCID[" + handPhoneId + "] carID[" + carId + "]");
+                LOGGER.warn("미터링 차단된 유저 : CCID[" + handPhoneId + "] carID[" + carId + "]");
                 return false;
             }
 
@@ -84,7 +84,7 @@ public class MeteringService {
             return true;
 
         } catch (Exception e) {
-            //LOGGER.warn("CCSP 미터링 Service [checkAccess] EXCEPTION 발생, serviceNo[\"" + request.getServiceNo() + "\"], CCID[\"" + request.getHpId() + "\"], CARID[\"" + request.getCarId() + "]", e);
+            LOGGER.warn("CCSP 미터링 Service [checkAccess] EXCEPTION 발생, serviceNo[\"" + request.getServiceNo() + "\"], CCID[\"" + request.getHpId() + "\"], CARID[\"" + request.getCarId() + "]", e);
             throw e;
         }
     }
@@ -104,12 +104,12 @@ public class MeteringService {
         long attemptsToday = apiAccessRepository.dailyAccessCount(handPhoneId, carId, requestUrl);
 
         if (attemptsInLast10Minutes >= maxTenMinuteAccessCount) {
-            //LOGGER.info("CCSP API미터링 차단(1004:10분, 1005:당일), 서비스코드[" + serviceNo + "], CCID[" + handPhoneId + "], CARID[" + carId + "], 차단코드[" + AccessCheckResult.BLOCKED_RSON_10MIN.getResCode() + "] ");
+            LOGGER.info("CCSP API미터링 차단(1004:10분, 1005:당일), 서비스코드[" + serviceNo + "], CCID[" + handPhoneId + "], CARID[" + carId + "], 차단코드[" + AccessCheckResult.BLOCKED_RSON_10MIN.getResCode() + "] ");
             return AccessCheckResult.BLOCKED_RSON_10MIN;
         }
 
         if (attemptsToday >= maxDayAccessCount) {
-            //LOGGER.info("CCSP API미터링 차단(1004:10분, 1005:당일), 서비스코드[" + serviceNo + "], CCID[" + handPhoneId + "], CARID[" + carId + "], 차단코드[" + AccessCheckResult.BLOCKED_RSON_DAY.getResCode() + "] ");
+            LOGGER.info("CCSP API미터링 차단(1004:10분, 1005:당일), 서비스코드[" + serviceNo + "], CCID[" + handPhoneId + "], CARID[" + carId + "], 차단코드[" + AccessCheckResult.BLOCKED_RSON_DAY.getResCode() + "] ");
             return AccessCheckResult.BLOCKED_RSON_DAY;
         }
 

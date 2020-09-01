@@ -10,7 +10,7 @@ import java.time.Clock;
 
 
 @SpringBootApplication
-//@Import(TransactionLoggerConfiguration.class)
+@Import(TransactionLoggerConfiguration.class)
 public class MeteringApplication {
 
     public static void main(String[] args) {

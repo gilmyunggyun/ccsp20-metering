@@ -24,7 +24,7 @@ spring:
   application:
     name: ccsp20-metering
   jpa:
-    show-sql: false
+    show-sql: true
     generate-ddl: true
     hibernate:
       ddl-auto: none
@@ -43,4 +43,4 @@ spring:
 
 logging:
   level:
-    com.hyundaiautoever.ccs.metering: ERROR
+    com.hyundaiautoever.ccs.metering: DEBUG

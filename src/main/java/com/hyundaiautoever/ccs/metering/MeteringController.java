@@ -47,29 +47,29 @@ public class MeteringController {
                                                                 BindingResult result) throws Exception {
 
         //TODO: Need to Add circuitBreaker --> for the 500 error etc
-//
-//        try {
-//            if (result.hasErrors()) {
-//                //LOGGER.warn("미터링 ValidationCheck 전문형식오류 서비스ID[" + request.getServiceNo() + "] carID[" + request.getCarId() + "] CCID[" + request.getHpId() + "] requestURL[" + request.getReqUrl() + "]");
-//
-//                return status(BAD_REQUEST).body(MeteringCheckResponse.builder()
-//                        .serviceNo(request.getServiceNo())
-//                        .retCode(result_fail)
-//                        .resCode(MSG_FORMAT_INVALID)
-//                        .build());
-//            }
-//
-//            boolean hasAccess = meteringService.checkAccess(request);
-//
-//            if (!hasAccess) {
-//                return status(TOO_MANY_REQUESTS).body(
-//                        MeteringCheckResponse.builder()
-//                                .serviceNo(request.getServiceNo())
-//                                .retCode(result_fail)
-//                                .resCode(BLOCK_BY_API)
-//                                .build()
-//                );
-//            }
+
+        try {
+            if (result.hasErrors()) {
+                LOGGER.warn("미터링 ValidationCheck 전문형식오류 서비스ID[" + request.getServiceNo() + "] carID[" + request.getCarId() + "] CCID[" + request.getHpId() + "] requestURL[" + request.getReqUrl() + "]");
+
+                return status(BAD_REQUEST).body(MeteringCheckResponse.builder()
+                        .serviceNo(request.getServiceNo())
+                        .retCode(result_fail)
+                        .resCode(MSG_FORMAT_INVALID)
+                        .build());
+            }
+
+            boolean hasAccess = meteringService.checkAccess(request);
+
+            if (!hasAccess) {
+                return status(TOO_MANY_REQUESTS).body(
+                        MeteringCheckResponse.builder()
+                                .serviceNo(request.getServiceNo())
+                                .retCode(result_fail)
+                                .resCode(BLOCK_BY_API)
+                                .build()
+                );
+            }
 
             return ok(MeteringCheckResponse.builder()
                     .serviceNo(request.getServiceNo())
@@ -77,9 +77,9 @@ public class MeteringController {
                     .resCode(SERVICE_SUCCESS)
                     .build());
 
-//        } catch (Exception e) {
-//            //LOGGER.warn("CCSP 미터링 Controller EXCEPTION 발생, serviceNo[\"" + request.getServiceNo() + "\"], CCID[\"" + request.getHpId() + "\"], CARID[\"" + request.getCarId() + "]", e);
-//            throw e;
-//        }
+        } catch (Exception e) {
+            LOGGER.warn("CCSP 미터링 Controller EXCEPTION 발생, serviceNo[\"" + request.getServiceNo() + "\"], CCID[\"" + request.getHpId() + "\"], CARID[\"" + request.getCarId() + "]", e);
+            throw e;
+        }
     }
 }
