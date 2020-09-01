@@ -24,7 +24,7 @@ spring:
   application:
     name: ccsp20-metering
   jpa:
-    show-sql: true
+    show-sql: false
     generate-ddl: true
     hibernate:
       ddl-auto: none
