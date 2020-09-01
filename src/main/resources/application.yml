@@ -16,6 +16,8 @@ server:
   port: 8080
   servlet:
     context-path: /metering/v1/
+  tomcat:
+    max-threads: 50000
 spring:
   application:
     name: ccsp20-metering
@@ -33,11 +35,25 @@ spring:
 #    username: meteringwas
 #    password: P!ssw0rd
     hikari:
-      maximum-pool-size: 4
+      maximum-pool-size: 300
 #      schema: meteringadm
   zipkin:
     base-url: http://10.11.53.1:9411
 
 logging:
   level:
-    com.hyundaiautoever.ccs.metering: DEBUG
+    com.hyundaiautoever.ccs.metering: ERROR
+
+#feign:
+#  httpclient:
+#    enabled: true
+#    #feign client max connection 수
+#    max-connections: 200000
+#    #동일 한구간 최대 connection 수
+#    max-connections-per-route: 150000
+#  client:
+#    congfig:
+#      default:
+#        connectionTimeout: 120000
+#        readTimeout: 120000
+#        loggerLever: headers
