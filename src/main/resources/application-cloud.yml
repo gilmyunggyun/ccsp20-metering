@@ -33,6 +33,7 @@ spring:
     password: P!ssw0rd
     hikari:
       maximum-pool-size: 100
+      minimum-idle: 80
       schema: meteringadm
   zipkin:
     base-url: http://10.11.53.1:9411
