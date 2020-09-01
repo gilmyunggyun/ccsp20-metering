@@ -41,3 +41,6 @@ spring:
   zipkin:
     base-url: http://10.11.53.1:9411
 
+logging:
+  level:
+    com.hyundaiautoever.ccs.metering: ERROR
