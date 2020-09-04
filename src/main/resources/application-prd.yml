@@ -22,4 +22,4 @@ spring:
 
 logging:
   level:
-    com.hyundaiautoever.ccs.metering: DEBUG
+    com.hyundaiautoever.ccs.metering: INFO
