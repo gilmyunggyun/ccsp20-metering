@@ -18,7 +18,7 @@ server:
   servlet:
     context-path: /metering/v1/
   tomcat:
-    max-threads: 500
+    max-threads: 1000
     min-spare-threads: 100
 spring:
   application:
@@ -43,4 +43,4 @@ spring:
 
 logging:
   level:
-    com.hyundaiautoever.ccs.metering: DEBUG
+    com.hyundaiautoever.ccs.metering: ERROR
