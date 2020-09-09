@@ -1,11 +1,6 @@
 server:
   metering:
     url: https://metering.apps.dev.hkccs.kr
-  servlet:
-    context-path: /metering/v1/
-  tomcat:
-    max-threads: 1000
-    min-spare-threads: 100
 spring:
   jpa:
     show-sql: true
@@ -27,4 +22,4 @@ spring:
 
 logging:
   level:
-    com.hyundaiautoever.ccs.metering: ERROR
+    com.hyundaiautoever.ccs.metering: INFO
