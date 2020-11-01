@@ -40,6 +40,13 @@ spring:
 #      schema: meteringadm
   zipkin:
     base-url: http://10.11.53.1:9411
+  ##Async Thread
+  task:
+    execution:
+      thread-name-prefix: meteringAsync-
+      pool:
+        core-size: 8
+        max-size: 8
 
 logging:
   level:

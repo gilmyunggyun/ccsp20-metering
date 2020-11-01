@@ -6,14 +6,17 @@ import com.hyundaiautoever.ccs.metering.models.entity.BlockedId;
 import com.hyundaiautoever.ccs.metering.models.vo.MeteringCheckRequest;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.time.Clock;
 import java.time.OffsetDateTime;
 import java.util.Optional;
 
+@Slf4j
 @Service
 public class MeteringService {
 
@@ -123,21 +126,27 @@ public class MeteringService {
                 .build());
     }
 
-    private void recordAccess(String handPhoneId, String carId, String requestUrl) {
+    @Async
+    public void recordAccess(String handPhoneId, String carId, String requestUrl) {
         apiAccessRepository.save(ApiAccess.builder()
                 .handPhoneId(handPhoneId)
                 .carId(carId)
                 .requestUrl(requestUrl)
                 .accessTime(OffsetDateTime.now(clock))
                 .build());
+
+        log.info("Execute method asynchronously. RecordAccess Done : " + Thread.currentThread().getName() + "recordAccess");
+
     }
 
-    private void blockCustomer(String handPhoneId, String carId, AccessCheckResult accessCheckResult) {
+    @Async
+    public void blockCustomer(String handPhoneId, String carId, AccessCheckResult accessCheckResult) {
         blockedRepository.save(Blocked.builder()
                 .handPhoneId(handPhoneId)
                 .carId(carId)
                 .blockedRsonCd(accessCheckResult.getResCode())
                 .blockedTime(OffsetDateTime.now(clock))
                 .build());
+        log.info("Execute method asynchronously. RecordAccess Done : " + Thread.currentThread().getName() + "blockCustomer");
     }
 }
