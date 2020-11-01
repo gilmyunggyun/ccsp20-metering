@@ -30,7 +30,7 @@ spring:
       thread-name-prefix: meteringAsync-
       pool:
         core-size: 8
-        max-size: 8
+        max-size: 160
 logging:
   level:
     com.hyundaiautoever.ccs.metering: ERROR
