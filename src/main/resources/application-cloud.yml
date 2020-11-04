@@ -19,7 +19,7 @@ spring:
     username: meteringwas
     password: P!ssw0rd
     hikari:
-      maximum-pool-size: 100
+      maximum-pool-size: 300
       minimum-idle: 80
       schema: meteringadm
   zipkin:
