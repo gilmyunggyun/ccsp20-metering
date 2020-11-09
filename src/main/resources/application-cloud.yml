@@ -1,6 +1,4 @@
 server:
-  metering:
-    url: https://metering.apps.dev.hkccs.kr
   servlet:
     context-path: /metering/v1/
   tomcat:
@@ -31,11 +29,11 @@ spring:
       pool:
         ## 최초에 생성할 Pool 개수
         core-size: 10
-        ## 몇개까지 Pool을 생성할 것인지 : Max TPS * 10%
-        max-size: 160
+        ## 몇개까지 Pool을 생성할 것인지 : Max TPS * 110%
+        max-size: 1760
       ##Async 처리 시 Queue Size(설정하지 않으면 Integer.MAX이기 때문에 성능에 문제가 발생함)
       #QueueCapacity를 CorePoolSize * MaxPoolSize * 2
-      queue-capacity: 3200
+      queue-capacity: 35200
 
 
 logging:

@@ -1,6 +1,4 @@
-server:
-  metering:
-    url: https://metering.apps.dev.hkccs.kr
+
 spring:
   jpa:
     show-sql: true
