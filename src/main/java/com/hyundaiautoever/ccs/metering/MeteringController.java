@@ -46,8 +46,6 @@ public class MeteringController {
     public ResponseEntity<MeteringCheckResponse> checkAPIAccess(@Valid @RequestBody MeteringCheckRequest request,
                                                                 BindingResult result) throws Exception {
 
-        //TODO: Need to Add circuitBreaker --> for the 500 error etc
-
         try {
             if (result.hasErrors()) {
                 LOGGER.warn("미터링 ValidationCheck 전문형식오류 서비스ID[" + request.getServiceNo() + "] carID[" + request.getCarId() + "] CCID[" + request.getHpId() + "] requestURL[" + request.getReqUrl() + "]");
