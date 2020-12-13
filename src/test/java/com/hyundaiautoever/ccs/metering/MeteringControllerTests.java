@@ -2,12 +2,16 @@ package com.hyundaiautoever.ccs.metering;
 
 import com.hyundaiautoever.ccs.metering.models.vo.MeteringCheckRequest;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
@@ -18,6 +22,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@ActiveProfiles(profiles = {"local"})
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@ExtendWith(SpringExtension.class)
 @WebMvcTest(value = {MeteringController.class})
 public class MeteringControllerTests {
 
@@ -51,7 +58,7 @@ public class MeteringControllerTests {
     @Test
     void validationCheck_whenAnyFieldIsBlank_thenReturnFailandResponse() throws Exception {
 
-        mockMvc.perform(post("/metering")
+        mockMvc.perform(post("/metering/v1/metering")
                 .content("{\n" +
                         "  \"serviceNo\": \"V1\",\n" +
                         "  \"carId\":  \"CAR123456\",\n" +
@@ -108,7 +115,7 @@ public class MeteringControllerTests {
     // TODO: Validation check, or in service?
 
     private ResultActions makeRequest() throws Exception {
-        return mockMvc.perform(post("/metering").content("{\n" +
+        return mockMvc.perform(post("/metering/v1/metering").content("{\n" +
                 "\"serviceNo\":  \"V1\",\n" +
                 "  \"hpId\":  \"HP123456\",\n" +
                 "  \"carID\":  \"CAR123456\",\n" +

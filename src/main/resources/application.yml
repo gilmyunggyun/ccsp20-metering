@@ -1,3 +1,7 @@
+spring:
+  application:
+    name: ccsp20-metering
+
 metering:
   max-ten-minute-access-count: 200
   max-day-access-count : 300
@@ -13,33 +17,35 @@ RETURN_CODE_TYPE:
   BLOCKED: B
 
 server:
-  port: 8080
   servlet:
-    context-path: /metering/v1/
   tomcat:
-    max-threads: 500
+    max-threads: 1000
     min-spare-threads: 100
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+---
 spring:
-  application:
-    name: ccsp20-metering
+  profiles: dev
   jpa:
     show-sql: true
-    generate-ddl: true
+    generate-ddl: false
     hibernate:
       ddl-auto: none
       database: POSTGRESQL
       database-platform: org.hibernate.dialect.PostgreSQLDialect
   datasource:
-    url: jdbc:postgresql://localhost:5432/metering
-    username: user
-#    url: jdbc:postgresql://10.11.53.64:5432/meteringdb
-#    username: meteringwas
-#    password: P!ssw0rd
+    url: jdbc:postgresql://10.11.53.64:5432/meteringdb
+    username: meteringwas
+    password: P!ssw0rd
     hikari:
       maximum-pool-size: 300
-#      schema: meteringadm
-  zipkin:
-    base-url: http://10.11.53.1:9411
+      minimum-idle: 80
+      schema: meteringadm
   ##Async Thread
   task:
     execution:
@@ -52,4 +58,34 @@ spring:
 logging:
   level:
     com.hyundaiautoever.ccs.metering: DEBUG
+---
+spring:
+  profiles: prd
+  jpa:
+    show-sql: true
+    generate-ddl: false
+    hibernate:
+      ddl-auto: none
+      database: POSTGRESQL
+      database-platform: org.hibernate.dialect.PostgreSQLDialect
+  datasource:
+    url: jdbc:postgresql://10.11.61.74:5432/meteringdb
+    username: meteringadm
+    password: P!ssw0rd
+    hikari:
+      maximum-pool-size: 300
+      minimum-idle: 80
+      schema: meteringadm
+  ##Async Thread
+  task:
+    execution:
+      thread-name-prefix: meteringAsync-
+      pool:
+        core-size: 8
+        max-size: 16
+        queue-capacity: 100
 
+logging:
+  level:
+    com.hyundaiautoever.ccs.metering: ERROR
+---

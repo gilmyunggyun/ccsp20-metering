@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -64,7 +65,7 @@ public class MeteringService {
 
             String reqUrl = "";
             if(!requestUrl.equals("/pushVersion.do")){
-                reqUrl = requestUrl.substring(requestUrl.indexOf("tmc/ccsp")+8,requestUrl.length());
+                reqUrl = requestUrl.substring(requestUrl.indexOf("/ccsp")+5,requestUrl.length());
             }else{
                 reqUrl = requestUrl;
             }

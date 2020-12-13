@@ -6,6 +6,7 @@ import com.hyundaiautoever.ccs.metering.models.entity.BlockedId;
 import com.hyundaiautoever.ccs.metering.models.vo.MeteringCheckRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 
 import java.time.Clock;
 import java.time.Instant;
@@ -18,6 +19,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
+@RefreshScope
 class MeteringServiceTest {
 
     private BlockedRepository blockedRepository;

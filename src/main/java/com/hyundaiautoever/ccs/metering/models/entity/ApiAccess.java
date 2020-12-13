@@ -19,6 +19,7 @@ import java.util.UUID;
                 name = "apiaccess_handphoneid_carid_requesturl",
                 columnList = "handphoneid,carid,requesturl"
         )
+
 })
 public class ApiAccess {
 

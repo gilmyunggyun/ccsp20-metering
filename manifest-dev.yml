@@ -1,0 +1,17 @@
+applications:
+  - name: ccsp20-metering
+    disk_quota: 1G
+    instances: 1
+    memory: 1G
+    path: target/metering-0.0.1-SNAPSHOT.jar
+    stack: cflinuxfs3
+    buildpack: java_buildpack_offline_v200728dev
+    env:
+      TZ: Asia/Seoul
+      SPRING_PROFILES_ACTIVE: dev
+      JBP_CONFIG_OPEN_JDK_JRE: '{ jre: { version: 13.0.+ } }'
+      SPRING_CLOUD_CONFIG_NAME: ccsp20-common, ccsp20-metering
+    services:
+      - stgregistry
+      - stgconfig
+      - ssyslog
