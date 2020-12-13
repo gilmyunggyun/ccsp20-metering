@@ -70,12 +70,12 @@ public class MeteringService {
                 reqUrl = requestUrl;
             }
 
-            if (isAllowedUrl(requestUrl)) {
+            if (isAllowedUrl(reqUrl)) {
                 return true;
             }
 
             //count check
-            AccessCheckResult accessCheckResult = shouldHaveAccess(serviceNo, handPhoneId, carId, requestUrl);
+            AccessCheckResult accessCheckResult = shouldHaveAccess(serviceNo, handPhoneId, carId, reqUrl);
 
             recordAccess(handPhoneId, carId, reqUrl);
 
