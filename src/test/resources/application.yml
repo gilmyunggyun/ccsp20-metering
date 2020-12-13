@@ -22,7 +22,7 @@ spring:
 
 server:
   servlet:
-  port: 8090
+    port: 8090
 
 metering:
   max-ten-minute-access-count: 200
