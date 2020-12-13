@@ -17,7 +17,6 @@ RETURN_CODE_TYPE:
   BLOCKED: B
 
 server:
-  servlet:
   tomcat:
     max-threads: 1000
     min-spare-threads: 100
