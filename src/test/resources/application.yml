@@ -21,7 +21,8 @@ spring:
         max-size: 8
 
 server:
-  port: 8090
+  servlet:
+    port: 8090
 
 metering:
   max-ten-minute-access-count: 200
