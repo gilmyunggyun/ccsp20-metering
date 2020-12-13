@@ -18,7 +18,6 @@ RETURN_CODE_TYPE:
 
 server:
   servlet:
-    port: 8090
   tomcat:
     max-threads: 1000
     min-spare-threads: 100
