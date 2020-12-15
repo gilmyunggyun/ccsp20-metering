@@ -2,25 +2,6 @@ spring:
   application:
     name: ccsp20-metering
 
-metering:
-  max-ten-minute-access-count: 200
-  max-day-access-count : 300
-  BLOCK_BY_API: BK02      # 서비스 요청 횟수 초과로 인한 차단(API미터링 관련 코드)
-  SERVICE_SUCCESS: "0000"   #서비스요청성공
-  MSG_FORMAT_INVALID: S999 #전문 형식 에러
-  BLOCKED_RSON_10MIN: 1004 #CCSP PI미터링 차단(1004:10분, 1005:당일)
-  BLOCKED_RSON_DAY: 1005   #CCSP API미터링 차단(1004:10분, 1005:당일)
-
-RETURN_CODE_TYPE:
-  FAIL: F
-  SUCCESS: S
-  BLOCKED: B
-
-server:
-  tomcat:
-    max-threads: 1000
-    min-spare-threads: 100
-
 management:
   endpoints:
     web:
@@ -29,7 +10,7 @@ management:
 
 ---
 spring:
-  profiles: dev
+  profiles: local
   jpa:
     show-sql: true
     generate-ddl: false
@@ -38,7 +19,7 @@ spring:
       database: POSTGRESQL
       database-platform: org.hibernate.dialect.PostgreSQLDialect
   datasource:
-    url: jdbc:postgresql://10.11.53.64:5432/meteringdb
+    url: jdbc:postgresql://localhost:5432/meteringdb
     username: meteringwas
     password: P!ssw0rd
     hikari:
@@ -57,34 +38,22 @@ spring:
 logging:
   level:
     com.hyundaiautoever.ccs.metering: DEBUG
----
-spring:
-  profiles: prd
-  jpa:
-    show-sql: true
-    generate-ddl: false
-    hibernate:
-      ddl-auto: none
-      database: POSTGRESQL
-      database-platform: org.hibernate.dialect.PostgreSQLDialect
-  datasource:
-    url: jdbc:postgresql://10.11.61.74:5432/meteringdb
-    username: meteringadm
-    password: P!ssw0rd
-    hikari:
-      maximum-pool-size: 300
-      minimum-idle: 80
-      schema: meteringadm
-  ##Async Thread
-  task:
-    execution:
-      thread-name-prefix: meteringAsync-
-      pool:
-        core-size: 8
-        max-size: 16
-        queue-capacity: 100
 
-logging:
-  level:
-    com.hyundaiautoever.ccs.metering: ERROR
----
+metering:
+  max-ten-minute-access-count: 200
+  max-day-access-count : 300
+  BLOCK_BY_API: BK02      # 서비스 요청 횟수 초과로 인한 차단(API미터링 관련 코드)
+  SERVICE_SUCCESS: "0000"   #서비스요청성공
+  MSG_FORMAT_INVALID: S999 #전문 형식 에러
+  BLOCKED_RSON_10MIN: 1004 #CCSP PI미터링 차단(1004:10분, 1005:당일)
+  BLOCKED_RSON_DAY: 1005   #CCSP API미터링 차단(1004:10분, 1005:당일)
+
+RETURN_CODE_TYPE:
+  FAIL: F
+  SUCCESS: S
+  BLOCKED: B
+
+server:
+  tomcat:
+    max-threads: 1000
+    min-spare-threads: 100
