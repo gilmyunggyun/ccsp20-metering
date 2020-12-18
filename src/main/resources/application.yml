@@ -7,7 +7,9 @@ management:
     web:
       exposure:
         include: "*"
-
+jasypt:
+  encryptor:
+    bean: jasyptStringEncryptor
 ---
 spring:
   profiles: local
@@ -21,7 +23,7 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/meteringdb
     username: meteringwas
-    password: P!ssw0rd
+    password: ENC(xTLr0yTr2RCyLi7+YHOA6qrQ3e6phZoQED02t7YyIbuiO/UTKZilfRP2/xrHxuIF)
     hikari:
       maximum-pool-size: 300
       minimum-idle: 80
@@ -57,3 +59,5 @@ server:
   tomcat:
     max-threads: 1000
     min-spare-threads: 100
+
+

@@ -90,6 +90,11 @@
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>ccsp20-sp-kr</groupId>
+			<artifactId>ccsp20-process-core</artifactId>
+			<version>1.2.0</version>
+		</dependency>
 	</dependencies>
 
 	<dependencyManagement>
