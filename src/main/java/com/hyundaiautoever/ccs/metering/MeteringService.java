@@ -104,12 +104,8 @@ public class MeteringService {
         long attemptsInLast10Minutes = apiAccessRepository.countByHandPhoneIdAndCarIdAndRequestUrlAndAccessTimeAfter(
                 handPhoneId, carId, requestUrl, OffsetDateTime.now(clock).minusMinutes(10)
         );
-        LOGGER.info("##OffsetDateTime.now(clock).minusMinutes(10)===>"+OffsetDateTime.now(clock).minusMinutes(10));
-        LOGGER.info("##attemptsInLast10Minutes==="+attemptsInLast10Minutes);
         long attemptsToday = apiAccessRepository.dailyAccessCount(handPhoneId, carId, requestUrl);
-        LOGGER.info("####attemptsToday=====>"+attemptsToday);
-        LOGGER.info("###maxTenMinuteAccessCount===>"+maxTenMinuteAccessCount);
-        LOGGER.info("###maxDayAccessCount===>"+maxDayAccessCount);
+        LOGGER.info("#OffsetDateTime.now(clock).minusMinutes(10)=>"+OffsetDateTime.now(clock).minusMinutes(10) + " #attemptsInLast10Minutes=>"+attemptsInLast10Minutes + " #attemptsToday=>"+attemptsToday +" #maxTenMinuteAccessCount===>"+maxTenMinuteAccessCount + " #maxDayAccessCount=>"+maxDayAccessCount);
         if (attemptsInLast10Minutes >= maxTenMinuteAccessCount) {
             LOGGER.info("CCSP API미터링 차단(1004:10분, 1005:당일), 서비스코드[" + serviceNo + "], CCID[" + handPhoneId + "], CARID[" + carId + "], 차단코드[" + AccessCheckResult.BLOCKED_RSON_10MIN.getResCode() + "] ");
             return AccessCheckResult.BLOCKED_RSON_10MIN;
