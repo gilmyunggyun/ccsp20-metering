@@ -65,9 +65,9 @@
             <version>2.5</version>
         </dependency>
 		<dependency>
-			<groupId>com.hyundaiautoever</groupId>
-			<artifactId>transaction-logger</artifactId>
-			<version>1.0.3</version>
+			<groupId>ccsp20-sp-kr</groupId>
+			<artifactId>ccsp20-logger</artifactId>
+			<version>1.0.10</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
@@ -94,6 +94,15 @@
 			<groupId>ccsp20-sp-kr</groupId>
 			<artifactId>ccsp20-process-core</artifactId>
 			<version>1.2.0</version>
+		</dependency>
+		<dependency>
+			<groupId>io.micrometer.prometheus</groupId>
+			<artifactId>prometheus-rsocket-spring</artifactId>
+			<version>1.2.1</version>
+		</dependency>
+		<dependency>
+			<groupId>io.micrometer</groupId>
+			<artifactId>micrometer-registry-prometheus</artifactId>
 		</dependency>
 	</dependencies>
 

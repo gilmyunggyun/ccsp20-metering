@@ -57,7 +57,7 @@ RETURN_CODE_TYPE:
 
 server:
   tomcat:
-    max-threads: 1000
-    min-spare-threads: 100
-
+    threads:
+      max: 1000
+      min-spare: 100
 
