@@ -23,7 +23,7 @@ public interface ApiAccessRepository extends JpaRepository<ApiAccess, UUID> {
             "where hand_Phone_Id = :handPhoneId\n" +
             "and car_Id = :carId\n" +
             "and request_Url = :requestUrl \n" +
-            "and access_Time >= CURRENT_DATE "
+            "and access_time between to_timestamp(CURRENT_DATE||' 00:00:00','yyyy-mm-dd hh24:mi:ss') and to_timestamp(CURRENT_DATE||' 23:59:59','yyyy-mm-dd hh24:mi:ss') "
     )
     long dailyAccessCount(
             @Param("handPhoneId") String handPhoneId,
