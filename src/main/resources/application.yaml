@@ -28,6 +28,15 @@ spring:
       maximum-pool-size: 300
       minimum-idle: 80
       schema: meteringadm
+  kafka:
+    bootstrap-servers: 10.11.52.11:9092, 10.11.52.12:9092, 10.11.52.13:9092, 10.11.52.14:9092, 10.11.52.15:9092,10.11.52.16:9092
+    max-poll-interval-ms: 600000
+    consumer:
+      auto-offset-reset: earliest
+      enable:
+        auto:
+          commit: true
+
   ##Async Thread
   task:
     execution:

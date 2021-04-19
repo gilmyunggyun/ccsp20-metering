@@ -18,8 +18,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -49,7 +51,7 @@ public class MeteringControllerTests {
 
     @Test
     void checkAccess_whenControllerAllowsAccess_thenReturnSuccess() throws Exception {
-        when(meteringService.checkAccess(any())).thenReturn(true);
+        when(meteringService.checkAccess(any(),anyString())).thenReturn(true);
 
         makeRequest().andExpect(status().isOk())
                 .andExpect(content().json(
@@ -62,14 +64,15 @@ public class MeteringControllerTests {
 
         mockMvc.perform(post("/metering/v1/metering")
                 .content("{\n" +
-                        "  \"serviceNo\": \"V1\",\n" +
-                        "  \"carId\":  \"CAR123456\",\n" +
-                        "  \"hpId\": \"\",\n" +
-                        "  \"reqUrl\": \"/ccsp/window.do\"\n" +
-                        "  \n" +
+                        "  \"serviceNo\":\"V1\",\n" +
+                        "  \"carId\":\"CAR123456\",\n" +
+                        "  \"hpId\":\"\",\n" +
+                        "  \"reqUrl\":\"/ccsp/window.do\"\n" +
                         "}")
+                .header("XTID", "testxtid")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(APPLICATION_JSON))
                 .andExpect(content().json(
                         "{\"ServiceNo\":\"V1\",\"RetCode\":\"F\",\"resCode\":\"S999\"}"
                 ));
@@ -78,7 +81,7 @@ public class MeteringControllerTests {
 
     @Test
     void checkAccess_whenControllerDeniesAccess_forBlockedCustomer_thenReturnFailandResponse() throws Exception {
-        when(meteringService.checkAccess(any())).thenReturn(false);
+        when(meteringService.checkAccess(any(),anyString())).thenReturn(false);
 
         makeRequest().andExpect(status().isTooManyRequests())
                 .andExpect(content().json(
@@ -88,7 +91,7 @@ public class MeteringControllerTests {
 
     @Test
     public void checkAccess_callsUseCase_withApiRequestDataFromBody() throws Exception {
-        when(meteringService.checkAccess(any())).thenReturn(true);
+        when(meteringService.checkAccess(any(),anyString())).thenReturn(true);
 
         // Act
         makeRequest()
@@ -98,13 +101,13 @@ public class MeteringControllerTests {
                         "{\"ServiceNo\":\"V1\",\"RetCode\":\"S\",\"resCode\":\"0000\"}"
                 ));
 
-        verify(meteringService).checkAccess(meteringCheckRequest);
+        verify(meteringService).checkAccess(meteringCheckRequest,"testxtid");
     }
 
     @Test
     public void checkAccess_whenServiceDeniesAccess_returnsFailureResponse() throws Exception {
         // Arrange
-        when(meteringService.checkAccess(meteringCheckRequest)).thenReturn(false);
+        when(meteringService.checkAccess(any(),anyString())).thenReturn(false);
 
         // Act
         makeRequest()
@@ -117,12 +120,14 @@ public class MeteringControllerTests {
     // TODO: Validation check, or in service?
 
     private ResultActions makeRequest() throws Exception {
-        return mockMvc.perform(post("/metering/v1/metering").content("{\n" +
+        return mockMvc.perform(post("/metering/v1/metering").header("XTID","testxtid")
+                .content("{\n" +
                 "\"serviceNo\":  \"V1\",\n" +
                 "  \"hpId\":  \"HP123456\",\n" +
                 "  \"carID\":  \"CAR123456\",\n" +
                 "  \"reqUrl\":  \"/ccsp/window.do\",\n" +
                 "  \"resObj\" :  null\n" +
-                "}").contentType(MediaType.APPLICATION_JSON));
+                "}").contentType(MediaType.APPLICATION_JSON)
+        );
     }
 }

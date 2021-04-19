@@ -12,6 +12,8 @@ spring:
     database-platform: org.hibernate.dialect.H2Dialect
   zipkin:
     base-url: http://10.11.53.1:9411
+  kafka:
+    bootstrap-servers: localhost:9092
   ##Async Thread
   task:
     execution:

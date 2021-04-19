@@ -9,9 +9,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+
+import java.util.Map;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.TOO_MANY_REQUESTS;
@@ -45,12 +48,13 @@ public class MeteringController {
 
     @PostMapping("/metering/v1/metering")
     public ResponseEntity<MeteringCheckResponse> checkAPIAccess(@Valid @RequestBody MeteringCheckRequest request,
-                                                                BindingResult result) throws Exception {
-
+                                                                BindingResult result,
+                                                                @RequestHeader Map<String, Object> header
+                                                                ) throws Exception {
+        String xTid = (String) header.get("XTID");
         try {
             if (result.hasErrors()) {
-                LOGGER.warn("미터링 ValidationCheck 전문형식오류 서비스ID[" + request.getServiceNo() + "] carID[" + request.getCarId() + "] CCID[" + request.getHpId() + "] requestURL[" + request.getReqUrl() + "]");
-
+                LOGGER.warn("[XTID : {}] 미터링 ValidationCheck 전문형식오류 서비스ID[{}] carID[{}] CCID[{}] requestURL[{}]",xTid,request.getServiceNo(),request.getCarId(),request.getHpId(),request.getReqUrl());
                 return status(BAD_REQUEST).body(MeteringCheckResponse.builder()
                         .serviceNo(request.getServiceNo())
                         .retCode(result_fail)
@@ -58,7 +62,7 @@ public class MeteringController {
                         .build());
             }
 
-            boolean hasAccess = meteringService.checkAccess(request);
+            boolean hasAccess = meteringService.checkAccess(request,xTid);
 
             if (!hasAccess) {
                 return status(TOO_MANY_REQUESTS).body(
@@ -77,7 +81,7 @@ public class MeteringController {
                     .build());
 
         } catch (Exception e) {
-            LOGGER.warn("CCSP 미터링 Controller EXCEPTION 발생, serviceNo[\"" + request.getServiceNo() + "\"], CCID[\"" + request.getHpId() + "\"], CARID[\"" + request.getCarId() + "]", e);
+            LOGGER.warn("[XTID : {}] CCSP 미터링 Controller EXCEPTION 발생, serviceNo[{}], CCID[{}], CARID[{}] ,EXCEPTION : {}",xTid,request.getServiceNo(),request.getHpId(),request.getCarId(),e.getMessage());
             throw e;
         }
     }

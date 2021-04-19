@@ -51,7 +51,7 @@ public class MeteringService {
         this.clock = clock;
     }
 
-    public boolean checkAccess(MeteringCheckRequest request) {
+    public boolean checkAccess(MeteringCheckRequest request,String xTid) {
 
         String serviceNo = request.getServiceNo();
         String handPhoneId = request.getHpId();
@@ -61,7 +61,7 @@ public class MeteringService {
         try {
             Optional<Blocked> blockedCustomer = isCustomerBlocked(handPhoneId, carId);
             if (blockedCustomer.isPresent()) {
-                LOGGER.warn("미터링 차단된 유저 : CCID[" + handPhoneId + "] carID[" + carId + "]");
+                LOGGER.warn("[XTID : {}] 미터링 차단된 유저 : CCID[{}], carID[{}]",xTid, handPhoneId, carId);
                 return false;
             }
 
@@ -77,7 +77,7 @@ public class MeteringService {
             }
 
             //count check
-            AccessCheckResult accessCheckResult = shouldHaveAccess(serviceNo, handPhoneId, carId, reqUrl);
+            AccessCheckResult accessCheckResult = shouldHaveAccess(serviceNo, handPhoneId, carId, reqUrl, xTid);
 
             recordAccess(handPhoneId, carId, reqUrl);
 
@@ -90,7 +90,7 @@ public class MeteringService {
             return true;
 
         } catch (Exception e) {
-            LOGGER.warn("CCSP 미터링 Service [checkAccess] EXCEPTION 발생, serviceNo[\"" + request.getServiceNo() + "\"], CCID[\"" + request.getHpId() + "\"], CARID[\"" + request.getCarId() + "]", e);
+            LOGGER.warn("[XITD : {}] CCSP 미터링 Service [checkAccess] EXCEPTION 발생, serviceNo[{}], CCID[{}], CARID[{}] , Exception : {}",xTid,request.getServiceNo(),request.getHpId(),request.getCarId(),e.getMessage());
             throw e;
         }
     }
@@ -101,20 +101,19 @@ public class MeteringService {
         return foundResultCount > 0;
     }
 
-    private AccessCheckResult shouldHaveAccess(String serviceNo, String handPhoneId, String carId, String requestUrl) {
+    private AccessCheckResult shouldHaveAccess(String serviceNo, String handPhoneId, String carId, String requestUrl, String xTid) {
 
         long attemptsInLast10Minutes = apiAccessRepository.countByHandPhoneIdAndCarIdAndRequestUrlAndAccessTimeAfter(
                 handPhoneId, carId, requestUrl, OffsetDateTime.now(clock).minusMinutes(10)
         );
         long attemptsToday = apiAccessRepository.dailyAccessCount(handPhoneId, carId, requestUrl);
-        LOGGER.info("#OffsetDateTime.now(clock).minusMinutes(10)=>"+OffsetDateTime.now(clock).minusMinutes(10) + " #attemptsInLast10Minutes=>"+attemptsInLast10Minutes + " #attemptsToday=>"+attemptsToday +" #maxTenMinuteAccessCount===>"+maxTenMinuteAccessCount + " #maxDayAccessCount=>"+maxDayAccessCount);
         if (attemptsInLast10Minutes >= maxTenMinuteAccessCount) {
-            LOGGER.info("CCSP API미터링 차단(1004:10분, 1005:당일), 서비스코드[" + serviceNo + "], CCID[" + handPhoneId + "], CARID[" + carId + "], 차단코드[" + AccessCheckResult.BLOCKED_RSON_10MIN.getResCode() + "] ");
+            LOGGER.info("[XTID : {}] CCSP API미터링 차단(1004:10분, 1005:당일), 서비스코드[{}], CCID[{}], CARID[{}], 차단코드[{}]",xTid,serviceNo,handPhoneId,carId,AccessCheckResult.BLOCKED_RSON_10MIN.getResCode());
             return AccessCheckResult.BLOCKED_RSON_10MIN;
         }
 
         if (attemptsToday >= maxDayAccessCount) {
-            LOGGER.info("CCSP API미터링 차단(1004:10분, 1005:당일), 서비스코드[" + serviceNo + "], CCID[" + handPhoneId + "], CARID[" + carId + "], 차단코드[" + AccessCheckResult.BLOCKED_RSON_DAY.getResCode() + "] ");
+            LOGGER.info("[XTID : {}] CCSP API미터링 차단(1004:10분, 1005:당일), 서비스코드[{}], CCID[{}], CARID[{}], 차단코드[{}]",xTid,serviceNo,handPhoneId,carId,AccessCheckResult.BLOCKED_RSON_DAY.getResCode());
             return AccessCheckResult.BLOCKED_RSON_DAY;
         }
 
@@ -136,9 +135,6 @@ public class MeteringService {
                 .requestUrl(requestUrl)
                 .accessTime(OffsetDateTime.now(clock))
                 .build());
-
-        log.info("Execute method asynchronously. RecordAccess Done : " + Thread.currentThread().getName() + "recordAccess");
-
     }
 
     @Async
@@ -149,6 +145,5 @@ public class MeteringService {
                 .blockedRsonCd(accessCheckResult.getResCode())
                 .blockedTime(OffsetDateTime.now(clock))
                 .build());
-        log.info("Execute method asynchronously. RecordAccess Done : " + Thread.currentThread().getName() + "blockCustomer");
     }
 }

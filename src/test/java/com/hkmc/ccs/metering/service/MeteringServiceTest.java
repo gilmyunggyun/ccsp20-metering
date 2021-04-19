@@ -56,12 +56,12 @@ class MeteringServiceTest {
 
     @Test
     void checkAccess_allowsAccess() {
-        assertThat(subject.checkAccess(meteringCheckRequest)).isTrue();
+        assertThat(subject.checkAccess(meteringCheckRequest,"testxtid")).isTrue();
     }
 
     @Test
     void checkAccess_addApiAccessRecords() {
-        subject.checkAccess(meteringCheckRequest);
+        subject.checkAccess(meteringCheckRequest,"testxtid");
 
         verify(apiAccessRepository).save(ArgumentMatchers.eq(ApiAccess.builder()
                 .handPhoneId("HP1234")
@@ -85,7 +85,7 @@ class MeteringServiceTest {
                 .build())).thenReturn(Optional.of(chkdata));
 
         //Action
-        boolean hasAccess = subject.checkAccess(meteringCheckRequest);
+        boolean hasAccess = subject.checkAccess(meteringCheckRequest,"testxtid");
 
         //Assert
         assertThat(hasAccess).isFalse();
@@ -104,7 +104,7 @@ class MeteringServiceTest {
                 .thenReturn(Optional.of(Blocked.builder().build()));
 
         //Action
-        boolean hasAccess = subject.checkAccess(meteringCheckRequest);
+        boolean hasAccess = subject.checkAccess(meteringCheckRequest,"testxtid");
 
         //Assert
         assertThat(hasAccess).isFalse();
@@ -121,7 +121,7 @@ class MeteringServiceTest {
                 OffsetDateTime.now(clock).minusMinutes(10)
         )).thenReturn(199L);
 
-        boolean hasAccess = subject.checkAccess(meteringCheckRequest);
+        boolean hasAccess = subject.checkAccess(meteringCheckRequest,"testxtid");
 
         assertThat(hasAccess).isTrue();
     }
@@ -135,7 +135,7 @@ class MeteringServiceTest {
                 OffsetDateTime.now(clock).minusMinutes(10)
         )).thenReturn(200L);
 
-        boolean hasAccess = subject.checkAccess(meteringCheckRequest);
+        boolean hasAccess = subject.checkAccess(meteringCheckRequest,"testxtid");
 
         assertThat(hasAccess).isFalse();
     }
@@ -149,7 +149,7 @@ class MeteringServiceTest {
                 OffsetDateTime.now(clock).minusMinutes(10)
         )).thenReturn(200L);
 
-        subject.checkAccess(meteringCheckRequest);
+        subject.checkAccess(meteringCheckRequest,"testxtid");
 
         verify(blockedRepository).save(Blocked.builder()
                 .handPhoneId("HP1234")
@@ -167,7 +167,7 @@ class MeteringServiceTest {
                 "/was1/tmc/ccsp/window.do"
         )).thenReturn(299L);
 
-        boolean hasAccess = subject.checkAccess(meteringCheckRequest);
+        boolean hasAccess = subject.checkAccess(meteringCheckRequest,"testxtid");
 
         assertThat(hasAccess).isTrue();
     }
@@ -180,7 +180,7 @@ class MeteringServiceTest {
                 "/window.do"
         )).thenReturn(301L);
 
-        boolean hasAccess = subject.checkAccess(meteringCheckRequest);
+        boolean hasAccess = subject.checkAccess(meteringCheckRequest,"testxtid");
 
         assertThat(hasAccess).isFalse();
     }
@@ -193,7 +193,7 @@ class MeteringServiceTest {
                 "/window.do"
         )).thenReturn(300L);
 
-        subject.checkAccess(meteringCheckRequest);
+        subject.checkAccess(meteringCheckRequest,"testxtid");
 
         verify(blockedRepository).save(Blocked.builder()
                 .handPhoneId("HP1234")
@@ -212,7 +212,7 @@ class MeteringServiceTest {
                 .carId("CAR1234")
                 .hpId("HP1234")
                 .reqUrl("/pushVersion.do")
-                .build());
+                .build(),"testxtid");
 
         assertThat(hasAccess).isTrue();
         verify(blockedRepository, atLeastOnce()).findById(any());
