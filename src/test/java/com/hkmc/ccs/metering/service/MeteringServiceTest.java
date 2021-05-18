@@ -7,6 +7,7 @@ import com.hkmc.ccs.metering.models.vo.MeteringCheckRequest;
 import com.hkmc.ccs.metering.repository.AllowedApiRepository;
 import com.hkmc.ccs.metering.repository.ApiAccessRepository;
 import com.hkmc.ccs.metering.repository.BlockedRepository;
+import com.hkmc.ccs.metering.repository.BlockedTempRepository;
 import com.hkmc.ccs.metering.service.MeteringService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -28,6 +29,7 @@ import static org.mockito.Mockito.*;
 class MeteringServiceTest {
 
     private BlockedRepository blockedRepository;
+    private BlockedTempRepository blockedTempRepository;
     private ApiAccessRepository apiAccessRepository;
     private AllowedApiRepository allowedApiRepository;
     private Clock clock;
@@ -37,11 +39,13 @@ class MeteringServiceTest {
     @BeforeEach
     void setUp() {
         blockedRepository = mock(BlockedRepository.class);
+        blockedTempRepository = mock(BlockedTempRepository.class);
         apiAccessRepository = mock(ApiAccessRepository.class);
         allowedApiRepository = mock(AllowedApiRepository.class);
         clock = Clock.fixed(Instant.now(), ZoneId.systemDefault());
 
         subject = new MeteringService(blockedRepository,
+                blockedTempRepository,
                 apiAccessRepository,
                 allowedApiRepository,
                 clock);

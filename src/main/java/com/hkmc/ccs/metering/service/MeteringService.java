@@ -3,10 +3,12 @@ package com.hkmc.ccs.metering.service;
 import com.hkmc.ccs.metering.models.entity.ApiAccess;
 import com.hkmc.ccs.metering.models.entity.Blocked;
 import com.hkmc.ccs.metering.models.entity.BlockedId;
+import com.hkmc.ccs.metering.models.entity.BlockedTemp;
 import com.hkmc.ccs.metering.models.vo.MeteringCheckRequest;
 import com.hkmc.ccs.metering.repository.AllowedApiRepository;
 import com.hkmc.ccs.metering.repository.ApiAccessRepository;
 import com.hkmc.ccs.metering.repository.BlockedRepository;
+import com.hkmc.ccs.metering.repository.BlockedTempRepository;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -40,12 +42,14 @@ public class MeteringService {
 
     private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(MeteringService.class);
     private final BlockedRepository blockedRepository;
+    private final BlockedTempRepository blockedTempRepository;
     private final ApiAccessRepository apiAccessRepository;
     private final AllowedApiRepository allowedApiRepository;
     private final Clock clock;
 
-    public MeteringService(BlockedRepository blockedRepository, ApiAccessRepository apiAccessRepository, AllowedApiRepository allowedApiRepository, Clock clock) {
+    public MeteringService(BlockedRepository blockedRepository, BlockedTempRepository blockedTempRepository, ApiAccessRepository apiAccessRepository, AllowedApiRepository allowedApiRepository, Clock clock) {
         this.blockedRepository = blockedRepository;
+        this.blockedTempRepository = blockedTempRepository;
         this.apiAccessRepository = apiAccessRepository;
         this.allowedApiRepository = allowedApiRepository;
         this.clock = clock;
@@ -83,6 +87,8 @@ public class MeteringService {
 
             if (accessCheckResult != AccessCheckResult.SERVICE_SUCCESS) {
                 blockCustomer(handPhoneId, carId, accessCheckResult);
+
+                blockCustomerTemp(handPhoneId, carId, accessCheckResult, reqUrl);
 
                 return false;
             }
@@ -145,5 +151,17 @@ public class MeteringService {
                 .blockedRsonCd(accessCheckResult.getResCode())
                 .blockedTime(OffsetDateTime.now(clock))
                 .build());
+    }
+
+    @Async
+    public void blockCustomerTemp(String handPhoneId, String carId, AccessCheckResult accessCheckResult, String requestUrl) {
+        blockedTempRepository.save(BlockedTemp.builder()
+                .handPhoneId(handPhoneId)
+                .carId(carId)
+                .blockedRsonCd(accessCheckResult.getResCode())
+                .blockedTime(OffsetDateTime.now(clock))
+                .requestUrl(requestUrl)
+                .build());
+        log.info("Execute method asynchronously. RecordAccess Done : " + Thread.currentThread().getName() + "blockCustomerTemp");
     }
 }
