@@ -31,9 +31,6 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @RefreshScope
-@SpringBootTest
-@ActiveProfiles("local")
-@DirtiesContext
 class MeteringServiceTest {
 
     private BlockedRepository blockedRepository;
