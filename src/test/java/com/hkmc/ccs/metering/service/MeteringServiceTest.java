@@ -33,7 +33,6 @@ import static org.mockito.Mockito.*;
 @RefreshScope
 @SpringBootTest
 @ActiveProfiles("local")
-@EmbeddedKafka
 @DirtiesContext
 class MeteringServiceTest {
 
