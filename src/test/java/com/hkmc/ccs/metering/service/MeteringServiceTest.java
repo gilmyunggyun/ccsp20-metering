@@ -12,7 +12,12 @@ import com.hkmc.ccs.metering.service.MeteringService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.kafka.test.context.EmbeddedKafka;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.Clock;
 import java.time.Instant;
@@ -26,6 +31,10 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @RefreshScope
+@SpringBootTest
+@ActiveProfiles("local")
+@EmbeddedKafka
+@DirtiesContext
 class MeteringServiceTest {
 
     private BlockedRepository blockedRepository;
@@ -35,6 +44,9 @@ class MeteringServiceTest {
     private Clock clock;
 
     private MeteringService subject;
+
+    private final int ALLOW_BLOCK = 1;
+    private final int DATA_NOT_VALID = 2;
 
     @BeforeEach
     void setUp() {
@@ -60,7 +72,7 @@ class MeteringServiceTest {
 
     @Test
     void checkAccess_allowsAccess() {
-        assertThat(subject.checkAccess(meteringCheckRequest,"testxtid")).isTrue();
+        assertThat(subject.checkAccess(meteringCheckRequest,"testxtid")).isEqualTo(0);
     }
 
     @Test
@@ -77,6 +89,11 @@ class MeteringServiceTest {
 
     @Test
     void checkAccess_withBlockedCustomer_deniesAccess() {
+        String[] remoteControlWhiteList = {"/pushhistorylist.do","/getbadgecount.do","/readmsg.do"};
+        ReflectionTestUtils.setField(subject,"remoteControlWhiteList",remoteControlWhiteList);
+        ReflectionTestUtils.setField(subject,"ALLOW_ACCESS",0);
+        ReflectionTestUtils.setField(subject,"ALLOW_BLOCK",1);
+        ReflectionTestUtils.setField(subject,"DATA_NOT_VALID",2);
 
         //Arrange
         when(blockedRepository.findById(any()))
@@ -89,10 +106,10 @@ class MeteringServiceTest {
                 .build())).thenReturn(Optional.of(chkdata));
 
         //Action
-        boolean hasAccess = subject.checkAccess(meteringCheckRequest,"testxtid");
+        int hasAccess = subject.checkAccess(meteringCheckRequest,"testxtid");
 
         //Assert
-        assertThat(hasAccess).isFalse();
+        assertThat(hasAccess).isEqualTo(ALLOW_BLOCK);
 
         verify(blockedRepository).findById(eq(BlockedId.builder()
                 .handPhoneId("HP1234")
@@ -102,22 +119,33 @@ class MeteringServiceTest {
 
     @Test
     void checkAccess_withBlockedCustomer_doesntAddApiRecords() {
+        String[] remoteControlWhiteList = {"/pushhistorylist.do","/getbadgecount.do","/readmsg.do"};
+        ReflectionTestUtils.setField(subject,"remoteControlWhiteList",remoteControlWhiteList);
+        ReflectionTestUtils.setField(subject,"ALLOW_ACCESS",0);
+        ReflectionTestUtils.setField(subject,"ALLOW_BLOCK",1);
+        ReflectionTestUtils.setField(subject,"DATA_NOT_VALID",2);
 
         //Arrange
         when(blockedRepository.findById(any()))
                 .thenReturn(Optional.of(Blocked.builder().build()));
 
         //Action
-        boolean hasAccess = subject.checkAccess(meteringCheckRequest,"testxtid");
+        int hasAccess = subject.checkAccess(meteringCheckRequest,"testxtid");
 
         //Assert
-        assertThat(hasAccess).isFalse();
+        assertThat(hasAccess).isEqualTo(ALLOW_BLOCK);
 
         verifyNoInteractions(apiAccessRepository);
     }
 
     @Test
     void checkAccess_with199RequestsInLast10Mins_allowsAccess() {
+        String[] remoteControlWhiteList = {"/pushhistorylist.do","/getbadgecount.do","/readmsg.do"};
+        ReflectionTestUtils.setField(subject,"remoteControlWhiteList",remoteControlWhiteList);
+        ReflectionTestUtils.setField(subject,"ALLOW_ACCESS",0);
+        ReflectionTestUtils.setField(subject,"ALLOW_BLOCK",1);
+        ReflectionTestUtils.setField(subject,"DATA_NOT_VALID",2);
+
         when(apiAccessRepository.countByHandPhoneIdAndCarIdAndRequestUrlAndAccessTimeAfter(
                 "HP1234",
                 "CAR1234",
@@ -125,13 +153,19 @@ class MeteringServiceTest {
                 OffsetDateTime.now(clock).minusMinutes(10)
         )).thenReturn(199L);
 
-        boolean hasAccess = subject.checkAccess(meteringCheckRequest,"testxtid");
+        int hasAccess = subject.checkAccess(meteringCheckRequest,"testxtid");
 
-        assertThat(hasAccess).isTrue();
+        assertThat(hasAccess).isEqualTo(0);
     }
 
     @Test
     void checkAccess_with200RequestsInLast10Mins_deniesAccess() {
+        String[] remoteControlWhiteList = {"/pushhistorylist.do","/getbadgecount.do","/readmsg.do"};
+        ReflectionTestUtils.setField(subject,"remoteControlWhiteList",remoteControlWhiteList);
+        ReflectionTestUtils.setField(subject,"ALLOW_ACCESS",0);
+        ReflectionTestUtils.setField(subject,"ALLOW_BLOCK",1);
+        ReflectionTestUtils.setField(subject,"DATA_NOT_VALID",2);
+
         when(apiAccessRepository.countByHandPhoneIdAndCarIdAndRequestUrlAndAccessTimeAfter(
                 "HP1234",
                 "CAR1234",
@@ -139,13 +173,19 @@ class MeteringServiceTest {
                 OffsetDateTime.now(clock).minusMinutes(10)
         )).thenReturn(200L);
 
-        boolean hasAccess = subject.checkAccess(meteringCheckRequest,"testxtid");
+        int hasAccess = subject.checkAccess(meteringCheckRequest,"testxtid");
 
-        assertThat(hasAccess).isFalse();
+        assertThat(hasAccess).isEqualTo(ALLOW_BLOCK);
     }
 
     @Test
     void checkAccess_with200RequestsInLast10Mins_blocksCustomer() {
+        String[] remoteControlWhiteList = {"/pushhistorylist.do","/getbadgecount.do","/readmsg.do"};
+        ReflectionTestUtils.setField(subject,"remoteControlWhiteList",remoteControlWhiteList);
+        ReflectionTestUtils.setField(subject,"ALLOW_ACCESS",0);
+        ReflectionTestUtils.setField(subject,"ALLOW_BLOCK",1);
+        ReflectionTestUtils.setField(subject,"DATA_NOT_VALID",2);
+
         when(apiAccessRepository.countByHandPhoneIdAndCarIdAndRequestUrlAndAccessTimeAfter(
                 "HP1234",
                 "CAR1234",
@@ -165,32 +205,50 @@ class MeteringServiceTest {
 
     @Test
     void checkAccess_with299RequestsToday_allowsAccess() {
+        String[] remoteControlWhiteList = {"/pushhistorylist.do","/getbadgecount.do","/readmsg.do"};
+        ReflectionTestUtils.setField(subject,"remoteControlWhiteList",remoteControlWhiteList);
+        ReflectionTestUtils.setField(subject,"ALLOW_ACCESS",0);
+        ReflectionTestUtils.setField(subject,"ALLOW_BLOCK",1);
+        ReflectionTestUtils.setField(subject,"DATA_NOT_VALID",2);
+
         when(apiAccessRepository.dailyAccessCount(
                 "HP1234",
                 "CAR1234",
                 "/was1/tmc/ccsp/window.do"
         )).thenReturn(299L);
 
-        boolean hasAccess = subject.checkAccess(meteringCheckRequest,"testxtid");
+        int hasAccess = subject.checkAccess(meteringCheckRequest,"testxtid");
 
-        assertThat(hasAccess).isTrue();
+        assertThat(hasAccess).isEqualTo(0);
     }
 
     @Test
     void checkAccess_with301RequestsToday_deniesAccess() {
+        String[] remoteControlWhiteList = {"/pushhistorylist.do","/getbadgecount.do","/readmsg.do"};
+        ReflectionTestUtils.setField(subject,"remoteControlWhiteList",remoteControlWhiteList);
+        ReflectionTestUtils.setField(subject,"ALLOW_ACCESS",0);
+        ReflectionTestUtils.setField(subject,"ALLOW_BLOCK",1);
+        ReflectionTestUtils.setField(subject,"DATA_NOT_VALID",2);
+
         when(apiAccessRepository.dailyAccessCount(
                 "HP1234",
                 "CAR1234",
                 "/window.do"
         )).thenReturn(301L);
 
-        boolean hasAccess = subject.checkAccess(meteringCheckRequest,"testxtid");
+        int hasAccess = subject.checkAccess(meteringCheckRequest,"testxtid");
 
-        assertThat(hasAccess).isFalse();
+        assertThat(hasAccess).isEqualTo(ALLOW_BLOCK);
     }
 
     @Test
     void checkAccess_with300RequestsToday_blocksCustomer() {
+        String[] remoteControlWhiteList = {"/pushhistorylist.do","/getbadgecount.do","/readmsg.do"};
+        ReflectionTestUtils.setField(subject,"remoteControlWhiteList",remoteControlWhiteList);
+        ReflectionTestUtils.setField(subject,"ALLOW_ACCESS",0);
+        ReflectionTestUtils.setField(subject,"ALLOW_BLOCK",1);
+        ReflectionTestUtils.setField(subject,"DATA_NOT_VALID",2);
+
         when(apiAccessRepository.dailyAccessCount(
                 "HP1234",
                 "CAR1234",
@@ -209,18 +267,47 @@ class MeteringServiceTest {
 
     @Test
     void checkAccess_withRequestUrlInExceptionList_allowsAccess_withoutCheckingOrRecording() {
+        String[] remoteControlWhiteList = {"/pushhistorylist.do","/getbadgecount.do","/readmsg.do"};
+        ReflectionTestUtils.setField(subject,"remoteControlWhiteList",remoteControlWhiteList);
+        ReflectionTestUtils.setField(subject,"ALLOW_ACCESS",0);
+        ReflectionTestUtils.setField(subject,"ALLOW_BLOCK",1);
+        ReflectionTestUtils.setField(subject,"DATA_NOT_VALID",2);
+
         when(allowedApiRepository.countByRequestUrl("/pushVersion.do")).thenReturn(1L);
 
-        boolean hasAccess = subject.checkAccess(MeteringCheckRequest.builder()
+        int hasAccess = subject.checkAccess(MeteringCheckRequest.builder()
                 .serviceNo("V1")
                 .carId("CAR1234")
                 .hpId("HP1234")
                 .reqUrl("/pushVersion.do")
                 .build(),"testxtid");
 
-        assertThat(hasAccess).isTrue();
+        assertThat(hasAccess).isEqualTo(0);
         verify(blockedRepository, atLeastOnce()).findById(any());
         verifyNoInteractions(apiAccessRepository);
         verify(blockedRepository, never()).save(any());
+    }
+
+    @Test
+    void checkAccess_allowsAccess_withoutCarIdCase() {
+        String[] remoteControlWhiteList = {"/pushhistorylist.do","/getbadgecount.do","/readmsg.do"};
+        ReflectionTestUtils.setField(subject,"remoteControlWhiteList",remoteControlWhiteList);
+        ReflectionTestUtils.setField(subject,"ALLOW_ACCESS",0);
+        ReflectionTestUtils.setField(subject,"ALLOW_BLOCK",1);
+        ReflectionTestUtils.setField(subject,"DATA_NOT_VALID",2);
+
+        when(allowedApiRepository.countByRequestUrl(
+                "/pushhistorylist.do"
+        )).thenReturn(1L);
+
+        int hasAccess = subject.checkAccess(MeteringCheckRequest.builder()
+                .serviceNo("V1")
+                .carId("")
+                .hpId("HP1234")
+                .reqUrl("/ccsp/pushhistorylist.do")
+                .build(),"testxtid");
+
+
+        assertThat(hasAccess).isEqualTo(0);
     }
 }

@@ -51,7 +51,7 @@ public class MeteringControllerTests {
 
     @Test
     void checkAccess_whenControllerAllowsAccess_thenReturnSuccess() throws Exception {
-        when(meteringService.checkAccess(any(),anyString())).thenReturn(true);
+        when(meteringService.checkAccess(any(),anyString())).thenReturn(0);
 
         makeRequest().andExpect(status().isOk())
                 .andExpect(content().json(
@@ -81,7 +81,7 @@ public class MeteringControllerTests {
 
     @Test
     void checkAccess_whenControllerDeniesAccess_forBlockedCustomer_thenReturnFailandResponse() throws Exception {
-        when(meteringService.checkAccess(any(),anyString())).thenReturn(false);
+        when(meteringService.checkAccess(any(),anyString())).thenReturn(1);
 
         makeRequest().andExpect(status().isTooManyRequests())
                 .andExpect(content().json(
@@ -91,7 +91,7 @@ public class MeteringControllerTests {
 
     @Test
     public void checkAccess_callsUseCase_withApiRequestDataFromBody() throws Exception {
-        when(meteringService.checkAccess(any(),anyString())).thenReturn(true);
+        when(meteringService.checkAccess(any(),anyString())).thenReturn(0);
 
         // Act
         makeRequest()
@@ -107,7 +107,7 @@ public class MeteringControllerTests {
     @Test
     public void checkAccess_whenServiceDeniesAccess_returnsFailureResponse() throws Exception {
         // Arrange
-        when(meteringService.checkAccess(any(),anyString())).thenReturn(false);
+        when(meteringService.checkAccess(any(),anyString())).thenReturn(1);
 
         // Act
         makeRequest()
@@ -116,6 +116,25 @@ public class MeteringControllerTests {
                 ));
     }
 
+    @Test
+    public void checkAccess_whenControllerAllowsAccess_whencaridNull() throws Exception {
+        when(meteringService.checkAccess(any(),anyString())).thenReturn(0);
+
+        mockMvc.perform(post("/metering/v1/metering")
+                .content("{\n" +
+                        "  \"serviceNo\":\"V1\",\n" +
+                        "  \"carId\":\"\",\n" +
+                        "  \"hpId\":\"HP123456\",\n" +
+                        "  \"reqUrl\":\"/pushhistorylist.do\"\n" +
+                        "}")
+                .header("XTID", "testxtid")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().json(
+                        "{\"ServiceNo\":\"V1\",\"RetCode\":\"S\",\"resCode\":\"0000\"}"
+                ));
+
+    }
 
     // TODO: Validation check, or in service?
 

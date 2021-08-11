@@ -13,7 +13,7 @@ spring:
   zipkin:
     base-url: http://10.11.53.1:9411
   kafka:
-    bootstrap-servers: localhost:9092
+    bootstrap-servers: ${spring.embedded.kafka.brokers}
   ##Async Thread
   task:
     execution:
@@ -34,6 +34,13 @@ metering:
   MSG_FORMAT_INVALID: S999 #전문 형식 에러
   BLOCKED_RSON_10MIN: 1004 #CCSP PI미터링 차단(1004:10분, 1005:당일)
   BLOCKED_RSON_DAY: 1005   #CCSP API미터링 차단(1004:10분, 1005:당일)
+  caridnullablewhitelist:
+    /pushhistorylist.do
+    , /getbadgecount.do
+    , /readmsg.do
+  ALLOW_ACCESS: 0
+  ALLOW_BLOCK: 1
+  DATA_NOT_VALID: 2
 
 RETURN_CODE_TYPE:
   FAIL: F

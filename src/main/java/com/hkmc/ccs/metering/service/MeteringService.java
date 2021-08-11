@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 
 import java.time.Clock;
 import java.time.OffsetDateTime;
@@ -40,12 +41,25 @@ public class MeteringService {
     @Value("${metering.max-day-access-count}")
     private int maxDayAccessCount = 300;
 
+    @Value("${metering.caridnullablewhitelist}")
+    private String[] remoteControlWhiteList;
+
+    @Value("${metering.ALLOW_ACCESS}")
+    private int ALLOW_ACCESS;
+
+    @Value("${metering.ALLOW_BLOCK}")
+    private int ALLOW_BLOCK;
+
+    @Value("${metering.DATA_NOT_VALID}")
+    private int DATA_NOT_VALID;
+
     private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(MeteringService.class);
     private final BlockedRepository blockedRepository;
     private final BlockedTempRepository blockedTempRepository;
     private final ApiAccessRepository apiAccessRepository;
     private final AllowedApiRepository allowedApiRepository;
     private final Clock clock;
+
 
     public MeteringService(BlockedRepository blockedRepository, BlockedTempRepository blockedTempRepository, ApiAccessRepository apiAccessRepository, AllowedApiRepository allowedApiRepository, Clock clock) {
         this.blockedRepository = blockedRepository;
@@ -55,7 +69,7 @@ public class MeteringService {
         this.clock = clock;
     }
 
-    public boolean checkAccess(MeteringCheckRequest request,String xTid) {
+    public int checkAccess(MeteringCheckRequest request,String xTid) {
 
         String serviceNo = request.getServiceNo();
         String handPhoneId = request.getHpId();
@@ -66,7 +80,7 @@ public class MeteringService {
             Optional<Blocked> blockedCustomer = isCustomerBlocked(handPhoneId, carId);
             if (blockedCustomer.isPresent()) {
                 LOGGER.warn("[XTID : {}] 미터링 차단된 유저 : CCID[{}], carID[{}]",xTid, handPhoneId, carId);
-                return false;
+                return ALLOW_BLOCK;
             }
 
             String reqUrl = "";
@@ -76,8 +90,22 @@ public class MeteringService {
                 reqUrl = requestUrl;
             }
 
+            // 특정 api에 대하여 carid 가 null이어도 서비스 정상 으로 판단하도록 기능 추가 (taeseong, 21.08.09)
+            boolean carIdNullDeny = true;
+            if(ObjectUtils.isEmpty(carId)) {
+                for (int i = 0; i < remoteControlWhiteList.length; i++) {
+                    if(reqUrl.equals(remoteControlWhiteList[i])) {
+                        carIdNullDeny = false;
+                        break;
+                    }
+                }
+                if(carIdNullDeny){
+                    return DATA_NOT_VALID;
+                }
+            }
+
             if (isAllowedUrl(reqUrl)) {
-                return true;
+                return ALLOW_ACCESS;
             }
 
             //count check
@@ -90,10 +118,10 @@ public class MeteringService {
 
                 blockCustomerTemp(handPhoneId, carId, accessCheckResult, reqUrl);
 
-                return false;
+                return ALLOW_BLOCK;
             }
 
-            return true;
+            return ALLOW_ACCESS;
 
         } catch (Exception e) {
             LOGGER.warn("[XITD : {}] CCSP 미터링 Service [checkAccess] EXCEPTION 발생, serviceNo[{}], CCID[{}], CARID[{}] , Exception : {}",xTid,request.getServiceNo(),request.getHpId(),request.getCarId(),e.getMessage());
