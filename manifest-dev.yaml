@@ -11,7 +11,9 @@ applications:
       SPRING_PROFILES_ACTIVE: dev
       JBP_CONFIG_OPEN_JDK_JRE: '{ jre: { version: 13.0.+ } }'
       SPRING_CLOUD_CONFIG_NAME: ccsp20-common, ccsp20-metering
+      JAVA_OPTS: -XX:+UnlockExperimentalVMOptions -XX:+UseZGC
     services:
       - stgregistry
       - stgconfig
       - ssyslog
+      - selasticapm
