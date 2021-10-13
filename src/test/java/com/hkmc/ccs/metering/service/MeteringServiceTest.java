@@ -142,7 +142,7 @@ class MeteringServiceTest {
         ReflectionTestUtils.setField(subject,"ALLOW_BLOCK",1);
         ReflectionTestUtils.setField(subject,"DATA_NOT_VALID",2);
 
-        when(apiAccessRepository.countByHandPhoneIdAndCarIdAndRequestUrlAndAccessTimeAfter(
+        when(apiAccessRepository.lastTimeAccessCount(
                 "HP1234",
                 "CAR1234",
                 "/was1/tmc/ccsp/window.do",
@@ -162,7 +162,7 @@ class MeteringServiceTest {
         ReflectionTestUtils.setField(subject,"ALLOW_BLOCK",1);
         ReflectionTestUtils.setField(subject,"DATA_NOT_VALID",2);
 
-        when(apiAccessRepository.countByHandPhoneIdAndCarIdAndRequestUrlAndAccessTimeAfter(
+        when(apiAccessRepository.lastTimeAccessCount(
                 "HP1234",
                 "CAR1234",
                 "/window.do",
@@ -182,7 +182,8 @@ class MeteringServiceTest {
         ReflectionTestUtils.setField(subject,"ALLOW_BLOCK",1);
         ReflectionTestUtils.setField(subject,"DATA_NOT_VALID",2);
 
-        when(apiAccessRepository.countByHandPhoneIdAndCarIdAndRequestUrlAndAccessTimeAfter(
+
+        when(apiAccessRepository.lastTimeAccessCount(
                 "HP1234",
                 "CAR1234",
                 "/window.do",

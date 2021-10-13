@@ -35,7 +35,7 @@ public interface ApiAccessRepository extends JpaRepository<ApiAccess, UUID> {
             "where hand_Phone_Id = :handPhoneId\n" +
             "and car_Id = :carId\n" +
             "and request_Url = :requestUrl \n" +
-            "and access_time between CURRENT_TIMESTAMP and :accessTime "
+            "and access_time between :accessTime and CURRENT_TIMESTAMP "
     )
     long lastTimeAccessCount(
             @Param("handPhoneId") String handPhoneId,

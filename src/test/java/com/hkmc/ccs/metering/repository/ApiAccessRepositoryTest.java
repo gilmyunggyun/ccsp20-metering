@@ -39,7 +39,7 @@ class ApiAccessRepositoryTest {
         ));
 
         // Act
-        long count = subject.countByHandPhoneIdAndCarIdAndRequestUrlAndAccessTimeAfter(
+        long count = subject.lastTimeAccessCount(
                 "HP1234",
                 "CAR1234",
                 "/was1/tmc/ccsp/window.do",
@@ -47,7 +47,7 @@ class ApiAccessRepositoryTest {
         );
 
         // Assert
-        assertThat(count).isEqualTo(2L);
+        assertThat(count).isEqualTo(3L);
     }
 
     @Test
@@ -60,7 +60,7 @@ class ApiAccessRepositoryTest {
                 .accessTime(now)
                 .build());
 
-        long count = subject.countByHandPhoneIdAndCarIdAndRequestUrlAndAccessTimeAfter(
+        long count = subject.lastTimeAccessCount(
                 "HP1234",
                 "CAR1234",
                 "/was1/tmc/ccsp/window.do",
