@@ -137,7 +137,8 @@ public class MeteringService {
 
     private AccessCheckResult shouldHaveAccess(String serviceNo, String handPhoneId, String carId, String requestUrl, String xTid) {
 
-        long attemptsInLast10Minutes = apiAccessRepository.countByHandPhoneIdAndCarIdAndRequestUrlAndAccessTimeAfter(
+        // [21.10.13 taeseong] 최근 10분간 조회 쿼리 변경
+        long attemptsInLast10Minutes = apiAccessRepository.lastTimeAccessCount(
                 handPhoneId, carId, requestUrl, OffsetDateTime.now(clock).minusMinutes(10)
         );
         long attemptsToday = apiAccessRepository.dailyAccessCount(handPhoneId, carId, requestUrl);

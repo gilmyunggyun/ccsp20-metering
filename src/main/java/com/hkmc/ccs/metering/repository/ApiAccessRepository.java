@@ -30,4 +30,17 @@ public interface ApiAccessRepository extends JpaRepository<ApiAccess, UUID> {
             @Param("carId") String carId,
             @Param("requestUrl") String requestUrl
     );
+
+    @Query(nativeQuery = true, value = "select count(1) from api_Access \n" +
+            "where hand_Phone_Id = :handPhoneId\n" +
+            "and car_Id = :carId\n" +
+            "and request_Url = :requestUrl \n" +
+            "and access_time between CURRENT_TIMESTAMP and :accessTime "
+    )
+    long lastTimeAccessCount(
+            @Param("handPhoneId") String handPhoneId,
+            @Param("carId") String carId,
+            @Param("requestUrl") String requestUrl,
+            @Param("accessTime") OffsetDateTime accessTime
+    );
 }
