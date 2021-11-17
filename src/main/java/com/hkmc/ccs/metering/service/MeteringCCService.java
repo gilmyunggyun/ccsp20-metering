@@ -26,7 +26,7 @@ public class MeteringCCService {
 
 
     private String BLOCKED_RSON_10MIN = "1004";
-    private String BLOCKED_RSON_DAY = "1005 ";
+    private String BLOCKED_RSON_DAY = "1005";
 
     private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(MeteringCCService.class);
 
