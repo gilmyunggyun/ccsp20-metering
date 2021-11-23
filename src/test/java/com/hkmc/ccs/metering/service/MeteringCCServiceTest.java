@@ -115,7 +115,7 @@ class MeteringCCServiceTest {
 
         meteringCCBlockList = new MeteringCCBlockList();
         meteringCCBlockList.setCcid("CAR5432");
-        meteringCCBlockList.setRsonCd("오류");
+        meteringCCBlockList.setRsonCd("일 한도 초과");
         meteringCCBlockList.setBlockedDate(OffsetDateTime.now().format(DateTimeFormatter.ofPattern("yyyMMddHHmmss")));
 
         Resultlist.add(meteringCCBlockList);
