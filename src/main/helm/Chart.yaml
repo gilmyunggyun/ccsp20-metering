@@ -3,6 +3,6 @@ name: metering
 description: ccsp20-metering
 type: application
 version: 1.0.3
-appVersion: 1.0.3
+appVersion: "1.0.3"
 sources:
-- https://code.hcloud.hmc.co.kr/ccs/
+  - https://code.hcloud.hmc.co.kr/ccs/

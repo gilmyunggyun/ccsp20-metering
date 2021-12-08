@@ -1,7 +1,6 @@
 pluginManagement {
 
   repositories {
-    mavenLocal()
     maven {
       url "https://pkg-ccs-stg.hcloud.io/repository/maven-public/"
     }
