@@ -2,14 +2,14 @@
 apiVersion: autoscaling/v1
 kind: HorizontalPodAutoscaler
 metadata:
-  name: {{ include "basic.fullname" . }}
+  name: {{ include "metering.fullname" . }}
   labels:
-    {{- include "basic.labels" . | nindent 4 }}
+    {{- include "metering.labels" . | nindent 4 }}
 spec:
   scaleTargetRef:
     apiVersion: argoproj.io/v1alpha1
     kind: Rollout
-    name: {{ include "basic.fullname" . }}
+    name: {{ include "metering.fullname" . }}
   minReplicas: {{ .Values.autoscaling.minReplicas }}
   maxReplicas: {{ .Values.autoscaling.maxReplicas }}
   targetCPUUtilizationPercentage: {{ .Values.autoscaling.targetCPUUtilizationPercentage }}

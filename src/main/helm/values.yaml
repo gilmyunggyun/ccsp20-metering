@@ -52,7 +52,7 @@ ingress:
             pathType: Prefix
             backend:
               service:
-                name: basic
+                name: metering
                 port:
                   number: 8080
   tls:
