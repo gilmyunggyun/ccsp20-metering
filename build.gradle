@@ -3,7 +3,7 @@ plugins {
 }
 
 group = "com.hkmc.ccs"
-version = "1.0.1"
+version = "1.0.2"
 
 cloudnative {
   printConfig = false
@@ -20,7 +20,7 @@ cloudnative {
   }
 
   microservice {
-    reactive = true
+//    reactive = true
     swagger = true
     undertow = true
     security = true
@@ -54,9 +54,7 @@ cloudnative {
   thirdparty{
     commonsLang = true
     commonsCollections = true
-    gson = true
     jasypt = true
-    jacksonAfterburner = true
   }
 
   cicd{

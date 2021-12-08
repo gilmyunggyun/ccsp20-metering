@@ -1,7 +1,8 @@
 spring:
   application:
     name: ccsp20-metering
-
+  config:
+    import: optional:configserver:http://config.ccs.svc.cluster.local:8888
 management:
   endpoints:
     web:
@@ -12,7 +13,9 @@ jasypt:
     bean: jasyptStringEncryptor
 ---
 spring:
-  profiles: local
+  config:
+    activate:
+      on-profile: local
   jpa:
     show-sql: true
     generate-ddl: false
