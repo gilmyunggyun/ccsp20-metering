@@ -12,11 +12,12 @@ import lombok.NoArgsConstructor;
 @Data
 public class MeteringCheckResponse {
 
-    @JsonProperty("ServiceNo")
-    private String serviceNo;
+  @JsonProperty("ServiceNo")
+  private String serviceNo;
 
-    @JsonProperty("RetCode")
-    private String retCode;
+  @JsonProperty("RetCode")
+  private String retCode;
 
-    private String resCode;
+  private String resCode;
+
 }

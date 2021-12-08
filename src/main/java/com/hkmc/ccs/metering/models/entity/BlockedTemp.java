@@ -1,15 +1,15 @@
 package com.hkmc.ccs.metering.models.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
+import java.time.OffsetDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
-import java.time.OffsetDateTime;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Entity
@@ -19,18 +19,18 @@ import java.time.OffsetDateTime;
 @AllArgsConstructor
 public class BlockedTemp {
 
-    @Id
-    private String handPhoneId;
+  @Id
+  private String handPhoneId;
 
-    @Id
-    private String carId;
+  @Id
+  private String carId;
 
-    private String blockedRsonCd;
+  private String blockedRsonCd;
 
-    @Id
-    @Column(columnDefinition = "TIMESTAMP WITH TIME ZONE")
-    private OffsetDateTime blockedTime;
+  @Id
+  @Column(columnDefinition = "TIMESTAMP WITH TIME ZONE")
+  private OffsetDateTime blockedTime;
 
-    private String requestUrl;
+  private String requestUrl;
 
 }

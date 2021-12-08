@@ -1,11 +1,17 @@
 spring:
   application:
     name: ccsp20-metering
-  cloud:
-    config:
-      name: ccsp20-common, ccsp20-metering
-  config:
-    import: optional:configserver:http://localhost:8888
+#  cloud:
+#    config:
+#      name: ccsp20-common,ccsp20-metering
+#  config:
+#    import: optional:configserver:http://localhost:8888
+#  jpa:
+#    properties:
+#      hibernate:
+#        dialect: org.hibernate.dialect.PostgreSQLDialect
+#    hibernate:
+#      database-platform:
 management:
   endpoints:
     web:
@@ -24,7 +30,7 @@ spring:
     generate-ddl: false
     hibernate:
       ddl-auto: none
-      database: POSTGRESQL
+      database: postgresql
       database-platform: org.hibernate.dialect.PostgreSQL10Dialect
   datasource:
     url: jdbc:postgresql://10.11.53.64:5432/meteringdb
@@ -58,7 +64,7 @@ logging:
 
 metering:
   max-ten-minute-access-count: 200
-  max-day-access-count : 300
+  max-day-access-count: 300
   BLOCK_BY_API: BK02      # 서비스 요청 횟수 초과로 인한 차단(API미터링 관련 코드)
   SERVICE_SUCCESS: "0000"   #서비스요청성공
   MSG_FORMAT_INVALID: S999 #전문 형식 에러
@@ -68,9 +74,9 @@ metering:
     /pushhistorylist.do
     , /getbadgecount.do
     , /readmsg.do
-  ALLOW_ACCESS : 0
-  ALLOW_BLOCK : 1
-  DATA_NOT_VALID : 2
+  ALLOW_ACCESS: 0
+  ALLOW_BLOCK: 1
+  DATA_NOT_VALID: 2
 
 RETURN_CODE_TYPE:
   FAIL: F

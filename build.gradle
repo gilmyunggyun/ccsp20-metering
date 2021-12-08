@@ -3,13 +3,11 @@ plugins {
 }
 
 group = "com.hkmc.ccs"
-version = "1.0.2"
+version = "1.0.3"
 
 cloudnative {
-  printConfig = false
 
   core {
-    dbcore = true
     processcore = true
   }
 
@@ -21,19 +19,12 @@ cloudnative {
   }
 
   microservice {
-//    reactive = true
     swagger = true
     undertow = true
     security = true
     metric = true
     trace = true
     config = true
-    circuitbreaker = true
-    validate = true
-  }
-
-  springcloud {
-    kubernetes = false
     openfeign = true
     kafka = true
     cloudbus = true
@@ -65,7 +56,7 @@ cloudnative {
 }
 
 dependencies {
-  implementation 'io.micrometer.prometheus:prometheus-rsocket-spring:1.2.1'
-  implementation 'com.zaxxer:HikariCP:5.0.0'
+  implementation 'io.micrometer.prometheus:prometheus-rsocket-spring:1.3.0'
+//  implementation 'com.zaxxer:HikariCP:5.0.0'
 }
 
