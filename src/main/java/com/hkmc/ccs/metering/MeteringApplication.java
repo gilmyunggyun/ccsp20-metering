@@ -11,7 +11,7 @@ import java.time.Clock;
 
 @EnableAsync
 @SpringBootApplication
-@EnableCcsp20TransactionLogger
+//@EnableCcsp20TransactionLogger
 @EnablePropertyEncrypt
 public class MeteringApplication {
 

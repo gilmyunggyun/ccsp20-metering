@@ -1,0 +1,71 @@
+plugins {
+  id "com.hkmc.cloudnative" version "1.0.8"
+}
+
+group = "com.hkmc.ccs"
+version = "1.0.0"
+
+cloudnative {
+  printConfig = false
+
+  core {
+    processcore = true
+  }
+
+  container {
+    enabled = true
+    from = "registry.hcloud.hmc.co.kr/ccs/java:17"
+    to = "registry.hcloud.hmc.co.kr/ccs/${project.name}"
+    tag = ["${project.version}", 'latest']
+  }
+
+  microservice {
+    reactive = true
+    swagger = true
+    undertow = true
+    security = true
+    metric = true
+    trace = true
+    config = true
+    circuitbreaker = true
+    validate = true
+  }
+
+  springcloud {
+    kubernetes = false
+    openfeign = true
+    kafka = true
+    cloudbus = true
+  }
+
+  persistent {
+    jpa = true
+    postgresql = true
+  }
+
+  quality {
+    checkerframework = true
+    checkstyleIgnoreFailure = true
+    pmdIgnoreFailures = true
+    sonarqubeIgnoreFailure = true
+    skipCheckerFramework = true
+  }
+
+  thirdparty{
+    commonsLang = true
+    commonsCollections = true
+    gson = true
+    jasypt = true
+    jacksonAfterburner = true
+  }
+
+  cicd{
+    gitlabPath = "ccs/devops/ccs-basic-starter"
+    chartName = "basic"
+  }
+}
+
+dependencies {
+  implementation 'io.micrometer.prometheus:prometheus-rsocket-spring:1.2.1'
+}
+

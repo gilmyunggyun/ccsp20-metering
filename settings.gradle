@@ -1,0 +1,9 @@
+pluginManagement {
+
+  repositories {
+    maven {
+      url "https://pkg-ccs-stg.hcloud.io/repository/maven-public/"
+    }
+  }
+}
+rootProject.name = 'ccsp20-metering'

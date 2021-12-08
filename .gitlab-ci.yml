@@ -1,0 +1,22 @@
+image: gradle:jdk17-alpine
+
+variables:
+  GRADLE_OPTS: "-Dorg.gradle.daemon=false"
+
+before_script:
+  - export GRADLE_USER_HOME=`pwd`/.gradle
+
+test:
+  stage: test
+  script: |-
+    gradle check -x test
+  cache:
+    key: "$CI_COMMIT_REF_NAME"
+    policy: push
+build:
+  stage: test
+  script: |-
+    gradle sonarqube -x test
+  cache:
+    key: "$CI_COMMIT_REF_NAME"
+    policy: push

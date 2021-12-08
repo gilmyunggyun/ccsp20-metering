@@ -1,0 +1,8 @@
+apiVersion: v2
+name: basic
+description: ccsp20-metering
+type: application
+version: 1.0.0
+appVersion: "1.0.0"
+sources:
+  - https://code.hcloud.hmc.co.kr/ccs/
