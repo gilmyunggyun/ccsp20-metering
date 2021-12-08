@@ -47,7 +47,7 @@ spec:
                   name: environment
                   key: configserver
             - name: spring.cloud.config.name
-              value: ccsp20-common, ccsp20-metering
+              value: ccsp20-common,ccsp20-metering
           livenessProbe:
             httpGet:
               path: /actuator/health/liveness
