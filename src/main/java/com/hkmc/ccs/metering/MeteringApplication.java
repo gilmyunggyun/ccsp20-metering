@@ -1,13 +1,13 @@
 package com.hkmc.ccs.metering;
 
-import ccs.core.data.encrypt.EnablePropertyEncrypt;
-import com.hkmc.transactionlogger.EnableCcsp20TransactionLogger;
+import java.time.Clock;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableAsync;
 
-import java.time.Clock;
+import ccs.core.data.encrypt.EnablePropertyEncrypt;
 
 @EnableAsync
 @SpringBootApplication
@@ -15,12 +15,13 @@ import java.time.Clock;
 @EnablePropertyEncrypt
 public class MeteringApplication {
 
-    public static void main(String[] args) {
-        SpringApplication.run(MeteringApplication.class, args);
-    }
+  public static void main(String[] args) {
+    SpringApplication.run(MeteringApplication.class, args);
+  }
 
-    @Bean
-    public Clock clock() {
-        return Clock.systemDefaultZone();
-    }
+  @Bean
+  public Clock clock() {
+    return Clock.systemDefaultZone();
+  }
+
 }

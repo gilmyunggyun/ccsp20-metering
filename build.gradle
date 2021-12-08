@@ -9,6 +9,7 @@ cloudnative {
   printConfig = false
 
   core {
+    dbcore = true
     processcore = true
   }
 
@@ -51,13 +52,13 @@ cloudnative {
     skipCheckerFramework = true
   }
 
-  thirdparty{
+  thirdparty {
     commonsLang = true
     commonsCollections = true
     jasypt = true
   }
 
-  cicd{
+  cicd {
     gitlabPath = "ccs/domain/ccsp20-metering"
     chartName = "metering"
   }
@@ -65,5 +66,6 @@ cloudnative {
 
 dependencies {
   implementation 'io.micrometer.prometheus:prometheus-rsocket-spring:1.2.1'
+  implementation 'com.zaxxer:HikariCP:5.0.0'
 }
 

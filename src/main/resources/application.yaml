@@ -1,8 +1,11 @@
 spring:
   application:
     name: ccsp20-metering
+  cloud:
+    config:
+      name: ccsp20-common, ccsp20-metering
   config:
-    import: optional:configserver:http://config.ccs.svc.cluster.local:8888
+    import: optional:configserver:http://localhost:8888
 management:
   endpoints:
     web:
@@ -22,7 +25,7 @@ spring:
     hibernate:
       ddl-auto: none
       database: POSTGRESQL
-      database-platform: org.hibernate.dialect.PostgreSQLDialect
+      database-platform: org.hibernate.dialect.PostgreSQL10Dialect
   datasource:
     url: jdbc:postgresql://10.11.53.64:5432/meteringdb
     username: meteringwas
