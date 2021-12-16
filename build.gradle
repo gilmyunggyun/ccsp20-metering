@@ -1,21 +1,14 @@
 plugins {
-  id "com.hkmc.cloudnative" version "1.0.10"
+  id "com.hkmc.cloudnative" version "1.1.1"
 }
 
 group = "com.hkmc.ccs"
-version = "1.0.3"
+version = "1.0.4"
 
 cloudnative {
 
   core {
     processcore = true
-  }
-
-  container {
-    enabled = true
-    from = "registry.hcloud.hmc.co.kr/ccs/java:17"
-    to = "registry.hcloud.hmc.co.kr/ccs/${project.name}"
-    tag = ["${project.version}", 'latest']
   }
 
   microservice {
@@ -50,13 +43,17 @@ cloudnative {
   }
 
   cicd {
+    helm = true
     gitlabPath = "ccs/domain/ccsp20-metering"
     chartName = "metering"
+
+    jib = true
+    to = "registry.hcloud.hmc.co.kr/ccs/${project.name}"
+    tag = ["${project.version}", 'latest']
   }
 }
 
 dependencies {
   implementation 'io.micrometer.prometheus:prometheus-rsocket-spring:1.3.0'
-//  implementation 'com.zaxxer:HikariCP:5.0.0'
 }
 

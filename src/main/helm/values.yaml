@@ -2,7 +2,7 @@ replicaCount: 1
 image:
   repository: registry.hcloud.hmc.co.kr/ccs/ccsp20-metering
   pullPolicy: IfNotPresent
-  tag: "1.0.3"
+  tag: "1.0.4"
 
 service:
   type: ClusterIP
@@ -10,10 +10,10 @@ service:
 
 resources:
   limits:
-    cpu: 2000m
+    cpu: 1000m
     memory: 3072Mi
   requests:
-    cpu: 1000m
+    cpu: 100m
     memory: 2048Mi
 
 imagePullSecrets: []

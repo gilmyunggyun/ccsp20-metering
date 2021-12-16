@@ -1,86 +1,62 @@
-def label = "worker-${env.JOB_NAME}${env.BUILD_NUMBER}"
+def label = "worker-${env.JOB_NAME}-${env.BUILD_NUMBER}"
 
 podTemplate(label: label,
-containers: [
-  containerTemplate(name: 'gradle', image: 'gradle:jdk17-alpine', command: 'cat', ttyEnabled: true)
-],
-volumes: [
-   persistentVolumeClaim(claimName: 'gradle-shared', mountPath: '/home/gradle/.gradle')
-]) {
+  containers: [
+    containerTemplate(name: 'gradle', image: 'gradle:7.3.1-jdk17-alpine', command: 'cat', ttyEnabled: true)
+  ],
+  volumes: [
+     persistentVolumeClaim(claimName: 'gradle-shared', mountPath: '/home/gradle/.gradle')
+  ]) {
   node(label) {
-     properties([
-       pipelineTriggers([
+    properties([
+      pipelineTriggers([
         [$class: 'GenericTrigger',
-        genericVariables: [
-          [key: 'user_name', value: '$.user_name'],
-          [key: 'checkout_sha', value: '$.checkout_sha'],
-          [key: 'web_url', value: '$.project.web_url'],
-          [key: 'ref', value: '$.ref'],
-          [key: 'tag', value: '$.ref', regexpFilter: 'refs/tags/'],
-        ],
-         causeString: '$user_name pushed tag $tag to $web_url referencing $checkout_sha',
-         token: "ccsp20-metering",
-         printContributedVariables: true,
-         printPostContent: true,
-         silentResponse: false,
-         regexpFilterText: '$ref',
-         regexpFilterExpression: '^refs/tags/.*'
+          genericVariables: [
+            [key: 'user_name', value: '$.user_name'], [key: 'checkout_sha', value: '$.checkout_sha'],
+            [key: 'ref', value: '$.ref'], [key: 'tag', value: '$.ref', regexpFilter: 'refs/tags/'],
+            [key: 'event', value: '$.event_name']
+          ], causeString: '$ref-$user_name:$checkout_sha', token: "ccsp20-metering",
+          printContributedVariables:false, printPostContent: false, silentResponse: true,
+          regexpFilterText: '$ref', regexpFilterExpression: 'refs/heads/' + BRANCH_NAME
         ]
-       ])
       ])
+    ])
 
-    def myRepo = checkout scm
-    def gitCommit = myRepo.GIT_COMMIT
-    def gitBranch = myRepo.GIT_BRANCH
-    def shortGitCommit = "${gitCommit[0..10]}"
-    def previousGitCommit = sh(script: "git rev-parse ${gitCommit}~", returnStdout: true)
 
-     stage('Test') {
-      if(gitBranch == 'develop'){
-        try {
-          container('gradle') {
-            sh """
-               pwd
-               echo "GIT_BRANCH=${gitBranch}" >> /etc/environment
-               echo "GIT_COMMIT=${gitCommit}" >> /etc/environment
-               gradle test
-               """
-          }
-        }catch (exc) {
-          println "Failed to test - ${currentBuild.fullDisplayName}"
-          throw(exc)
+    def repo = checkout scm
+    def commit = repo.GIT_COMMIT
+    def branch = repo.GIT_BRANCH
+    def short_commit = "${commit[0..10]}"
+
+    stage("Checking Quality"){
+      container('gradle') {
+        if(branch == 'release' || branch == 'develop' || branch == 'rc') {
+          sh "gradle check"
         }
       }
     }
 
-    stage('Build') {
-     if(gitBranch == 'develop'){
-        try {
-          container('gradle') {
-            sh """
-               pwd
-               echo "GIT_BRANCH=${gitBranch}" >> /etc/environment
-               echo "GIT_COMMIT=${gitCommit}" >> /etc/environment
-               gradle test
-               """
-          }
-        }catch (exc) {
-          println "Failed to test - ${currentBuild.fullDisplayName}"
-          throw(exc)
-        }
+    stage("Build Source"){
+      container('gradle') {
+        sh "gradle build -x test"
       }
     }
 
-    stage('Bake') {
-      try {
-        container('gradle') {
-          sh "gradle jib"
-        }
+    stage("Upload Artifact"){
+      container('gradle') {
+        sh "gradle publish -x test"
+      }
+    }
 
+    stage("Baking Docker"){
+      container('gradle') {
+        sh "gradle jib -x test"
+      }
+    }
 
-      }catch (exc) {
-        println "Failed to test - ${currentBuild.fullDisplayName}"
-        throw(exc)
+    stage("Packaging Helm"){
+      if(branch=='release') {
+        sh "helm cm-push"
       }
     }
   }
