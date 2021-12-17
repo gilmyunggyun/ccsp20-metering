@@ -11,10 +11,10 @@ service:
 resources:
   limits:
     cpu: 1000m
-    memory: 3072Mi
+    memory: 1024Mi
   requests:
-    cpu: 100m
-    memory: 2048Mi
+    cpu: 300m
+    memory: 512Mi
 
 imagePullSecrets: []
 nameOverride: ""
@@ -34,30 +34,6 @@ autoscaling:
 
 ingress:
   enabled: false
-  className: ""
-  annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
-    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
-    nginx.ingress.kubernetes.io/auth-tls-verify-client: "on"
-    nginx.ingress.kubernetes.io/auth-tls-verify-depth: "1"
-    nginx.ingress.kubernetes.io/auth-tls-pass-certificate-to-upstream: "true"
-    nginx.ingress.kubernetes.io/proxy-body-size: "0"
-    nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
-    nginx.ingress.kubernetes.io/proxy-send-timeout: "600"
-  hosts:
-    - host: your.domain.com
-      http:
-        paths:
-          - path: "/"
-            pathType: Prefix
-            backend:
-              service:
-                name: metering
-                port:
-                  number: 8080
-  tls:
-    - secretName: ca-secret
-      hosts:
-        - your.domain.com
-
+  host: 
 autoPromotionEnabled: true
+jvmOption: ""

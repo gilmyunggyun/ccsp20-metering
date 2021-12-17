@@ -48,6 +48,8 @@ spec:
                   key: configserver
             - name: spring.cloud.config.name
               value: ccsp20-common,ccsp20-metering
+            - name: JAVA_TOOL_OPTIONS
+              value: {{ .Values.jvmOption }}
           livenessProbe:
             httpGet:
               path: /actuator/health/liveness
