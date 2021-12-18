@@ -3,7 +3,7 @@ plugins {
 }
 
 group = "com.hkmc.ccs"
-version = "1.0.4"
+version = "1.0.6"
 
 cloudnative {
 
@@ -13,7 +13,7 @@ cloudnative {
 
   microservice {
     swagger = true
-    undertow = true
+    undertow = false
     security = true
     metric = true
     trace = true

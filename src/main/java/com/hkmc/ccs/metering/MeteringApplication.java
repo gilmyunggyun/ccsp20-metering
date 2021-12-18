@@ -2,6 +2,7 @@ package com.hkmc.ccs.metering;
 
 import java.time.Clock;
 
+import com.hkmc.transactionlogger.EnableCcsp20TransactionLogger;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -11,7 +12,7 @@ import ccs.core.data.encrypt.EnablePropertyEncrypt;
 
 @EnableAsync
 @SpringBootApplication
-//@EnableCcsp20TransactionLogger
+@EnableCcsp20TransactionLogger
 @EnablePropertyEncrypt
 public class MeteringApplication {
 

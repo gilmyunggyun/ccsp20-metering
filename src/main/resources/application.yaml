@@ -25,6 +25,9 @@ spring:
   config:
     activate:
       on-profile: local
+  cloud:
+    config:
+      enabled: false
   jpa:
     show-sql: true
     generate-ddl: false
@@ -61,6 +64,10 @@ spring:
 logging:
   level:
     com.hyundaiautoever.ccs.metering: DEBUG
+transaction:
+  logger:
+    exclude:
+      url: cloudfoundryapplication, swagger, actuator
 
 metering:
   max-ten-minute-access-count: 200
