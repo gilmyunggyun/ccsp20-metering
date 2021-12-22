@@ -66,7 +66,7 @@
 		<dependency>
 			<groupId>ccsp20-sp-kr</groupId>
 			<artifactId>ccsp20-logger</artifactId>
-			<version>1.0.10</version>
+			<version>1.0.11</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
@@ -93,7 +93,7 @@
 		<dependency>
 			<groupId>ccsp20-sp-kr</groupId>
 			<artifactId>ccsp20-process-core</artifactId>
-			<version>1.2.0</version>
+			<version>1.2.1</version>
 		</dependency>
 		<dependency>
 			<groupId>io.micrometer.prometheus</groupId>
