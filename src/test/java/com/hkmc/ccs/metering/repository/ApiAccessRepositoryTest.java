@@ -6,6 +6,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.Profile;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.Clock;
@@ -18,6 +20,7 @@ import static org.assertj.core.util.Lists.list;
 
 @ExtendWith(SpringExtension.class)
 @DataJpaTest
+@ActiveProfiles("local")
 class ApiAccessRepositoryTest {
 
     @Autowired
