@@ -43,7 +43,7 @@ public class MeteringCCController {
     }
 
     @PostMapping("/metering/v1/getBlockList")
-    public ResponseEntity<MeteringCCResponse> checkAPIAccess(@Valid @RequestBody MeteringCCRequest request,
+    public ResponseEntity<MeteringCCResponse> getBlockList(@Valid @RequestBody MeteringCCRequest request,
                                                              BindingResult result,
                                                              @RequestHeader Map<String, Object> header ) throws Exception {
         try{
