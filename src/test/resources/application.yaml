@@ -1,7 +1,12 @@
 spring:
   application:
     name: ccsp20-metering
-  profiles: local
+  config:
+    activate:
+      on-profile: local
+  cloud:
+    config:
+      enabled: false
   jpa:
     show-sql: true
     generate-ddl: true

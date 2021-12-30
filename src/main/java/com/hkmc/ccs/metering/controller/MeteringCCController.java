@@ -43,7 +43,7 @@ public class MeteringCCController {
     }
 
     @PostMapping("/metering/v1/getBlockList")
-    public ResponseEntity<MeteringCCResponse> checkAPIAccess(@Valid @RequestBody MeteringCCRequest request,
+    public ResponseEntity<MeteringCCResponse> getBlockList(@Valid @RequestBody MeteringCCRequest request,
                                                              BindingResult result,
                                                              @RequestHeader Map<String, Object> header ) throws Exception {
         try{
@@ -59,6 +59,7 @@ public class MeteringCCController {
             // DB 리스트 조회
             List<MeteringCCBlockList> blockList = meteringCCService.getBlockList(request);
             if(ObjectUtils.isEmpty(blockList)){
+                LOGGER.warn("미터링 CC getBloickList 조회 정보 없음 carID[{}], requestID[{}]", request.getCarId(), request.getRequestId());
                 return status(BAD_REQUEST).body(MeteringCCResponse.builder()
                         .resultCode(result_fail)
                         .resultMessage("조회 정보 없음")
@@ -102,6 +103,7 @@ public class MeteringCCController {
             int count = meteringCCService.unblock(request);
 
             if(count == 0){
+                LOGGER.warn("미터링 CC unblock 삭제할 정보 없음 carID[{}], requestID[{}]", request.getCarId(), request.getRequestId());
                 return status(BAD_REQUEST).body(MeteringCCResponse.builder()
                         .resultCode(result_fail)
                         .resultMessage("삭제할 정보 없음")
