@@ -6,7 +6,7 @@ variables:
 before_script:
   - export GRADLE_USER_HOME=`pwd`/.gradle
 
-qualitygateway:
+quality-gate:
   stage: test
   script: |-
     gradle check -x test
