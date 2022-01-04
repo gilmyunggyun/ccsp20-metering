@@ -95,4 +95,9 @@ server:
     threads:
       max: 1000
       min-spare: 100
+core:
+  filter:
+    exclude:
+      - /actuator/**
+      - /swagger/**
 

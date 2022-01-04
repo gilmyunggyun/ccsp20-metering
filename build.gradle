@@ -1,17 +1,14 @@
 plugins {
-  id "com.hkmc.cloudnative" version "1.2.0"
+  id "com.hkmc.cloudnative" version "1.5.8"
 }
 
 group = "com.hkmc.ccs"
-version = "1.0.6"
+version = "1.0.7"
 
 cloudnative {
 
-  core {
-    processcore = true
-  }
-
   microservice {
+    core = true
     swagger = true
     undertow = false
     security = true
@@ -55,5 +52,6 @@ cloudnative {
 
 dependencies {
   implementation 'io.micrometer.prometheus:prometheus-rsocket-spring:1.3.0'
+  testImplementation group: 'com.h2database', name: 'h2', version: '2.0.202'
 }
 

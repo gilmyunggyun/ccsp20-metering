@@ -1,6 +1,6 @@
 package com.hkmc.ccs.metering.controller;
 
-import com.hkmc.ccs.metering.controller.MeteringController;
+
 import com.hkmc.ccs.metering.models.vo.MeteringCheckRequest;
 import com.hkmc.ccs.metering.service.MeteringService;
 import org.junit.jupiter.api.Test;
@@ -26,7 +26,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@ActiveProfiles(profiles = {"local"})
+@ActiveProfiles("local")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(value = {MeteringController.class})

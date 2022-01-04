@@ -28,8 +28,6 @@ import com.hkmc.ccs.metering.repository.BlockedTempRepository;
 @Service
 public class MeteringService {
 
-  private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(MeteringService.class);
-
   private final BlockedRepository blockedRepository;
 
   private final BlockedTempRepository blockedTempRepository;
@@ -77,7 +75,7 @@ public class MeteringService {
     try {
       Optional<Blocked> blockedCustomer = isCustomerBlocked(handPhoneId, carId);
       if (blockedCustomer.isPresent()) {
-        LOGGER.warn("[XTID : {}] 미터링 차단된 유저 : CCID[{}], carID[{}]", xTid, handPhoneId, carId);
+        log.warn("[XTID : {}] 미터링 차단된 유저 : CCID[{}], carID[{}]", xTid, handPhoneId, carId);
         return ALLOW_BLOCK;
       }
 
@@ -121,7 +119,7 @@ public class MeteringService {
 
       return ALLOW_ACCESS;
     } catch (Exception e) {
-      LOGGER.warn(
+      log.error(
         "[XITD : {}] CCSP 미터링 Service [checkAccess] EXCEPTION 발생, serviceNo[{}], CCID[{}], CARID[{}] , Exception : {}",
         xTid, request.getServiceNo(), request.getHpId(), request.getCarId(), e.getMessage());
       throw e;
@@ -143,13 +141,13 @@ public class MeteringService {
     );
     long attemptsToday = apiAccessRepository.dailyAccessCount(handPhoneId, carId, requestUrl);
     if (attemptsInLast10Minutes >= maxTenMinuteAccessCount) {
-      LOGGER.info("[XTID : {}] CCSP API미터링 차단(1004:10분, 1005:당일), 서비스코드[{}], CCID[{}], CARID[{}], 차단코드[{}]", xTid,
+      log.info("[XTID : {}] CCSP API미터링 차단(1004:10분, 1005:당일), 서비스코드[{}], CCID[{}], CARID[{}], 차단코드[{}]", xTid,
                   serviceNo, handPhoneId, carId, AccessCheckResult.BLOCKED_RSON_10MIN.getResCode());
       return AccessCheckResult.BLOCKED_RSON_10MIN;
     }
 
     if (attemptsToday >= maxDayAccessCount) {
-      LOGGER.info("[XTID : {}] CCSP API미터링 차단(1004:10분, 1005:당일), 서비스코드[{}], CCID[{}], CARID[{}], 차단코드[{}]", xTid,
+      log.info("[XTID : {}] CCSP API미터링 차단(1004:10분, 1005:당일), 서비스코드[{}], CCID[{}], CARID[{}], 차단코드[{}]", xTid,
                   serviceNo, handPhoneId, carId, AccessCheckResult.BLOCKED_RSON_DAY.getResCode());
       return AccessCheckResult.BLOCKED_RSON_DAY;
     }

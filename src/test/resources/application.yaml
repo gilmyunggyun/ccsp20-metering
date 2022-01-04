@@ -1,12 +1,17 @@
 spring:
   application:
     name: ccsp20-metering
-  profiles: local
+  config:
+    activate:
+      on-profile: local
+  cloud:
+    config:
+      enabled: false
   jpa:
     show-sql: true
     generate-ddl: true
   datasource:
-    url: jdbc:h2:mem:testdb
+    url: jdbc:h2:mem:testdb;MODE=PostgreSQL
     driverClassName: org.h2.Driver
     username: sa
     database-platform: org.hibernate.dialect.H2Dialect
@@ -47,10 +52,13 @@ RETURN_CODE_TYPE:
   SUCCESS: S
   BLOCKED: B
 
-
-
 management:
   endpoints:
     web:
       exposure:
         include: "*"
+core:
+  filter:
+    exclude:
+      - /actuator/**
+      - /swagger/**

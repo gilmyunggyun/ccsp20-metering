@@ -27,8 +27,6 @@ import com.hkmc.ccs.metering.repository.UnblockedRepository;
 @Service
 public class MeteringCCService {
 
-  private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(MeteringCCService.class);
-
   private final UnblockedRepository unblockedRepository;
 
   private final BlockedRepository blockedRepository;
@@ -53,7 +51,7 @@ public class MeteringCCService {
       List<Blocked> list = findAllByCarId(carId);
 
       if (ObjectUtils.isEmpty(list)) {
-        LOGGER.warn("미터링 CC getBloickList 데이터 없음 carID[{}]", request.getCarId());
+        log.warn("미터링 CC getBloickList 데이터 없음 carID[{}]", request.getCarId());
         return null;
       }
 
@@ -83,7 +81,7 @@ public class MeteringCCService {
 
       return blockList;
     } catch (Exception e) {
-      LOGGER.warn("미터링 CC getBloickList Exception 발생 carID[{}]", request.getCarId());
+      log.error("미터링 CC getBloickList Exception 발생 carID[{}]", request.getCarId());
       throw e;
     }
   }
@@ -97,7 +95,7 @@ public class MeteringCCService {
 
       // 삭제할 데이터 없음
       if (ObjectUtils.isEmpty(list)) {
-        LOGGER.warn("미터링 CC getBloickList 데이터 없음 carID[{}]", request.getCarId());
+        log.warn("미터링 CC getBloickList 데이터 없음 carID[{}]", request.getCarId());
         return 0;
       }
 
@@ -113,11 +111,11 @@ public class MeteringCCService {
       // 삭제진행
       int result = blockedRepository.deleteByCarId(carId);
 
-      LOGGER.warn("미터링 CC unblock 삭제 {} row, carID[{}]", result, request.getCarId());
+      log.debug("미터링 CC unblock 삭제 {} row, carID[{}]", result, request.getCarId());
 
       return result;
     } catch (Exception e) {
-      LOGGER.warn("미터링 CC unblock Exception 발생 carID[{}]", request.getCarId());
+      log.error("미터링 CC unblock Exception 발생 carID[{}]", request.getCarId());
       throw e;
     }
   }
