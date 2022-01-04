@@ -47,6 +47,10 @@ cloudnative {
     jib = true
     to = "registry.hcloud.hmc.co.kr/ccs/${project.name}"
     tag = ["${project.version}", 'latest']
+
+    cluster = "ccs-stg"
+    namespace = "metering"
+    branch = "hcloud"
   }
 }
 
