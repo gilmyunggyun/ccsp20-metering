@@ -6,16 +6,10 @@ variables:
 before_script:
   - export GRADLE_USER_HOME=`pwd`/.gradle
 
-test:
+qualitygateway:
   stage: test
   script: |-
     gradle check -x test
-  cache:
-    key: "$CI_COMMIT_REF_NAME"
-    policy: push
-build:
-  stage: test
-  script: |-
     gradle sonarqube -x test
   cache:
     key: "$CI_COMMIT_REF_NAME"
