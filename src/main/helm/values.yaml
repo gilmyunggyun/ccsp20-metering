@@ -2,7 +2,7 @@ replicaCount: 1
 image:
   repository: registry.hcloud.hmc.co.kr/ccs/ccsp20-metering
   pullPolicy: IfNotPresent
-  tag: "1.0.7"
+  tag: "1.0.8"
 
 service:
   type: ClusterIP

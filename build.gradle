@@ -3,7 +3,7 @@ plugins {
 }
 
 group = "com.hkmc.ccs"
-version = "1.0.7"
+version = "1.0.8"
 
 cloudnative {
 
@@ -36,6 +36,7 @@ cloudnative {
   thirdparty {
     commonsLang = true
     commonsCollections = true
+    prometheusRSocket = true
     jasypt = true
   }
 
@@ -55,7 +56,6 @@ cloudnative {
 }
 
 dependencies {
-  implementation 'io.micrometer.prometheus:prometheus-rsocket-spring:1.3.0'
   testImplementation group: 'com.h2database', name: 'h2', version: '2.0.202'
 }
 
