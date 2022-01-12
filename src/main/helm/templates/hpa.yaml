@@ -4,7 +4,13 @@ kind: HorizontalPodAutoscaler
 metadata:
   name: {{ include "metering.fullname" . }}
   labels:
-    {{- include "metering.labels" . | nindent 4 }}
+    app: {{ template "metering.name" . }}
+    app.kubernetes.io/name: {{ template "metering.name" . }}
+    helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/version: {{ .Chart.AppVersion }}
+    app.kubernetes.io/component: "backend"
 spec:
   scaleTargetRef:
     apiVersion: argoproj.io/v1alpha1

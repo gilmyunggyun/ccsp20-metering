@@ -4,9 +4,13 @@ metadata:
   name: {{ template "metering.fullname" . }}
   labels:
     app: {{ template "metering.name" . }}
-    chart: {{ template "metering.chart" . }}
     release: {{ .Release.Name }}
-    heritage: {{ .Release.Service }}
+    app.kubernetes.io/name: {{ template "metering.name" . }}
+    helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/version: {{ .Chart.AppVersion }}
+    app.kubernetes.io/component: "backend"
 spec:
   replicas: {{ .Values.replicaCount }}
   revisionHistoryLimit: 3
@@ -17,13 +21,14 @@ spec:
   template:
     metadata:
       labels:
+        app: {{ template "metering.name" . }}
+        release: {{ .Release.Name }}
         app.kubernetes.io/name: {{ template "metering.name" . }}
         helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
         app.kubernetes.io/managed-by: {{ .Release.Service }}
         app.kubernetes.io/instance: {{ .Release.Name }}
         app.kubernetes.io/version: {{ .Chart.AppVersion }}
-        app: {{ template "metering.name" . }}
-        release: {{ .Release.Name }}
+        app.kubernetes.io/component: "backend"
     spec:
       containers:
         - name: {{ .Chart.Name }}

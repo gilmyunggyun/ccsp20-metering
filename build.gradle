@@ -1,5 +1,5 @@
 plugins {
-  id "com.hkmc.cloudnative" version "1.5.8"
+  id "com.hkmc.cloudnative" version "1.6.5"
 }
 
 group = "com.hkmc.ccs"
@@ -50,8 +50,12 @@ cloudnative {
     tag = ["${project.version}", 'latest']
 
     cluster = "ccs-stg"
-    namespace = "metering"
     branch = "hcloud"
+    namespace = "metering"
+
+    serviceType= "NodePort"
+    servicePort= 8080
+    nodePort= 30014
   }
 }
 
