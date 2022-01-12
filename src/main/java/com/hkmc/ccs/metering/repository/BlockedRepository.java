@@ -22,4 +22,13 @@ public interface BlockedRepository extends JpaRepository<Blocked, BlockedId> {
             "where car_Id = :carId"
     )
     int deleteByCarId(@Param("carId") String carId);
+
+    @Transactional
+    @Modifying
+    @Query(nativeQuery = true, value = "delete from api_access \n" +
+            "where hand_phone_Id = :handPhoneId \n" +
+            "and car_Id = :carId\n" +
+            "and access_time between to_timestamp(CURRENT_DATE||' 00:00:00','yyyy-mm-dd hh24:mi:ss') and to_timestamp(CURRENT_DATE||' 23:59:59','yyyy-mm-dd hh24:mi:ss')"
+    )
+    int deleteApiAccessHist(@Param("handPhoneId") String handPhoneId, @Param("carId") String carId);
 }

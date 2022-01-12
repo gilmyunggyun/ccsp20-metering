@@ -104,6 +104,9 @@ public class MeteringCCService {
                     , blocked.getBlockedRsonCd()
                     , blocked.getBlockedTime()
                     , requestId);
+
+                // 데이터 삭제할때, api 사용이력도 삭제
+                blockedRepository.deleteApiAccessHist(blocked.getHandPhoneId(),carId);
             }
 
             // 삭제진행

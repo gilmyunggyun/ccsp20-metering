@@ -13,7 +13,7 @@ import java.time.OffsetDateTime;
 
 @Data
 @Entity
-@IdClass(BlockedId.class)
+@IdClass(BlockedTempId.class)
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
