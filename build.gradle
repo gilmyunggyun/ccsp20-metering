@@ -55,7 +55,7 @@ cloudnative {
 
     serviceType= "NodePort"
     servicePort= 8080
-    nodePort= 30014
+    nodePort= 30017
 
     readinessInitialDelaySeconds=60
     readinessPeriodSeconds=60

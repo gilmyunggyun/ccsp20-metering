@@ -2,7 +2,7 @@ replicaCount: 2
 image:
   repository: registry.hcloud.hmc.co.kr/ccs/ccsp20-metering
   pullPolicy: IfNotPresent
-  tag: "1.0.8"
+  tag: "1.0.9"
 
 # Resource quota
 resources:
@@ -13,6 +13,14 @@ resources:
     cpu: 100m
     memory: 512Mi
 
+# Readiness 
+readinessInitialDelaySeconds: 60
+readinessPeriodSeconds: 60
+
+# Liveness
+livenessInitialDelaySeconds: 60
+livenessPeriodSeconds: 60
+
 # JVM Option
 jvm:
   enabled: false
@@ -22,7 +30,7 @@ jvm:
 service:
   type: NodePort
   port: 8080
-  nodePort: 30014
+  nodePort: 30017
 # Ingress 
 ingress:
   enabled: false

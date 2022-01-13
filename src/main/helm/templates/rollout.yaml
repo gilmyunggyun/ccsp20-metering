@@ -61,12 +61,14 @@ spec:
             httpGet:
               path: /actuator/health/liveness
               port: http
-            periodSeconds: 60
+            initialDelaySeconds: {{ .Values.livenessInitialDelaySeconds}}
+            periodSeconds: {{ .Values.livenessPeriodSeconds }}
           readinessProbe:
             httpGet:
               path: /actuator/health/readiness
               port: http
-            periodSeconds: 60
+            initialDelaySeconds: {{ .Values.readinessInitialDelaySeconds }}
+            periodSeconds: {{ .Values.readinessPeriodSeconds }}
   strategy:
     blueGreen:
       activeService: metering
