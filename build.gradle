@@ -42,7 +42,7 @@ cloudnative {
 
   cicd {
     helm = true
-    gitlabPath = "ccs/domain/ccsp20-metering"
+    gitlabPath = "ccs/domain/metering/ccsp20-metering"
     chartName = "metering"
 
     jib = true
