@@ -53,11 +53,5 @@ podTemplate(label: label,
         sh "gradle jib -x test"
       }
     }
-
-    stage("Packaging Helm"){
-      if(branch=='release') {
-        sh "helm cm-push"
-      }
-    }
   }
 }

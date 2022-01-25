@@ -63,12 +63,18 @@ spec:
               port: http
             initialDelaySeconds: {{ .Values.livenessInitialDelaySeconds}}
             periodSeconds: {{ .Values.livenessPeriodSeconds }}
+            failureThreshold: 3
+            successThreshold: 1
+            timeoutSeconds: 5
           readinessProbe:
             httpGet:
               path: /actuator/health/readiness
               port: http
             initialDelaySeconds: {{ .Values.readinessInitialDelaySeconds }}
             periodSeconds: {{ .Values.readinessPeriodSeconds }}
+            failureThreshold: 3
+            successThreshold: 1
+            timeoutSeconds: 5
   strategy:
     blueGreen:
       activeService: metering

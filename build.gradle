@@ -1,23 +1,13 @@
 plugins {
-  id "com.hkmc.cloudnative" version "1.6.6"
+  id "com.hkmc.cloudnative" version "1.8.0"
 }
 
 group = "com.hkmc.ccs"
-version = "1.0.9"
+version = "1.0.10"
 
 cloudnative {
-
   microservice {
-    core = true
-    swagger = true
-    undertow = false
-    security = true
-    metric = true
-    trace = true
-    config = true
     openfeign = true
-    kafka = true
-    cloudbus = true
   }
 
   persistent {
@@ -26,11 +16,7 @@ cloudnative {
   }
 
   quality {
-    checkerframework = true
-    checkstyleIgnoreFailure = true
-    pmdIgnoreFailures = true
-    sonarqubeIgnoreFailure = true
-    skipCheckerFramework = true
+    skipAll = true
   }
 
   thirdparty {
@@ -41,27 +27,25 @@ cloudnative {
   }
 
   cicd {
-    helm = true
-    gitlabPath = "ccs/domain/metering/ccsp20-metering"
-    chartName = "metering"
+    container {
+      to = "registry.hcloud.hmc.co.kr/ccs/${project.name}"
+      tag = ["${project.version}", 'latest']
+    }
 
-    jib = true
-    to = "registry.hcloud.hmc.co.kr/ccs/${project.name}"
-    tag = ["${project.version}", 'latest']
+    helm {
+      name = "metering"
 
-    cluster = "ccs-stg"
-    branch = "hcloud"
-    namespace = "metering"
+      service {
+        serviceType = "NodePort"
+        servicePort = 8080
+        nodePort = 30017
+      }
+    }
 
-    serviceType= "NodePort"
-    servicePort= 8080
-    nodePort= 30017
-
-    readinessInitialDelaySeconds=60
-    readinessPeriodSeconds=60
-    livenessInitialDelaySeconds=60
-    livenessPeriodSeconds=60
-
+    deploy {
+      namespace = "metering"
+      target = ["hcloud:ap-northeast-1:stg", "hcloud:ap-northeast-2:stg"]
+    }
   }
 }
 
