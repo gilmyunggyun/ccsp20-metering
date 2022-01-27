@@ -49,7 +49,7 @@ public class MeteringCCService {
             List<Blocked> list = findAllByCarId(carId);
 
             if(ObjectUtils.isEmpty(list)){
-                LOGGER.warn("미터링 CC getBloickList 데이터 없음 carID[{}]", request.getCarId());
+                LOGGER.warn("미터링 CC getBlockList 데이터 없음 carID[{}]", request.getCarId());
                 return null;
             }
 
@@ -79,7 +79,7 @@ public class MeteringCCService {
             return blockList;
 
         } catch (Exception e) {
-            LOGGER.warn("미터링 CC getBloickList Exception 발생 carID[{}]", request.getCarId());
+            LOGGER.warn("미터링 CC getBlockList Exception 발생 carID[{}]", request.getCarId());
             throw e;
         }
     }
@@ -93,7 +93,7 @@ public class MeteringCCService {
 
             // 삭제할 데이터 없음
             if(ObjectUtils.isEmpty(list)){
-                LOGGER.warn("미터링 CC getBloickList 데이터 없음 carID[{}]", request.getCarId());
+                LOGGER.warn("미터링 CC unblock 데이터 없음 carID[{}]", request.getCarId());
                 return 0;
             }
 
