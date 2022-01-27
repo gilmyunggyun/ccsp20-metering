@@ -76,6 +76,8 @@ public class MeteringCCService {
                 blockList.add(meteringCCBlockList);
             }
 
+            LOGGER.info("미터링 CC getBlockList 성공 carID[{}]", request.getCarId());
+
             return blockList;
 
         } catch (Exception e) {
@@ -112,7 +114,7 @@ public class MeteringCCService {
             // 삭제진행
             int result = blockedRepository.deleteByCarId(carId);
             
-            LOGGER.warn("미터링 CC unblock 삭제 {} row, carID[{}]", result, request.getCarId());
+            LOGGER.info("미터링 CC unblock 삭제 {} row, carID[{}]", result, request.getCarId());
 
             return result;
 
