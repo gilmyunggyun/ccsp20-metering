@@ -2,18 +2,14 @@ package com.hkmc.ccs.metering;
 
 import java.time.Clock;
 
-import com.hkmc.filter.EnableTransactionLogger;
+import com.hkmc.annotation.ConnectedCarApplication;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableAsync;
 
-import ccs.core.data.encrypt.EnablePropertyEncrypt;
 
 @EnableAsync
-@SpringBootApplication
-@EnableTransactionLogger
-@EnablePropertyEncrypt
+@ConnectedCarApplication
 public class MeteringApplication {
 
   public static void main(String[] args) {

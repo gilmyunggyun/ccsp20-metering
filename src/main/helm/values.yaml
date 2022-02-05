@@ -2,7 +2,7 @@ replicaCount: 1
 image:
   repository: registry.hcloud.hmc.co.kr/ccs/ccsp20-metering
   pullPolicy: IfNotPresent
-  tag: "1.0.10"
+  tag: "1.0.11"
 
 # Resource quota
 resources:
@@ -23,8 +23,8 @@ livenessPeriodSeconds: 30
 
 # JVM Option
 jvm:
-  enabled: false
-  option: ""
+  enabled: true
+  option: "-XX:+UnlockExperimentalVMOptions -XX:+UseZGC"
 
 # Service 
 service:
@@ -35,7 +35,7 @@ service:
 # Ingress 
 ingress:
   enabled: false
-  host:
+  host: 
 
 # AutoScaling
 autoscaling:

@@ -1,9 +1,9 @@
 plugins {
-  id "com.hkmc.cloudnative" version "1.8.0"
+  id "com.hkmc.cloudnative" version "1.8.13"
 }
 
 group = "com.hkmc.ccs"
-version = "1.0.10"
+version = "1.0.11"
 
 cloudnative {
   microservice {
@@ -30,6 +30,8 @@ cloudnative {
     container {
       to = "registry.hcloud.hmc.co.kr/ccs/${project.name}"
       tag = ["${project.version}", 'latest']
+
+      jvmOption = "-XX:+UnlockExperimentalVMOptions -XX:+UseZGC"
     }
 
     helm {
