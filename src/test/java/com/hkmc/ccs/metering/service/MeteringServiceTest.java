@@ -8,15 +8,10 @@ import com.hkmc.ccs.metering.repository.AllowedApiRepository;
 import com.hkmc.ccs.metering.repository.ApiAccessRepository;
 import com.hkmc.ccs.metering.repository.BlockedRepository;
 import com.hkmc.ccs.metering.repository.BlockedTempRepository;
-import com.hkmc.ccs.metering.service.MeteringService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.kafka.test.context.EmbeddedKafka;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.Clock;
