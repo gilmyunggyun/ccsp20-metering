@@ -29,6 +29,8 @@ spec:
         app.kubernetes.io/instance: {{ .Release.Name }}
         app.kubernetes.io/version: {{ .Chart.AppVersion }}
         app.kubernetes.io/component: "backend"
+      annotations:
+        telegraf.influxdata.com/ports: "{{ .Values.service.port }}"
     spec:
       containers:
         - name: {{ .Chart.Name }}
@@ -41,6 +43,8 @@ spec:
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           env:
+            - name: TZ
+              value: {{ .Values.timezone }}
             - name: SPRING_PROFILES_ACTIVE
               valueFrom:
                 configMapKeyRef:

@@ -2,15 +2,15 @@ replicaCount: 1
 image:
   repository: registry.hcloud.hmc.co.kr/ccs/ccsp20-metering
   pullPolicy: IfNotPresent
-  tag: "1.0.11"
+  tag: "1.0.12"
 
 # Resource quota
 resources:
   limits:
-    cpu: 800m
+    cpu: 1000m
     memory: 1024Mi
   requests:
-    cpu: 300m
+    cpu: 500m
     memory: 512Mi
 
 # Readiness 
@@ -43,6 +43,9 @@ autoscaling:
   minReplicas: 1
   maxReplicas: 2
   targetCPUUtilizationPercentage: 85
+
+# TimeZone
+timezone: Asia/Seoul
 
 # Delievery Policy
 autoPromotionEnabled: true

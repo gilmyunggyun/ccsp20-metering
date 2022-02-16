@@ -1,9 +1,9 @@
 plugins {
-  id "com.hkmc.cloudnative" version "1.8.13"
+  id "com.hkmc.h2" version "1.0.0"
 }
 
 group = "com.hkmc.ccs"
-version = "1.0.11"
+version = "1.0.12"
 
 cloudnative {
   microservice {
