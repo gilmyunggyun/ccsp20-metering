@@ -10,8 +10,15 @@ metadata:
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/version: {{ .Chart.AppVersion }}
     app.kubernetes.io/component: "backend"
+  annotations:
+    {{- if .Values.service.ipamRange }}
+    service.citrix.com/ipam-range: "{{ .Values.service.ipamRange }}"
+    {{- end}}
 spec:
   type: {{ .Values.service.type }}
+  {{- if .Values.service.loadbalancerIP }}
+  loadBalancerIP: {{ .Values.service.loadbalancerIP }}
+  {{- end }}
   ports:
     - port: {{ .Values.service.port }}
       {{- if contains "NodePort" .Values.service.type }}

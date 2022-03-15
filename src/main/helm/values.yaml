@@ -1,8 +1,7 @@
-replicaCount: 1
 image:
   repository: registry.hcloud.hmc.co.kr/ccs/ccsp20-metering
   pullPolicy: IfNotPresent
-  tag: "1.0.12"
+  tag: "1.0.13"
 
 # Resource quota
 resources:
@@ -31,6 +30,8 @@ service:
   type: NodePort
   port: 8080
   nodePort: 30017
+  ipamRange: 
+  loadbalancerIP: 
 
 # Ingress 
 ingress:
@@ -49,3 +50,7 @@ timezone: Asia/Seoul
 
 # Delievery Policy
 autoPromotionEnabled: true
+
+# Injetct Config server
+configServer:
+  enabled: true

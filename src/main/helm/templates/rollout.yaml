@@ -12,7 +12,6 @@ metadata:
     app.kubernetes.io/version: {{ .Chart.AppVersion }}
     app.kubernetes.io/component: "backend"
 spec:
-  replicas: {{ .Values.replicaCount }}
   revisionHistoryLimit: 3
   selector:
     matchLabels:
@@ -50,6 +49,7 @@ spec:
                 configMapKeyRef:
                   name: environment
                   key: environment
+            {{- if .Values.configServer.enabled }}
             - name: spring.config.import
               valueFrom:
                 configMapKeyRef:
@@ -57,6 +57,7 @@ spec:
                   key: configserver
             - name: spring.cloud.config.name
               value: ccsp20-common,ccsp20-metering
+            {{- end }}
             {{- if .Values.jvm.enabled }}
             - name: JAVA_TOOL_OPTIONS
               value: {{ .Values.jvm.option }}
@@ -79,6 +80,16 @@ spec:
             failureThreshold: 3
             successThreshold: 1
             timeoutSeconds: 5
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: app
+                    operator: In
+                    values:
+                      - {{ template "metering.name" . }}
+              topologyKey: "kubernetes.io/hostname"
   strategy:
     blueGreen:
       activeService: metering
