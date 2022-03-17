@@ -14,11 +14,11 @@ metadata:
     {{- if .Values.service.ipamRange }}
     service.citrix.com/ipam-range: "{{ .Values.service.ipamRange }}"
     {{- end}}
+    {{- if .Values.service.loadbalancerIP }}
+    service.citrix.com/frontend-ip: '{{ .Values.service.loadbalancerIP }}'
+    {{- end }}
 spec:
   type: {{ .Values.service.type }}
-  {{- if .Values.service.loadbalancerIP }}
-  loadBalancerIP: {{ .Values.service.loadbalancerIP }}
-  {{- end }}
   ports:
     - port: {{ .Values.service.port }}
       {{- if contains "NodePort" .Values.service.type }}

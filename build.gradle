@@ -1,9 +1,9 @@
 plugins {
-  id "com.hkmc.h2" version "1.0.16"
+  id "com.hkmc.h2" version "1.0.20"
 }
 
 group = "com.hkmc.ccs"
-version = "1.0.14"
+version = "1.0.15"
 
 cloudnative {
   microservice {
@@ -52,6 +52,6 @@ cloudnative {
 }
 
 dependencies {
-  testImplementation group: 'com.h2database', name: 'h2', version: '2.0.202'
+  testImplementation group: 'com.h2database', name: 'h2', version: '1.4.200'
 }
 
