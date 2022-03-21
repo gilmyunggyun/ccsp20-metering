@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.LoggerFactory;
 
 import com.hkmc.ccs.metering.models.entity.Blocked;
 import com.hkmc.ccs.metering.models.entity.Unblocked;
@@ -51,7 +50,7 @@ public class MeteringCCService {
       List<Blocked> list = findAllByCarId(carId);
 
       if (ObjectUtils.isEmpty(list)) {
-        log.warn("미터링 CC getBloickList 데이터 없음 carID[{}]", request.getCarId());
+        log.warn("미터링 CC getBlockList 데이터 없음 carID[{}]", request.getCarId());
         return null;
       }
 
@@ -79,9 +78,11 @@ public class MeteringCCService {
         blockList.add(meteringCCBlockList);
       }
 
+      log.info("미터링 CC getBlockList 성공 carID[{}]", request.getCarId());
+
       return blockList;
     } catch (Exception e) {
-      log.error("미터링 CC getBloickList Exception 발생 carID[{}]", request.getCarId());
+      log.error("미터링 CC getBlockList Exception 발생 carID[{}]", request.getCarId());
       throw e;
     }
   }
@@ -95,7 +96,7 @@ public class MeteringCCService {
 
       // 삭제할 데이터 없음
       if (ObjectUtils.isEmpty(list)) {
-        log.warn("미터링 CC getBloickList 데이터 없음 carID[{}]", request.getCarId());
+        log.warn("미터링 CC getBlockList 데이터 없음 carID[{}]", request.getCarId());
         return 0;
       }
 
@@ -114,7 +115,7 @@ public class MeteringCCService {
       // 삭제진행
       int result = blockedRepository.deleteByCarId(carId);
 
-      log.debug("미터링 CC unblock 삭제 {} row, carID[{}]", result, request.getCarId());
+      log.info("미터링 CC unblock 삭제 {} row, carID[{}]", result, request.getCarId());
 
       return result;
     } catch (Exception e) {
