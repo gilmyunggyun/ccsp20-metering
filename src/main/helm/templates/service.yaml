@@ -11,6 +11,11 @@ metadata:
     app.kubernetes.io/version: {{ .Chart.AppVersion }}
     app.kubernetes.io/component: "backend"
   annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/path: "/actuator/prometheus"
+    prometheus.io/port: "{{ .Values.service.port }}"
+    telegraf.influxdata.com/ports: "{{ .Values.service.port }}"
+    filter.by.port.name: 'true'
     {{- if .Values.service.ipamRange }}
     service.citrix.com/ipam-range: "{{ .Values.service.ipamRange }}"
     {{- end}}
