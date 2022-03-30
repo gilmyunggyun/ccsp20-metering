@@ -42,6 +42,8 @@ spec:
           env:
             - name: TZ
               value: {{ .Values.timezone }}
+            - name: file.encoding
+              value: UTF-8
             - name: SPRING_PROFILES_ACTIVE
               valueFrom:
                 configMapKeyRef:

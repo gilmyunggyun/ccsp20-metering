@@ -90,11 +90,11 @@ public class MeteringController {
       } else if (hasAccess == DATA_NOT_VALID) {
         LOGGER.warn("[XTID : {}] 미터링 ValidationCheck carID null 오류 서비스ID[{}] carID[{}] CCID[{}] requestURL[{}]", xTid,
                     request.getServiceNo(), request.getCarId(), request.getHpId(), request.getReqUrl());
-        return status(BAD_REQUEST).body(MeteringCheckResponse.builder()
-                                          .serviceNo(request.getServiceNo())
-                                          .retCode(result_fail)
-                                          .resCode(MSG_FORMAT_INVALID)
-                                          .build());
+//        return status(BAD_REQUEST).body(MeteringCheckResponse.builder()
+//                                          .serviceNo(request.getServiceNo())
+//                                          .retCode(result_fail)
+//                                          .resCode(MSG_FORMAT_INVALID)
+//                                          .build());
       }
 
       return ok(MeteringCheckResponse.builder()
