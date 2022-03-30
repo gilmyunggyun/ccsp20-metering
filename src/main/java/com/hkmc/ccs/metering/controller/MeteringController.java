@@ -80,22 +80,22 @@ public class MeteringController {
       int hasAccess = meteringService.checkAccess(request, xTid);
 
       // 비즈니스단에서 url에 따른 carId 사용가능여부 판단을 위해 boolean -> int/if 로 변경 (taeseong, 21.08.09)
-      if (hasAccess == ALLOW_BLOCK) {
-        return status(TOO_MANY_REQUESTS).body(
-          MeteringCheckResponse.builder()
-            .serviceNo(request.getServiceNo())
-            .retCode(result_fail)
-            .resCode(BLOCK_BY_API)
-            .build());
-      } else if (hasAccess == DATA_NOT_VALID) {
-        LOGGER.warn("[XTID : {}] 미터링 ValidationCheck carID null 오류 서비스ID[{}] carID[{}] CCID[{}] requestURL[{}]", xTid,
-                    request.getServiceNo(), request.getCarId(), request.getHpId(), request.getReqUrl());
+//      if (hasAccess == ALLOW_BLOCK) {
+//        return status(TOO_MANY_REQUESTS).body(
+//          MeteringCheckResponse.builder()
+//            .serviceNo(request.getServiceNo())
+//            .retCode(result_fail)
+//            .resCode(BLOCK_BY_API)
+//            .build());
+//      } else if (hasAccess == DATA_NOT_VALID) {
+//        LOGGER.warn("[XTID : {}] 미터링 ValidationCheck carID null 오류 서비스ID[{}] carID[{}] CCID[{}] requestURL[{}]", xTid,
+//                    request.getServiceNo(), request.getCarId(), request.getHpId(), request.getReqUrl());
 //        return status(BAD_REQUEST).body(MeteringCheckResponse.builder()
 //                                          .serviceNo(request.getServiceNo())
 //                                          .retCode(result_fail)
 //                                          .resCode(MSG_FORMAT_INVALID)
 //                                          .build());
-      }
+//      }
 
       return ok(MeteringCheckResponse.builder()
                   .serviceNo(request.getServiceNo())
