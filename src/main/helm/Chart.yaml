@@ -6,4 +6,4 @@ version: "1.0.20"
 appVersion: "1.0.20"
 icon: https://code.hcloud.hmc.co.kr/uploads/-/system/group/avatar/145/icon.png?width=64
 sources:
-  - https://code.hcloud.hmc.co.kr/ccs/
+  - "https://code.hcloud.hmc.co.kr/ccs/domain/metering/ccsp20-metering.git"

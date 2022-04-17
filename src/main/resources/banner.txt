@@ -16,9 +16,9 @@
             /_____/  \___/ _____/  \____/  _  .___/ /____/
                                            /_/
 
-                            �뻽�뻽   �뻽�뻽 �뻽�뻽�뻽�뻽�뻽�뻽
-                            �뻽�뻽   �뻽�뻽      �뻽�뻽
-                            �뻽�뻽�뻽�뻽�뻽�뻽�뻽  �뻽�뻽�뻽�뻽�뻽
-                            �뻽�뻽   �뻽�뻽 �뻽�뻽
-                            �뻽�뻽   �뻽�뻽 �뻽�뻽�뻽�뻽�뻽�뻽�뻽   ${AnsiColor.BRIGHT_GREEN}:: Spring Boot ::${AnsiColor.BRIGHT_YELLOW}${spring-boot.formatted-version}${AnsiColor.DEFAULT}
+                            ██   ██ ██████
+                            ██   ██      ██
+                            ███████  █████
+                            ██   ██ ██
+                            ██   ██ ███████   ${AnsiColor.BRIGHT_GREEN}:: Spring Boot ::${AnsiColor.BRIGHT_YELLOW}${spring-boot.formatted-version}${AnsiColor.DEFAULT}
 

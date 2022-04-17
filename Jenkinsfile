@@ -2,7 +2,7 @@ def label = "worker-${env.JOB_NAME}-${env.BUILD_NUMBER}"
 
 podTemplate(label: label,
   containers: [
-    containerTemplate(name: 'gradle', image: 'gradle:7.3.1-jdk17-alpine', command: 'cat', ttyEnabled: true)
+    containerTemplate(name: 'gradle', image: 'gradle:7.4.1-jdk17-alpine', command: 'cat', ttyEnabled: true)
   ],
   volumes: [
      persistentVolumeClaim(claimName: 'gradle-shared', mountPath: '/home/gradle/.gradle')
@@ -30,27 +30,21 @@ podTemplate(label: label,
 
     stage("Checking Quality"){
       container('gradle') {
-        if(branch == 'release' || branch == 'develop' || branch == 'rc') {
+        if(branch == 'release' || branch == 'develop') {
           sh "gradle check"
         }
-      }
-    }
-
-    stage("Build Source"){
-      container('gradle') {
-        sh "gradle build -x test"
-      }
-    }
-
-    stage("Upload Artifact"){
-      container('gradle') {
-        sh "gradle publish -x test"
       }
     }
 
     stage("Baking Docker"){
       container('gradle') {
         sh "gradle jib -x test"
+      }
+    }
+
+    stage("Upload Artifact"){
+      container('gradle') {
+        sh "gradle publish -x test"
       }
     }
   }

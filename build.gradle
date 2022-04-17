@@ -1,5 +1,5 @@
 plugins {
-  id "com.hkmc.h2" version "1.0.28"
+  id "com.hkmc.h2" version "1.0.35"
 }
 
 group = "com.hkmc.ccs"
@@ -28,25 +28,21 @@ cloudnative {
 
   cicd {
     container {
+      enabled = true
       to = "registry.hcloud.hmc.co.kr/ccs/${project.name}"
-      tag = ["${project.version}", 'latest']
-
       jvmOption = "-XX:+UnlockExperimentalVMOptions -XX:+UseZGC"
     }
 
     helm {
       name = "metering"
-
-      service {
-        serviceType = "NodePort"
-        servicePort = 8080
-        nodePort = 30017
-      }
+      namespace = "metering"
+      serviceType = "NodePort"
+      servicePort = 8080
+      nodePort = 30017
     }
 
     deploy {
-      namespace = "metering"
-      target = ["hcloud:ap-northeast-1:stg", "hcloud:ap-northeast-2:stg", "hcloud:ap-northeast-2:prd"]
+      target = ["hcloud:ap-northeast-2:stg", "hcloud:ap-northeast-2:prd"]
     }
   }
 }
