@@ -1,0 +1,9 @@
+apiVersion: v2
+name: "metering"
+description: "ccsp20-metering"
+type: application
+version: "1.0.21"
+appVersion: "1.0.21"
+icon: https://code.hcloud.hmc.co.kr/uploads/-/system/group/avatar/145/icon.png?width=64
+sources:
+  - "https://code.hcloud.hmc.co.kr/ccs/domain/metering/ccsp20-metering.git"

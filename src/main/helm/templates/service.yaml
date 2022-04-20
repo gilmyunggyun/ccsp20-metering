@@ -1,0 +1,60 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: metering
+  labels:
+    app: {{ template "metering.name" . }}
+    app.kubernetes.io/name: {{ template "metering.name" . }}
+    helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/version: {{ .Chart.AppVersion }}
+    app.kubernetes.io/component: "backend"
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/path: "/actuator/prometheus"
+    prometheus.io/port: "{{ .Values.service.port }}"
+    telegraf.influxdata.com/ports: "{{ .Values.service.port }}"
+    filter.by.port.name: 'true'
+    {{- if .Values.service.ipamRange }}
+    service.citrix.com/ipam-range: "{{ .Values.service.ipamRange }}"
+    {{- end}}
+    {{- if .Values.service.loadbalancerIP }}
+    service.citrix.com/frontend-ip: '{{ .Values.service.loadbalancerIP }}'
+    {{- end }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      {{- if contains "NodePort" .Values.service.type }}
+      nodePort: {{ .Values.service.nodePort }}
+      {{- end }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app: {{ template "metering.name" . }}
+    release: {{ .Release.Name }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: metering-blue
+  labels:
+    app: {{ template "metering.name" . }}
+    app.kubernetes.io/name: {{ template "metering.name" . }}
+    helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/version: {{ .Chart.AppVersion }}
+    app.kubernetes.io/component: "backend"
+spec:
+  type: ClusterIP
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app: {{ template "metering.name" . }}
+    release: {{ .Release.Name }}

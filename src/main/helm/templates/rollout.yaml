@@ -1,0 +1,97 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: {{ template "metering.fullname" . }}
+  labels:
+    app: {{ template "metering.name" . }}
+    release: {{ .Release.Name }}
+    app.kubernetes.io/name: {{ template "metering.name" . }}
+    helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/version: {{ .Chart.AppVersion }}
+    app.kubernetes.io/component: "backend"
+spec:
+  revisionHistoryLimit: 3
+  selector:
+    matchLabels:
+      app: {{ template "metering.name" . }}
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "metering.name" . }}
+        release: {{ .Release.Name }}
+        app.kubernetes.io/name: {{ template "metering.name" . }}
+        helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+        app.kubernetes.io/managed-by: {{ .Release.Service }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        app.kubernetes.io/version: {{ .Chart.AppVersion }}
+        app.kubernetes.io/component: "backend"
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.port }}
+              protocol: TCP
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          env:
+            - name: TZ
+              value: {{ .Values.timezone }}
+            - name: file.encoding
+              value: UTF-8
+            - name: SPRING_PROFILES_ACTIVE
+              valueFrom:
+                configMapKeyRef:
+                  name: environment
+                  key: environment
+            {{- if .Values.configServer.enabled }}
+            - name: spring.config.import
+              valueFrom:
+                configMapKeyRef:
+                  name: environment
+                  key: configserver
+            - name: spring.cloud.config.name
+              value: ccsp20-common,ccsp20-metering
+            {{- end }}
+            {{- if .Values.jvm.enabled }}
+            - name: JAVA_TOOL_OPTIONS
+              value: {{ .Values.jvm.option }}
+            {{- end }}
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: http
+            initialDelaySeconds: {{ .Values.livenessInitialDelaySeconds }}
+            periodSeconds: {{ .Values.livenessPeriodSeconds }}
+            failureThreshold: 3
+            successThreshold: 1
+            timeoutSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: http
+            initialDelaySeconds: {{ .Values.readinessInitialDelaySeconds }}
+            periodSeconds: {{ .Values.readinessPeriodSeconds }}
+            failureThreshold: 3
+            successThreshold: 1
+            timeoutSeconds: 5
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: app
+                    operator: In
+                    values:
+                      - {{ template "metering.name" . }}
+              topologyKey: "kubernetes.io/hostname"
+  strategy:
+    blueGreen:
+      activeService: metering
+      previewService: metering-blue
+      autoPromotionEnabled: {{ .Values.autoPromotionEnabled }}

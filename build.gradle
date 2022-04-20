@@ -1,0 +1,54 @@
+plugins {
+  id "com.hkmc.h2" version "1.0.35"
+}
+
+group = "com.hkmc.ccs"
+version = "1.0.21"
+
+cloudnative {
+  microservice {
+    openfeign = true
+  }
+
+  persistent {
+    jpa = true
+    postgresql = true
+  }
+
+  quality {
+    skipAll = true
+  }
+
+  thirdparty {
+    commonsLang = true
+    commonsCollections = true
+    prometheusRSocket = true
+    jasypt = true
+  }
+
+  cicd {
+    container {
+      enabled = true
+      to = "registry.hcloud.hmc.co.kr/ccs/${project.name}"
+      jvmOption = "-XX:+UnlockExperimentalVMOptions -XX:+UseZGC"
+    }
+
+    helm {
+      name = "metering"
+      namespace = "metering"
+      serviceType = "NodePort"
+      servicePort = 8080
+      nodePort = 30017
+    }
+
+    deploy {
+      target = ["hcloud:ap-northeast-2:stg", "hcloud:ap-northeast-2:prd"]
+    }
+  }
+}
+
+dependencies {
+  testImplementation group: 'com.h2database', name: 'h2', version: '1.4.200'
+  implementation 'org.springframework.boot:spring-boot-starter-validation'
+}
+
