@@ -3,7 +3,7 @@ plugins {
 }
 
 group = "com.hkmc.ccs"
-version = "1.0.21"
+version = "1.0.22"
 
 cloudnative {
   microservice {
@@ -42,7 +42,7 @@ cloudnative {
     }
 
     deploy {
-      target = ["hcloud:ap-northeast-2:stg", "hcloud:ap-northeast-2:prd"]
+      target = ["rc:ap-northeast-2:stg", "release:ap-northeast-2:prd"]
     }
   }
 }
