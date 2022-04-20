@@ -49,7 +49,7 @@ class ApiAccessRepositoryTest {
         );
 
         // Assert
-        assertThat(count).isEqualTo(3L);
+        assertThat(count).isEqualTo(2L);
     }
 
     @Test

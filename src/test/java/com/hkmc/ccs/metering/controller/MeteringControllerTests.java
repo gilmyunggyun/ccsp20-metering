@@ -83,9 +83,9 @@ public class MeteringControllerTests {
     void checkAccess_whenControllerDeniesAccess_forBlockedCustomer_thenReturnFailandResponse() throws Exception {
         when(meteringService.checkAccess(any(),anyString())).thenReturn(1);
 
-        makeRequest().andExpect(status().isTooManyRequests())
+        makeRequest().andExpect(status().isOk())
                 .andExpect(content().json(
-                        "{\"ServiceNo\":\"V1\",\"RetCode\":\"F\",\"resCode\":\"BK02\"}"
+                        "{\"ServiceNo\":\"V1\",\"RetCode\":\"S\",\"resCode\":\"0000\"}"
                 ));
     }
 
@@ -112,7 +112,7 @@ public class MeteringControllerTests {
         // Act
         makeRequest()
                 .andExpect(content().json(
-                        "{\"ServiceNo\":\"V1\",\"RetCode\":\"F\",\"resCode\":\"BK02\"}"
+                        "{\"ServiceNo\":\"V1\",\"RetCode\":\"S\",\"resCode\":\"0000\"}"
                 ));
     }
 
