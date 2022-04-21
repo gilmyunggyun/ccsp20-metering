@@ -28,7 +28,7 @@ class ApiAccessRepositoryTest {
     private final Clock clock = Clock.fixed(Instant.now(), ZoneId.systemDefault());
     private final OffsetDateTime now = OffsetDateTime.now(clock);
     private final OffsetDateTime nineMinutesAgo = OffsetDateTime.now(clock).minusMinutes(9L);
-    private final OffsetDateTime tenMinutesAgo = OffsetDateTime.now(clock).minusMinutes(11L);
+    private final OffsetDateTime tenMinutesAgo = OffsetDateTime.now(clock).minusMinutes(10L);
     private final OffsetDateTime yesterday = OffsetDateTime.now(clock).minusDays(1L);
 
     @Test
