@@ -1,15 +1,16 @@
 image:
   repository: registry.hcloud.hmc.co.kr/ccs/ccsp20-metering
   pullPolicy: IfNotPresent
-  tag: "1.0.26"
+  tag: "1.0.27"
 
 # Resource quota
 resources:
   requests:
-    cpu: 1000m
-    memory: 1Gi
+    cpu: 500m
+    memory: 1.5G
   limits:
-    memory: 1Gi
+    cpu: 500m
+    memory: 1.5G
 
 # Readiness 
 readinessInitialDelaySeconds: 30
@@ -22,7 +23,7 @@ livenessPeriodSeconds: 30
 # JVM Option
 jvm:
   enabled: true
-  option: "-XX:+UnlockExperimentalVMOptions -XX:+UseZGC"
+  option: "-XX:+UnlockExperimentalVMOptions -XX:+UseZGC -Xms512m -Xmx1g"
 
 # Service 
 service:
@@ -35,8 +36,8 @@ service:
 # AutoScaling
 autoscaling:
   enabled: true
-  minReplicas: 3
-  maxReplicas: 10
+  minReplicas: 8
+  maxReplicas: 16
   targetCPUUtilizationPercentage: 90
 
 # TimeZone

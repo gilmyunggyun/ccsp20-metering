@@ -3,7 +3,7 @@ plugins {
 }
 
 group = "com.hkmc.ccs"
-version = "1.0.26"
+version = "1.0.27"
 
 cloudnative {
   microservice {
@@ -30,7 +30,7 @@ cloudnative {
     container {
       enabled = true
       to = "registry.hcloud.hmc.co.kr/ccs/${project.name}"
-      jvmOption = "-XX:+UnlockExperimentalVMOptions -XX:+UseZGC"
+      jvmOption = "-XX:+UnlockExperimentalVMOptions -XX:+UseZGC -Xms512m -Xmx1g"
     }
 
     helm {
@@ -39,6 +39,10 @@ cloudnative {
       serviceType = "NodePort"
       servicePort = 8080
       nodePort = 30017
+      cpu = "500m"
+      memory = "1.5G"
+      minReplicas = 8
+      maxReplicas = 16
     }
 
     deploy {
