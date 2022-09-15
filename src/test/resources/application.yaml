@@ -46,6 +46,7 @@ metering:
     , /delselectedpush.do
     , /popuppushhistory.do
     , /infolist_v2.do
+    , /devicemapping.do
   ALLOW_ACCESS: 0
   ALLOW_BLOCK: 1
   DATA_NOT_VALID: 2
