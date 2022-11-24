@@ -1,0 +1,54 @@
+image:
+  repository: registry.hcloud.hmc.co.kr/ccs/ccsp20-metering
+  pullPolicy: IfNotPresent
+  tag: "1.0.28"
+
+# Resource quota
+resources:
+  requests:
+    cpu: 1000m
+    memory: 2Gi
+  limits:
+    cpu: 2000m
+    memory: 4Gi
+
+
+# Readiness 
+readinessInitialDelaySeconds: 30
+readinessPeriodSeconds: 30
+
+# Liveness
+livenessInitialDelaySeconds: 60
+livenessPeriodSeconds: 30
+
+# JVM Option
+jvm:
+  enabled: false
+  option: ""
+
+# Service 
+service:
+  type: ClusterIP
+  port: 8080
+  nodePort: 0
+  ipamRange: 
+  loadbalancerIP: 
+
+# AutoScaling
+autoscaling:
+  enabled: true
+  minReplicas: 12
+  maxReplicas: 16
+  targetCPUUtilizationPercentage: 70
+
+# TimeZone
+timezone: Asia/Seoul
+
+# Delievery Policy
+autoPromotionEnabled: true
+
+# Injetct Config server
+configServer:
+  enabled: true
+
+rolloutName: metering-az2-prd

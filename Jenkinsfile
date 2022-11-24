@@ -2,10 +2,7 @@ def label = "worker-${env.JOB_NAME}-${env.BUILD_NUMBER}"
 
 podTemplate(label: label,
   containers: [
-    containerTemplate(name: 'gradle', image: 'gradle:7.4.1-jdk17-alpine', command: 'cat', ttyEnabled: true)
-  ],
-  volumes: [
-     persistentVolumeClaim(claimName: 'gradle-shared', mountPath: '/home/gradle/.gradle')
+    containerTemplate(name: 'gradle', image: 'gradle:7.5.1-jdk17-alpine', command: 'cat', ttyEnabled: true)
   ]) {
   node(label) {
     properties([
@@ -28,11 +25,9 @@ podTemplate(label: label,
     def branch = repo.GIT_BRANCH
     def short_commit = "${commit[0..10]}"
 
-    stage("Checking Quality"){
+    stage("Upload Artifact"){
       container('gradle') {
-        if(branch == 'release' || branch == 'develop') {
-          sh "gradle check"
-        }
+        sh "gradle publish -x test"
       }
     }
 
@@ -42,9 +37,9 @@ podTemplate(label: label,
       }
     }
 
-    stage("Upload Artifact"){
+    stage("Publish Helm Chart"){
       container('gradle') {
-        sh "gradle publish -x test"
+        sh "gradle publishChart"
       }
     }
   }

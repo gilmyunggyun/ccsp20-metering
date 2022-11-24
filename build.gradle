@@ -1,5 +1,5 @@
 plugins {
-  id "com.hkmc.h2" version "1.0.35"
+  id "com.hkmc.h2" version "1.0.103"
 }
 
 group = "com.hkmc.ccs"
@@ -8,15 +8,14 @@ version = "1.0.28"
 cloudnative {
   microservice {
     openfeign = true
+    validate = true
+
   }
 
   persistent {
     jpa = true
     postgresql = true
-  }
-
-  quality {
-    skipAll = true
+    h2db = true
   }
 
   thirdparty {
@@ -28,32 +27,26 @@ cloudnative {
 
   cicd {
     container {
-      enabled = true
       to = "registry.hcloud.hmc.co.kr/ccs/${project.name}"
-      jvmOption = "-XX:+UnlockExperimentalVMOptions -XX:+UseZGC -XX:InitialRAMPercentage=50 -XX:MinRAMPercentage=50 -XX:MaxRAMPercentage=75"
+//      jvmOption = "-XX:+UnlockExperimentalVMOptions -XX:+UseZGC -XX:InitialRAMPercentage=50 -XX:MinRAMPercentage=50 -XX:MaxRAMPercentage=75"
     }
 
     helm {
       name = "metering"
       namespace = "metering"
-      serviceType = "NodePort"
       servicePort = 8080
-      nodePort = 30017
-      cpu = "500m"
-      memory = "1.5G"
-      minReplicas = 12
-      maxReplicas = 16
     }
 
+
     deploy {
-      target = ["rc:ap-northeast-2:stg", "release:ap-northeast-2:prd"]
+      oldStyleNaming = true
+      strategy = "BLUE-GREEN"
+
+      targets = [
+        [region: "ap-northeast", target: "dev", min: 1, max: 1],
+        [region: "ap-northeast", target: "stg", min: 1, max: 1],
+        [region: "ap-northeast", target: "prd", min: 12, max: 16]
+      ]
     }
   }
 }
-
-dependencies {
-  testImplementation group: 'com.h2database', name: 'h2', version: '1.4.200'
-  implementation 'org.springframework.boot:spring-boot-starter-validation'
-  implementation 'io.micrometer:micrometer-registry-statsd:1.9.2'
-}
-

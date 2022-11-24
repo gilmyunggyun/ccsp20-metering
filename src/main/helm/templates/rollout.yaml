@@ -1,16 +1,16 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Rollout
 metadata:
-  name: {{ template "metering.fullname" . }}
+  name: {{ .Values.rolloutName }}
   labels:
-    app: {{ template "metering.name" . }}
+    app: {{ template "metering.fullname" . }}
     release: {{ .Release.Name }}
     app.kubernetes.io/name: {{ template "metering.name" . }}
     helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/version: {{ .Chart.AppVersion }}
-    app.kubernetes.io/component: "backend"
+    app.kubernetes.io/component: "api"
 spec:
   revisionHistoryLimit: 3
   selector:
@@ -27,7 +27,7 @@ spec:
         app.kubernetes.io/managed-by: {{ .Release.Service }}
         app.kubernetes.io/instance: {{ .Release.Name }}
         app.kubernetes.io/version: {{ .Chart.AppVersion }}
-        app.kubernetes.io/component: "backend"
+        app.kubernetes.io/component: "api"
     spec:
       containers:
         - name: {{ .Chart.Name }}
@@ -37,6 +37,10 @@ spec:
             - name: http
               containerPort: {{ .Values.service.port }}
               protocol: TCP
+          volumeMounts:
+            - name: dumps
+              mountPath: /dumps
+              subPathExpr: $(POD_NAMESPACE).$(POD_NAME)
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           env:
@@ -49,6 +53,16 @@ spec:
                 configMapKeyRef:
                   name: environment
                   key: environment
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.name
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.namespace
             {{- if .Values.configServer.enabled }}
             - name: spring.config.import
               valueFrom:
@@ -80,6 +94,10 @@ spec:
             failureThreshold: 3
             successThreshold: 1
             timeoutSeconds: 5
+      volumes:
+        - name: dumps
+          persistentVolumeClaim:
+            claimName: dumps
       affinity:
         podAntiAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:

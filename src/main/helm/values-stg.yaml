@@ -6,11 +6,12 @@ image:
 # Resource quota
 resources:
   requests:
-    cpu: 500m
-    memory: 1.5G
+    cpu: 1000m
+    memory: 2Gi
   limits:
-    cpu: 500m
-    memory: 1.5G
+    cpu: 2000m
+    memory: 4Gi
+
 
 # Readiness 
 readinessInitialDelaySeconds: 30
@@ -22,23 +23,23 @@ livenessPeriodSeconds: 30
 
 # JVM Option
 jvm:
-  enabled: true
-  option: "-XX:+UnlockExperimentalVMOptions -XX:+UseZGC -XX:InitialRAMPercentage=50 -XX:MinRAMPercentage=50 -XX:MaxRAMPercentage=75"
+  enabled: false
+  option: ""
 
 # Service 
 service:
-  type: NodePort
+  type: ClusterIP
   port: 8080
-  nodePort: 30017
+  nodePort: 0
   ipamRange: 
   loadbalancerIP: 
 
 # AutoScaling
 autoscaling:
   enabled: true
-  minReplicas: 12
-  maxReplicas: 16
-  targetCPUUtilizationPercentage: 90
+  minReplicas: 1
+  maxReplicas: 1
+  targetCPUUtilizationPercentage: 70
 
 # TimeZone
 timezone: Asia/Seoul
@@ -49,3 +50,5 @@ autoPromotionEnabled: true
 # Injetct Config server
 configServer:
   enabled: true
+
+rolloutName: metering-az2-stg
