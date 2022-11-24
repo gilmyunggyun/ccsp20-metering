@@ -3,7 +3,7 @@ plugins {
 }
 
 group = "com.hkmc.ccs"
-version = "1.0.28"
+version = "1.0.29.M"
 
 cloudnative {
   microservice {
@@ -43,7 +43,7 @@ cloudnative {
       strategy = "BLUE-GREEN"
 
       targets = [
-        [region: "ap-northeast", target: "dev", min: 1, max: 1],
+        [region: "ap-northeast", target: "dev", min: 1, max: 1, type:"git"],
         [region: "ap-northeast", target: "stg", min: 1, max: 1],
 //        [region: "ap-northeast", target: "prd", min: 12, max: 16]
       ]
