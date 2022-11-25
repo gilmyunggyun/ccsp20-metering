@@ -1,7 +1,7 @@
 pluginManagement {
   repositories {
     maven {
-      url "https://package-int.hcloud.hmc.co.kr/repository/maven-public/"
+      url "https://package.hcloud.hmc.co.kr/repository/maven-public/"
     }
   }
 }

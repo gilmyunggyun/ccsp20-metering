@@ -2,7 +2,7 @@
 apiVersion: autoscaling/v1
 kind: HorizontalPodAutoscaler
 metadata:
-  name: {{ .Values.rolloutName }}
+  name: {{ include "metering.fullname" . }}
   labels:
     app: {{ template "metering.name" . }}
     app.kubernetes.io/name: {{ template "metering.name" . }}
@@ -15,7 +15,7 @@ spec:
   scaleTargetRef:
     apiVersion: argoproj.io/v1alpha1
     kind: Rollout
-    name: {{ .Values.rolloutName }}
+    name: {{ include "metering.fullname" . }}
   minReplicas: {{ .Values.autoscaling.minReplicas }}
   maxReplicas: {{ .Values.autoscaling.maxReplicas }}
   targetCPUUtilizationPercentage: {{ .Values.autoscaling.targetCPUUtilizationPercentage }}
