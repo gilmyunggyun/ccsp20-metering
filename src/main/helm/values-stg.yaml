@@ -32,7 +32,7 @@ jvm:
   -Delastic.apm.capture_headers=true 
   -Delastic.apm.enable_experimental_instrumentations=true 
   -Delastic.apm.service_name=ccsp20-metering
-  -Delastic.apm.server_urls=http://172.16.64.65:18200
+  -Delastic.apm.server_urls=http://172.16.64.54:18200
   -Delastic.apm.application_packages=com.hkmc"
 
 # Service 
