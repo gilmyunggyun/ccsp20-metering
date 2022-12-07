@@ -1,0 +1,61 @@
+image:
+  repository: registry.hcloud.hmc.co.kr/ccs/ccsp20-metering
+  pullPolicy: IfNotPresent
+  tag: "1.0.31"
+
+# Resource quota
+resources:
+  requests:
+    cpu: 500m
+    memory: 1.5G
+  limits:
+    cpu: 500m
+    memory: 1.5G
+
+# Readiness 
+readinessInitialDelaySeconds: 30
+readinessPeriodSeconds: 30
+
+# Liveness
+livenessInitialDelaySeconds: 60
+livenessPeriodSeconds: 30
+
+# JVM Option
+jvm:
+  enabled: true
+  option: "-XX:+UnlockExperimentalVMOptions -XX:+UseZGC -XX:InitialRAMPercentage=50 -XX:MinRAMPercentage=50 -XX:MaxRAMPercentage=75
+  -javaagent:/app/libs/elastic-apm-agent-1.34.1.jar
+  -Dspring.profiles.active=dev
+  -Delastic.apm.use_path_as_transaction_name=true 
+  -Delastic.apm.capture_body_content_types=* 
+  -Delastic.apm.capture_body=all  
+  -Delastic.apm.capture_headers=true 
+  -Delastic.apm.enable_experimental_instrumentations=true 
+  -Delastic.apm.service_name=ccsp20-metering
+  -Delastic.apm.server_urls=http://172.16.64.65:18200
+  -Delastic.apm.application_packages=com.hkmc"
+
+# Service 
+service:
+  type: NodePort
+  port: 8080
+  nodePort: 30017
+  ipamRange: 
+  loadbalancerIP: 
+
+# AutoScaling
+autoscaling:
+  enabled: true
+  minReplicas: 1
+  maxReplicas: 1
+  targetCPUUtilizationPercentage: 90
+
+# TimeZone
+timezone: Asia/Seoul
+
+# Delievery Policy
+autoPromotionEnabled: true
+
+# Injetct Config server
+configServer:
+  enabled: true
