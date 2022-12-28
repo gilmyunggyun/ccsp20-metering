@@ -69,7 +69,7 @@ public class MeteringControllerTests {
                         "  \"hpId\":\"\",\n" +
                         "  \"reqUrl\":\"/ccsp/window.do\"\n" +
                         "}")
-                .header("XTID", "testxtid")
+                .header("xtid", "testxtid")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentType(APPLICATION_JSON))
@@ -127,7 +127,7 @@ public class MeteringControllerTests {
                         "  \"hpId\":\"HP123456\",\n" +
                         "  \"reqUrl\":\"/pushhistorylist.do\"\n" +
                         "}")
-                .header("XTID", "testxtid")
+                .header("xtid", "testxtid")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().json(
@@ -139,7 +139,7 @@ public class MeteringControllerTests {
     // TODO: Validation check, or in service?
 
     private ResultActions makeRequest() throws Exception {
-        return mockMvc.perform(post("/metering/v1/metering").header("XTID","testxtid")
+        return mockMvc.perform(post("/metering/v1/metering").header("xtid","testxtid")
                 .content("{\n" +
                 "\"serviceNo\":  \"V1\",\n" +
                 "  \"hpId\":  \"HP123456\",\n" +

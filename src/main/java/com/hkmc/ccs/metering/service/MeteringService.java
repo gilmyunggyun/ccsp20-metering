@@ -4,6 +4,8 @@ import java.time.Clock;
 import java.time.OffsetDateTime;
 import java.util.Optional;
 
+import com.hkmc.ccs.metering.models.entity.*;
+import com.hkmc.ccs.metering.repository.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -12,17 +14,8 @@ import org.springframework.util.ObjectUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.LoggerFactory;
 
-import com.hkmc.ccs.metering.models.entity.ApiAccess;
-import com.hkmc.ccs.metering.models.entity.Blocked;
-import com.hkmc.ccs.metering.models.entity.BlockedId;
-import com.hkmc.ccs.metering.models.entity.BlockedTemp;
 import com.hkmc.ccs.metering.models.vo.MeteringCheckRequest;
-import com.hkmc.ccs.metering.repository.AllowedApiRepository;
-import com.hkmc.ccs.metering.repository.ApiAccessRepository;
-import com.hkmc.ccs.metering.repository.BlockedRepository;
-import com.hkmc.ccs.metering.repository.BlockedTempRepository;
 
 @Slf4j
 @Service
@@ -35,6 +28,10 @@ public class MeteringService {
   private final ApiAccessRepository apiAccessRepository;
 
   private final AllowedApiRepository allowedApiRepository;
+
+  private final BlockCountApiRepository blockCountApiRepository;
+
+  private final WarningApiRepository warningApiRepository;
 
   private final Clock clock;
 
@@ -57,12 +54,14 @@ public class MeteringService {
   private int DATA_NOT_VALID;
 
   public MeteringService(BlockedRepository blockedRepository, BlockedTempRepository blockedTempRepository,
-    ApiAccessRepository apiAccessRepository, AllowedApiRepository allowedApiRepository, Clock clock) {
+    ApiAccessRepository apiAccessRepository, AllowedApiRepository allowedApiRepository, Clock clock, WarningApiRepository warningApiRepository, BlockCountApiRepository blockCountApiRepository) {
     this.blockedRepository = blockedRepository;
     this.blockedTempRepository = blockedTempRepository;
     this.apiAccessRepository = apiAccessRepository;
     this.allowedApiRepository = allowedApiRepository;
     this.clock = clock;
+    this.warningApiRepository = warningApiRepository;
+    this.blockCountApiRepository = blockCountApiRepository;
   }
 
   public int checkAccess(MeteringCheckRequest request, String xTid) {
@@ -110,14 +109,19 @@ public class MeteringService {
       recordAccess(handPhoneId, carId, reqUrl);
 
       if (accessCheckResult != AccessCheckResult.SERVICE_SUCCESS) {
-        blockCustomer(handPhoneId, carId, accessCheckResult);
+        
+        if(isBlockCountUrl(reqUrl)) {
+          blockCustomer(handPhoneId, carId, accessCheckResult);
 
-        blockCustomerTemp(handPhoneId, carId, accessCheckResult, reqUrl);
-
-        return ALLOW_BLOCK;
+          blockCustomerTemp(handPhoneId, carId, accessCheckResult, reqUrl);
+          return ALLOW_BLOCK;
+        } else if(!isWarningUrl(reqUrl)){
+          warningUrl(reqUrl);
+        }
       }
 
       return ALLOW_ACCESS;
+
     } catch (Exception e) {
       log.error(
         "[XITD : {}] CCSP 미터링 Service [checkAccess] EXCEPTION 발생, serviceNo[{}], CCID[{}], CARID[{}] , Exception : {}",
@@ -126,9 +130,24 @@ public class MeteringService {
     }
   }
 
+  private void warningUrl(String reqUrl) {
+    warningApiRepository.save(WarningApi.builder()
+                    .requestUrl(reqUrl)
+                    .build());
+  }
+
+  private boolean isBlockCountUrl(String requestUrl) {
+    long foundResultCount = blockCountApiRepository.countByRequestUrl(requestUrl);
+    return foundResultCount > 0;
+  }
+
+  private boolean isWarningUrl(String requestUrl) {
+    long foundResultCount = warningApiRepository.countByRequestUrl(requestUrl);
+    return foundResultCount > 0;
+  }
+
   private boolean isAllowedUrl(String requestUrl) {
     long foundResultCount = allowedApiRepository.countByRequestUrl(requestUrl);
-
     return foundResultCount > 0;
   }
 

@@ -60,7 +60,7 @@ public class MeteringController {
   public ResponseEntity<MeteringCheckResponse> checkAPIAccess(@RequestBody MeteringCheckRequest request,
     @RequestHeader Map<String, Object> header
   ) throws Exception {
-    String xTid = (String) header.get("XTID");
+    String xTid = (String) header.get("xtid");
     try {
       // @Validation을 사용하는 경우, MeteringCheckResult 내 carId 또한 notBlank/notNull/notEmpty로 null check가 이루어져, 부득이하게 각
       // 컨텐츠별 isEmpty를 이용하여 validation 진행 (taeseong, 21.08.09)
