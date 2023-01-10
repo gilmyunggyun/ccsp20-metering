@@ -1,16 +1,17 @@
 image:
   repository: registry.hcloud.hmc.co.kr/ccs/ccsp20-metering
   pullPolicy: IfNotPresent
-  tag: "1.0.30"
+  tag: "1.0.32"
 
 # Resource quota
 resources:
   requests:
     cpu: 500m
-    memory: 1.5G
+    memory: 3Gi
   limits:
     cpu: 500m
-    memory: 1.5G
+    memory: 3Gi
+
 
 # Readiness 
 readinessInitialDelaySeconds: 30
@@ -23,22 +24,23 @@ livenessPeriodSeconds: 30
 # JVM Option
 jvm:
   enabled: true
-  option: "-XX:+UnlockExperimentalVMOptions -XX:+UseZGC -XX:InitialRAMPercentage=50 -XX:MinRAMPercentage=50 -XX:MaxRAMPercentage=75"
+  option: "-XX:+UnlockExperimentalVMOptions -XX:+UseZGC -XX:InitialRAMPercentage=50 -XX:MinRAMPercentage=50 -XX:MaxRAMPercentage=80"
+    
+
 
 # Service 
 service:
-  type: NodePort
+  type: ClusterIP
   port: 8080
-  nodePort: 30017
   ipamRange: 
   loadbalancerIP: 
 
 # AutoScaling
 autoscaling:
   enabled: true
-  minReplicas: 12
+  minReplicas: 16
   maxReplicas: 16
-  targetCPUUtilizationPercentage: 90
+  targetCPUUtilizationPercentage: 70
 
 # TimeZone
 timezone: Asia/Seoul
@@ -49,3 +51,5 @@ autoPromotionEnabled: true
 # Injetct Config server
 configServer:
   enabled: true
+
+rolloutName: metering-az2-prd

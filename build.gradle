@@ -1,9 +1,9 @@
 plugins {
-  id "com.hkmc.h2" version "1.0.35"
+  id "com.hkmc.h2" version "1.0.105"
 }
 
 group = "com.hkmc.ccs"
-version = "1.0.31"
+version = "1.0.32"
 
 cloudnative {
   microservice {
@@ -13,10 +13,6 @@ cloudnative {
   persistent {
     jpa = true
     postgresql = true
-  }
-
-  quality {
-    skipAll = true
   }
 
   thirdparty {
@@ -30,23 +26,33 @@ cloudnative {
     container {
       enabled = true
       to = "registry.hcloud.hmc.co.kr/ccs/${project.name}"
-      jvmOption = "-XX:+UnlockExperimentalVMOptions -XX:+UseZGC -XX:InitialRAMPercentage=50 -XX:MinRAMPercentage=50 -XX:MaxRAMPercentage=75"
+      //jvmOption = "-XX:+UnlockExperimentalVMOptions -XX:+UseZGC -XX:InitialRAMPercentage=50 -XX:MinRAMPercentage=50 -XX:MaxRAMPercentage=75"
     }
 
     helm {
       name = "metering"
       namespace = "metering"
-      serviceType = "NodePort"
+      serviceType = "ClusterIP"
       servicePort = 8080
-      nodePort = 30017
-      cpu = "500m"
-      memory = "1.5G"
-      minReplicas = 12
-      maxReplicas = 16
+
+      requestsMem = "3Gi"   // k8s request resource memory 설정
+      requestsCpu = "500m"  // k8s request resource cpu 설정 0.5 Core
+
+      limitsMem = "3Gi"  // requestMem 와 같게 설정
+      limitsCpu = "500m" // 1 Core (멀티 프로세스 활용한 코딩을 진행하지 않았다면 1Core 사용)
+
     }
 
     deploy {
-      target = ["rc:ap-northeast-2:stg", "release:ap-northeast-2:prd"]
+      oldStyleNaming = true    // 기존 argocd 파이프라인 네이밍 방식 , false 하게 되면 downtime 발생되어 무조건 true!!
+      strategy = "BLUE-GREEN" // or ROLLING-UPDATE
+
+      targets = [
+              [region: "ap-northeast", target: "dev", min: 1, max: 1],
+//      [region: "ap-northeast", target: "stg", min: 1, max: 1],
+//      [region: "ap-northeast", target: "prd", min: 16, max: 16]
+      ]
+
     }
   }
 }

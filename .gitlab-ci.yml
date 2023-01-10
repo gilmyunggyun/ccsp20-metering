@@ -9,8 +9,8 @@ before_script:
 quality-gate:
   stage: test
   script: |-
-    gradle check -x test
-    gradle sonarqube -x test
+    gradle check
+    gradle sonar
   cache:
     key: "$CI_COMMIT_REF_NAME"
     policy: push
