@@ -3,7 +3,7 @@ plugins {
 }
 
 group = "com.hkmc.ccs"
-version = "1.0.33"
+version = "1.0.34"
 
 cloudnative {
   microservice {

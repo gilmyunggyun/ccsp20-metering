@@ -115,8 +115,8 @@ public class MeteringService {
 
           blockCustomerTemp(handPhoneId, carId, accessCheckResult, reqUrl);
           return ALLOW_BLOCK;
-        } else if(!isWarningUrl(reqUrl)){
-          warningUrl(reqUrl);
+        } else {
+          warningUrl(handPhoneId, carId, accessCheckResult, reqUrl);
         }
       }
 
@@ -130,8 +130,12 @@ public class MeteringService {
     }
   }
 
-  private void warningUrl(String reqUrl) {
+  private void warningUrl(String handPhoneId, String carId, AccessCheckResult accessCheckResult, String reqUrl) {
     warningApiRepository.save(WarningApi.builder()
+                    .handPhoneId(handPhoneId)
+                    .carId(carId)
+                    .blockedRsonCd(accessCheckResult.getResCode())
+                    .blockedTime(OffsetDateTime.now(clock))
                     .requestUrl(reqUrl)
                     .build());
   }
@@ -140,12 +144,6 @@ public class MeteringService {
     long foundResultCount = blockCountApiRepository.countByRequestUrl(requestUrl);
     return foundResultCount > 0;
   }
-
-  private boolean isWarningUrl(String requestUrl) {
-    long foundResultCount = warningApiRepository.countByRequestUrl(requestUrl);
-    return foundResultCount > 0;
-  }
-
   private boolean isAllowedUrl(String requestUrl) {
     long foundResultCount = allowedApiRepository.countByRequestUrl(requestUrl);
     return foundResultCount > 0;

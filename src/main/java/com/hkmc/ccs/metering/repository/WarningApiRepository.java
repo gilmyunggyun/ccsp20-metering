@@ -7,6 +7,4 @@ import java.util.UUID;
 
 public interface WarningApiRepository extends JpaRepository<WarningApi, UUID> {
 
-    long countByRequestUrl(String requestUrl);
-
 }

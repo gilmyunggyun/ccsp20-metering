@@ -1,7 +1,7 @@
 image:
   repository: registry.hcloud.hmc.co.kr/ccs/ccsp20-metering
   pullPolicy: Always
-  tag: "1.0.33"
+  tag: "1.0.34"
 
 # Resource quota
 resources:

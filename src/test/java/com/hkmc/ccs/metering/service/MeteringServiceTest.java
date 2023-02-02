@@ -315,32 +315,6 @@ class MeteringServiceTest {
     }
 
     @Test
-    void checkAccess_WarningApi() {
-        String[] remoteControlWhiteList = {"/pushhistorylist.do","/getbadgecount.do","/readmsg.do"};
-        ReflectionTestUtils.setField(subject,"remoteControlWhiteList",remoteControlWhiteList);
-        ReflectionTestUtils.setField(subject,"ALLOW_ACCESS",0);
-        ReflectionTestUtils.setField(subject,"ALLOW_BLOCK",1);
-        ReflectionTestUtils.setField(subject,"DATA_NOT_VALID",2);
-
-        when(apiAccessRepository.dailyAccessCount(
-                "HP1234",
-                "CAR1234",
-                "/window.do"
-        )).thenReturn(300L);
-
-        when(warningApiRepository.countByRequestUrl("/window.do")).thenReturn(1L);
-
-        int hasAccess = subject.checkAccess(meteringCheckRequest,"testxtid");
-
-        verify(warningApiRepository, times(0)).save(WarningApi.builder()
-                .requestUrl("/window.do")
-                .build());
-
-        assertThat(hasAccess).isEqualTo(0);
-
-    }
-
-    @Test
     void checkAccess_newWarningApi() {
         String[] remoteControlWhiteList = {"/pushhistorylist.do","/getbadgecount.do","/readmsg.do"};
         ReflectionTestUtils.setField(subject,"remoteControlWhiteList",remoteControlWhiteList);
@@ -354,12 +328,14 @@ class MeteringServiceTest {
                 "/window.do"
         )).thenReturn(300L);
 
-        when(warningApiRepository.countByRequestUrl("/window.do")).thenReturn(0L);
-
         int hasAccess = subject.checkAccess(meteringCheckRequest,"testxtid");
 
-        verify(warningApiRepository).save(WarningApi.builder()
+        verify(warningApiRepository, times(1)).save(WarningApi.builder()
                         .requestUrl("/window.do")
+                        .handPhoneId("HP1234")
+                        .carId("CAR1234")
+                        .blockedTime(OffsetDateTime.now(clock))
+                        .blockedRsonCd("1005")
                         .build());
 
         assertThat(hasAccess).isEqualTo(0);
