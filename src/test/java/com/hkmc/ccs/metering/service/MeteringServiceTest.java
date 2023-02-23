@@ -3,7 +3,6 @@ package com.hkmc.ccs.metering.service;
 import com.hkmc.ccs.metering.models.entity.ApiAccess;
 import com.hkmc.ccs.metering.models.entity.Blocked;
 import com.hkmc.ccs.metering.models.entity.BlockedId;
-import com.hkmc.ccs.metering.models.entity.WarningApi;
 import com.hkmc.ccs.metering.models.vo.MeteringCheckRequest;
 import com.hkmc.ccs.metering.repository.*;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,8 +29,6 @@ class MeteringServiceTest {
     private BlockedTempRepository blockedTempRepository;
     private ApiAccessRepository apiAccessRepository;
     private AllowedApiRepository allowedApiRepository;
-    private WarningApiRepository warningApiRepository;
-    private BlockCountApiRepository blockCountApiRepository;
     private Clock clock;
 
     private MeteringService subject;
@@ -45,17 +42,13 @@ class MeteringServiceTest {
         blockedTempRepository = mock(BlockedTempRepository.class);
         apiAccessRepository = mock(ApiAccessRepository.class);
         allowedApiRepository = mock(AllowedApiRepository.class);
-        warningApiRepository = mock(WarningApiRepository.class);
-        blockCountApiRepository = mock(BlockCountApiRepository.class);
         clock = Clock.fixed(Instant.now(), ZoneId.systemDefault());
 
         subject = new MeteringService(blockedRepository,
                 blockedTempRepository,
                 apiAccessRepository,
                 allowedApiRepository,
-                clock,
-                warningApiRepository,
-                blockCountApiRepository);
+                clock);
     }
 
     MeteringCheckRequest meteringCheckRequest = MeteringCheckRequest.builder()
@@ -168,8 +161,6 @@ class MeteringServiceTest {
                 OffsetDateTime.now(clock).minusMinutes(10)
         )).thenReturn(200L);
 
-        when(blockCountApiRepository.countByRequestUrl("/window.do")).thenReturn(1L);
-
         int hasAccess = subject.checkAccess(meteringCheckRequest,"testxtid");
 
         assertThat(hasAccess).isEqualTo(ALLOW_BLOCK);
@@ -189,8 +180,6 @@ class MeteringServiceTest {
                 "/window.do",
                 OffsetDateTime.now(clock).minusMinutes(10)
         )).thenReturn(200L);
-
-        when(blockCountApiRepository.countByRequestUrl("/window.do")).thenReturn(1L);
 
         subject.checkAccess(meteringCheckRequest,"testxtid");
 
@@ -235,8 +224,6 @@ class MeteringServiceTest {
                 "/window.do"
         )).thenReturn(301L);
 
-        when(blockCountApiRepository.countByRequestUrl("/window.do")).thenReturn(1L);
-
         int hasAccess = subject.checkAccess(meteringCheckRequest,"testxtid");
 
         assertThat(hasAccess).isEqualTo(ALLOW_BLOCK);
@@ -255,8 +242,6 @@ class MeteringServiceTest {
                 "CAR1234",
                 "/window.do"
         )).thenReturn(300L);
-
-        when(blockCountApiRepository.countByRequestUrl("/window.do")).thenReturn(1L);
 
         subject.checkAccess(meteringCheckRequest,"testxtid");
 
@@ -314,30 +299,4 @@ class MeteringServiceTest {
         assertThat(hasAccess).isEqualTo(0);
     }
 
-    @Test
-    void checkAccess_newWarningApi() {
-        String[] remoteControlWhiteList = {"/pushhistorylist.do","/getbadgecount.do","/readmsg.do"};
-        ReflectionTestUtils.setField(subject,"remoteControlWhiteList",remoteControlWhiteList);
-        ReflectionTestUtils.setField(subject,"ALLOW_ACCESS",0);
-        ReflectionTestUtils.setField(subject,"ALLOW_BLOCK",1);
-        ReflectionTestUtils.setField(subject,"DATA_NOT_VALID",2);
-
-        when(apiAccessRepository.dailyAccessCount(
-                "HP1234",
-                "CAR1234",
-                "/window.do"
-        )).thenReturn(300L);
-
-        int hasAccess = subject.checkAccess(meteringCheckRequest,"testxtid");
-
-        verify(warningApiRepository, times(1)).save(WarningApi.builder()
-                        .requestUrl("/window.do")
-                        .handPhoneId("HP1234")
-                        .carId("CAR1234")
-                        .blockedTime(OffsetDateTime.now(clock))
-                        .blockedRsonCd("1005")
-                        .build());
-
-        assertThat(hasAccess).isEqualTo(0);
-    }
 }

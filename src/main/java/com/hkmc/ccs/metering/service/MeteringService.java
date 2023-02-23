@@ -29,10 +29,6 @@ public class MeteringService {
 
   private final AllowedApiRepository allowedApiRepository;
 
-  private final BlockCountApiRepository blockCountApiRepository;
-
-  private final WarningApiRepository warningApiRepository;
-
   private final Clock clock;
 
   @Value("${metering.max-ten-minute-access-count}")
@@ -54,14 +50,12 @@ public class MeteringService {
   private int DATA_NOT_VALID;
 
   public MeteringService(BlockedRepository blockedRepository, BlockedTempRepository blockedTempRepository,
-    ApiAccessRepository apiAccessRepository, AllowedApiRepository allowedApiRepository, Clock clock, WarningApiRepository warningApiRepository, BlockCountApiRepository blockCountApiRepository) {
+    ApiAccessRepository apiAccessRepository, AllowedApiRepository allowedApiRepository, Clock clock) {
     this.blockedRepository = blockedRepository;
     this.blockedTempRepository = blockedTempRepository;
     this.apiAccessRepository = apiAccessRepository;
     this.allowedApiRepository = allowedApiRepository;
     this.clock = clock;
-    this.warningApiRepository = warningApiRepository;
-    this.blockCountApiRepository = blockCountApiRepository;
   }
 
   public int checkAccess(MeteringCheckRequest request, String xTid) {
@@ -109,15 +103,11 @@ public class MeteringService {
       recordAccess(handPhoneId, carId, reqUrl);
 
       if (accessCheckResult != AccessCheckResult.SERVICE_SUCCESS) {
-        
-        if(isBlockCountUrl(reqUrl)) {
-          blockCustomer(handPhoneId, carId, accessCheckResult);
+        blockCustomer(handPhoneId, carId, accessCheckResult);
 
-          blockCustomerTemp(handPhoneId, carId, accessCheckResult, reqUrl);
-          return ALLOW_BLOCK;
-        } else {
-          warningUrl(handPhoneId, carId, accessCheckResult, reqUrl);
-        }
+        blockCustomerTemp(handPhoneId, carId, accessCheckResult, reqUrl);
+
+        return ALLOW_BLOCK;
       }
 
       return ALLOW_ACCESS;
@@ -130,20 +120,6 @@ public class MeteringService {
     }
   }
 
-  private void warningUrl(String handPhoneId, String carId, AccessCheckResult accessCheckResult, String reqUrl) {
-    warningApiRepository.save(WarningApi.builder()
-                    .handPhoneId(handPhoneId)
-                    .carId(carId)
-                    .blockedRsonCd(accessCheckResult.getResCode())
-                    .blockedTime(OffsetDateTime.now(clock))
-                    .requestUrl(reqUrl)
-                    .build());
-  }
-
-  private boolean isBlockCountUrl(String requestUrl) {
-    long foundResultCount = blockCountApiRepository.countByRequestUrl(requestUrl);
-    return foundResultCount > 0;
-  }
   private boolean isAllowedUrl(String requestUrl) {
     long foundResultCount = allowedApiRepository.countByRequestUrl(requestUrl);
     return foundResultCount > 0;
