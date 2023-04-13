@@ -25,6 +25,10 @@ spring:
   cloud:
     config:
       enabled: false
+
+    compatibility-verifier:
+      enabled: false
+
   jpa:
     show-sql: true
     generate-ddl: false

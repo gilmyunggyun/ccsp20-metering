@@ -1,97 +1,263 @@
+buildscript {
+  dependencies {
+    classpath('com.google.cloud.tools:jib-native-image-extension-gradle:0.1.0')
+  }
+}
+
 plugins {
-  id "com.hkmc.h2" version "1.0.105"
+  id 'org.springframework.boot' version '3.0.1'
+
+  id 'io.spring.dependency-management' version '1.1.0'
+  id "com.google.cloud.tools.jib" version "3.3.1"
   id 'org.graalvm.buildtools.native' version '0.9.20'
+  id 'java'
+
+//  id 'org.springframework.experimental.aot' version '0.9.1'
+
+//  id("com.ccs-sre-team") version "1.0.12"
 }
 
 group = "com.hkmc.ccs"
 version = "1.0.35"
 
-cloudnative {
-  microservice {
-    openfeign = true
+
+
+
+repositories {
+//
+  gradlePluginPortal()
+//
+//  maven { url 'https://repo.spring.io/release' }
+//
+
+
+
+  mavenLocal()
+  maven {
+    url "https://package-int.hcloud.hmc.co.kr/repository/maven-public/"
   }
-
-  persistent {
-    jpa = true
-    postgresql = true
-  }
-
-  thirdparty {
-    commonsLang = true
-    commonsCollections = true
-    prometheusRSocket = true
-    jasypt = true
-  }
-
-  cicd {
-    container {
-      enabled = true
-      to = "registry.hcloud.hmc.co.kr/ccs/${project.name}"
-      //jvmOption = "-XX:+UnlockExperimentalVMOptions -XX:+UseZGC -XX:InitialRAMPercentage=50 -XX:MinRAMPercentage=50 -XX:MaxRAMPercentage=75"
-    }
-
-    helm {
-      name = "metering"
-      namespace = "metering"
-      serviceType = "ClusterIP"
-      servicePort = 8080
-
-      requestsMem = "3Gi"   // k8s request resource memory 설정
-      requestsCpu = "500m"  // k8s request resource cpu 설정 0.5 Core
-
-      limitsMem = "3Gi"  // requestMem 와 같게 설정
-      limitsCpu = "500m" // 1 Core (멀티 프로세스 활용한 코딩을 진행하지 않았다면 1Core 사용)
-
-    }
-
-    deploy {
-      oldStyleNaming = true    // 기존 argocd 파이프라인 네이밍 방식 , false 하게 되면 downtime 발생되어 무조건 true!!
-      strategy = "BLUE-GREEN" // or ROLLING-UPDATE
-
-      targets = [
-              [region: "ap-northeast", target: "dev", min: 1, max: 1],
-//      [region: "ap-northeast", target: "stg", min: 1, max: 1],
-//      [region: "ap-northeast", target: "prd", min: 16, max: 16]
-      ]
-
-    }
-  }
+  mavenCentral()
 }
-
 dependencies {
-  testImplementation group: 'com.h2database', name: 'h2', version: '1.4.200'
-  implementation 'org.springframework.boot:spring-boot-starter-validation'
-  implementation 'io.micrometer:micrometer-registry-statsd:1.9.2'
-  implementation group: 'co.elastic.apm', name: 'elastic-apm-agent', version: '1.34.1'
+
+//  testImplementation group: 'com.h2database', name: 'h2', version: '1.4.200'
+
+
+  implementation "org.springframework.boot:spring-boot-starter-web"
+  implementation "org.springframework.boot:spring-boot-starter-actuator"
+  implementation "org.springframework.boot:spring-boot-starter-validation"
+  implementation ("org.springframework.boot:spring-boot-starter-test"){
+    exclude group: 'org.springframework.boot', module: 'org.junit.vintage'
+
+  }
+//
+//
+  implementation "org.springframework.boot:spring-boot-starter-webflux"
+//
+//  // security
+  implementation "org.springframework.boot:spring-boot-starter-security"
+  implementation 'org.springframework.cloud:spring-cloud-starter-sleuth:3.1.7'
+  implementation 'org.springframework.cloud:spring-cloud-sleuth-zipkin:3.1.7'
+  implementation 'org.springframework.cloud:spring-cloud-starter-config:4.0.2'
+//
+//  // openfeign = true
+//
+  implementation 'org.springframework.cloud:spring-cloud-starter-openfeign:4.0.2'
+//
+//
+//  // kafka = true
+  implementation 'org.springframework.kafka:spring-kafka'
+  implementation  'org.springframework.kafka:spring-kafka-test'
+  implementation ('io.github.embeddedkafka:embedded-kafka_2.13:2.7.0'){
+//                   exclude group: 'org.apache.kafka', module: 'org.junit.vintage'
+  }
+//
+//
+  implementation 'io.springfox:springfox-boot-starter:3.0.0'
+//
+//
+//  //ccs-core
+//
+//  //jpa
+//
+  implementation "org.springframework.boot:spring-boot-starter-data-jpa"
+  implementation 'com.hkmc.ccs.commons:commons-jpa:1.0.2'
+//
+//
+//
+//  //postgresql
+//
+////  api 'com.hkmc.ccs.commons:commons-r2dbc:1.0.2'
+//
+  implementation 'org.postgresql:postgresql:42.3.8'
+//
+  implementation  'com.opentable.components:otj-pg-embedded:1.0.1'
+//
+//
+  implementation 'org.apache.commons:commons-lang3:3.12.0'
+
+  implementation 'commons-io:commons-io:2.11.0'
+//
+//
+//
+//
+  implementation 'org.apache.commons:commons-collections4:4.4'
+  implementation 'com.google.code.gson:gson:2.10.1'
+  implementation 'com.fasterxml.jackson.module:jackson-module-afterburner:2.14.2'
+//
+//  implementation 'io.micrometer:micrometer-registry-statsd:1.9.2'
+//  implementation 'co.elastic.apm:elastic-apm-agent:1.34.1'
+//  testImplementation 'com.github.tomakehurst:wiremock:2.27.2'
+//
+//  implementation 'org.springframework.experimental:spring-native:0.12.0'
+//  implementation 'org.springframework.experimental:spring-aot-gradle-plugin:0.9.1'
+//
+//  implementation 'org.projectlombok:lombok:1.18.12'
+  annotationProcessor 'org.projectlombok:lombok:1.18.20'
+  compileOnly 'org.projectlombok:lombok:1.18.20'
+
+
+//  implementation 'org.springframework:spring-context-indexer:6.0.7'
+
 }
+
+//
+//cloudnative {
+//  microservice {
+//    openfeign = true
+//  }
+//
+//  persistent {
+//    jpa = true
+//    postgresql = true
+//  }
+//
+//  thirdparty {
+//    commonsLang = true
+//    commonsCollections = true
+//    prometheusRSocket = true
+//    jasypt = true
+//  }
+//
+//  cicd {
+//    container {
+//      enabled = true
+//      to = "registry.hcloud.hmc.co.kr/ccs/${project.name}"
+//      //jvmOption = "-XX:+UnlockExperimentalVMOptions -XX:+UseZGC -XX:InitialRAMPercentage=50 -XX:MinRAMPercentage=50 -XX:MaxRAMPercentage=75"
+//    }
+//
+//    helm {
+//      name = "metering"
+//      namespace = "metering"
+//      serviceType = "ClusterIP"
+//      servicePort = 8080
+//
+//      requestsMem = "3Gi"   // k8s request resource memory 설정
+//      requestsCpu = "500m"  // k8s request resource cpu 설정 0.5 Core
+//
+//      limitsMem = "3Gi"  // requestMem 와 같게 설정
+//      limitsCpu = "500m" // 1 Core (멀티 프로세스 활용한 코딩을 진행하지 않았다면 1Core 사용)
+//
+//    }
+//
+//    deploy {
+//      oldStyleNaming = true    // 기존 argocd 파이프라인 네이밍 방식 , false 하게 되면 downtime 발생되어 무조건 true!!
+//      strategy = "BLUE-GREEN" // or ROLLING-UPDATE
+//
+//      targets = [
+//              [region: "ap-northeast", target: "dev", min: 1, max: 1],
+////      [region: "ap-northeast", target: "stg", min: 1, max: 1],
+////      [region: "ap-northeast", target: "prd", min: 16, max: 16]
+//      ]
+//
+//    }
+//  }
+//}
+//
+//dependencies {
+//  testImplementation group: 'com.h2database', name: 'h2', version: '1.4.200'
+//  implementation 'org.springframework.boot:spring-boot-starter-validation'
+//  implementation 'io.micrometer:micrometer-registry-statsd:1.9.2'
+//  implementation group: 'co.elastic.apm', name: 'elastic-apm-agent', version: '1.34.1'
+//}
+//
+
+
+
 
 tasks.named("bootBuildImage") {
   imageName = "registry-dev.hcloud.hmc.co.kr/ccssreteam20220616/graalvm"
-  builder = "registry-dev.hcloud.hmc.co.kr/ccssreteam20220616/paketobuildpacks/builder:tiny"
-  docker {
-//    host = "tcp://docker.hub:2376"
-    publish = true
-    publishRegistry {
-      username = "e679127"
-      password = "Iq1qGGLf9YLymht4npEgKDeYo3x2qGTc"
-      url = "registry-dev.hcloud.hmc.co.kr/ccssreteam20220616"
-    }
-    builderRegistry {
-      username = "e679127"
-      password = "Iq1qGGLf9YLymht4npEgKDeYo3x2qGTc"
-      url = "registry-dev.hcloud.hmc.co.kr/ccssreteam20220616"
+  builder = "registry-dev.hcloud.hmc.co.kr/ccssreteam20220616/paketobuildpacks/builder@sha256:24d4eecdb0d86973dfc7c1bdf26f6797960a26bd170a26e98c289627e37f5c15"
+//  docker {
+////    host = "tcp://docker.hub:2376"
+//    publish = true
+//    publishRegistry {
+//      username = "e679127"
+//      password = "Iq1qGGLf9YLymht4npEgKDeYo3x2qGTc"
+//      url = "registry-dev.hcloud.hmc.co.kr/ccssreteam20220616"
+//    }
+//    builderRegistry {
+//      username = "e679127"
+//      password = "Iq1qGGLf9YLymht4npEgKDeYo3x2qGTc"
+//      url = "registry-dev.hcloud.hmc.co.kr/ccssreteam20220616"
+//
+//    }
+//  }
+}
 
-    }
+//buildscript {
+//  dependencies {
+//    classpath('com.google.cloud.tools:jib-native-image-extension-gradle:0.1.0')
+//  }
+//}
+
+
+
+jib {
+
+  from {
+
+    image = "registry.hcloud.hmc.co.kr/ccs/graalvm-ce:ol9-java17-22.3.0"
+
   }
+
+  to {
+
+    allowInsecureRegistries = true
+
+    image = "localhost:5000/${project.name}"
+    auth {
+      username = "admin"
+      password = "admin"
+    }
+
+    tags = ["${project.version}"]
+  }
+
+  container {
+  }
+
+//  pluginExtensions {
+//    pluginExtension {
+//      implementation = 'com.google.cloud.tools.jib.gradle.extension.nativeimage.JibNativeImageExtension'
+//      properties = [
+//              imageName: 'localhost:5000/ccsp20-metering'
+//      ]
+//
+//
+//    }
+//  }
+
 }
 
 //bootBuildImage {
-//  imageName = "registry-dev.hcloud.hmc.co.kr/ccssreteam20220616/graalvm"
-//  builder = "paketobuildpacks/builder:tiny"
-//  docker {
-//    host = "https://registry-dev.hcloud.hmc.co.kr:443"
-//
-//  }
+//  imageName = "localhost:5000/ccssreteam20220616/graalvm"
+//  builder = "localhost:5000/paketobuildpacks/builder:tiny"
+////  buildpacks = ["file://c:/buildpack.tar.gz", "urn:cnb:builder:paketo-buildpacks/java"]
+//}
+
+
+
 //
 //
 //}

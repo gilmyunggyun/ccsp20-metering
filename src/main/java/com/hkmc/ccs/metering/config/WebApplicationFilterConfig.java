@@ -1,11 +1,12 @@
 package com.hkmc.ccs.metering.config;
 
+import jakarta.servlet.Filter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import javax.servlet.Filter;
+//import jakarta.servlet.Filter;
 import java.util.Arrays;
 
 @Configuration

@@ -1,9 +1,10 @@
 package com.hkmc.ccs.metering.models.vo;
 
-import javax.validation.constraints.NotBlank;
+//import jakarta.validation.constraints.NotBlank;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
