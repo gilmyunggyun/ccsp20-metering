@@ -1,6 +1,4 @@
-spring:
-  application:
-    name: ccsp20-metering
+
 #  cloud:
 #    config:
 #      name: ccsp20-common,ccsp20-metering
@@ -17,14 +15,13 @@ management:
     web:
       exposure:
         include: "*"
-jasypt:
-  encryptor:
-    bean: jasyptStringEncryptor
----
+
 spring:
-  config:
-    activate:
-      on-profile: local
+  profiles:
+    active: local
+  application:
+    name: ccsp20-metering
+
   cloud:
     config:
       enabled: false
@@ -38,7 +35,7 @@ spring:
   datasource:
     url: jdbc:postgresql://10.11.53.64:5432/meteringdb
     username: meteringwas
-    password: ENC(xTLr0yTr2RCyLi7+YHOA6qrQ3e6phZoQED02t7YyIbuiO/UTKZilfRP2/xrHxuIF)
+    password: devOps1!
     hikari:
       maximum-pool-size: 300
       minimum-idle: 80

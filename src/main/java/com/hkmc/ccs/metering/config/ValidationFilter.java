@@ -1,6 +1,6 @@
 package com.hkmc.ccs.metering.config;
 
-import com.hkmc.filter.wrapper.MultiReadHttpServletRequest;
+//import com.hkmc.filter.wrapper.MultiReadHttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.filter.GenericFilterBean;
 
@@ -22,9 +22,9 @@ public class ValidationFilter extends GenericFilterBean {
 
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-		HttpServletRequest httpRequest = ((HttpServletRequest) request);
-		MultiReadHttpServletRequest wrapper = new MultiReadHttpServletRequest(httpRequest);
-		chain.doFilter(wrapper, response);
+//		HttpServletRequest httpRequest = ((HttpServletRequest) request);
+//		MultiReadHttpServletRequest wrapper = new MultiReadHttpServletRequest(httpRequest);
+		chain.doFilter(request, response);
 	}
 
 }
