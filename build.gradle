@@ -5,7 +5,7 @@ buildscript {
 }
 
 plugins {
-  id 'org.springframework.boot' version '3.0.5'
+  id 'org.springframework.boot' version '2.5.14'
 
   id 'io.spring.dependency-management' version '1.1.0'
 //  id "com.google.cloud.tools.jib" version "3.3.1"
@@ -53,13 +53,13 @@ dependencies {
 //
 //  // security
   implementation "org.springframework.boot:spring-boot-starter-security"
-  implementation 'org.springframework.cloud:spring-cloud-starter-sleuth:3.1.7'
-  implementation 'org.springframework.cloud:spring-cloud-sleuth-zipkin:3.1.7'
-  implementation 'org.springframework.cloud:spring-cloud-starter-config:4.0.2'
+  implementation 'org.springframework.cloud:spring-cloud-starter-sleuth:3.0.5'
+  implementation 'org.springframework.cloud:spring-cloud-sleuth-zipkin:3.0.5'
+  implementation 'org.springframework.cloud:spring-cloud-starter-config:3.0.6'
 //
 //  // openfeign = true
 //
-  implementation 'org.springframework.cloud:spring-cloud-starter-openfeign:4.0.2'
+  implementation 'org.springframework.cloud:spring-cloud-starter-openfeign:3.0.6'
 //
 //
 //  // kafka = true
@@ -77,8 +77,8 @@ dependencies {
 //
 //  //jpa
 //
-//  implementation "org.springframework.boot:spring-boot-starter-data-jpa"
-//  implementation files('libs/commons-jpa-1.0.2.jar')
+  implementation "org.springframework.boot:spring-boot-starter-data-jpa"
+  implementation files('libs/commons-jpa-1.0.2.jar')
 //
 //
 //
@@ -248,7 +248,7 @@ dependencies {
 //}
 
 bootBuildImage {
-  imageName = "localhost:5000/ccssreteam20220616/graalvm"
+  imageName = "localhost:5000/ccssreteam20220616/graalvm_2_5_14"
 //  builder = "localhost:5000/paketobuildpacks/builder:tiny"
 //  buildpacks = ["file://c:/buildpack.tar.gz", "urn:cnb:builder:paketo-buildpacks/java"]
 }

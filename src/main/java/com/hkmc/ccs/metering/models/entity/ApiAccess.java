@@ -2,34 +2,33 @@ package com.hkmc.ccs.metering.models.entity;
 
 import java.time.OffsetDateTime;
 import java.util.UUID;
-//import jakarta.persistence.Column;
-//import jakarta.persistence.Entity;
-//import jakarta.persistence.GeneratedValue;
-//import jakarta.persistence.Id;
-//import jakarta.persistence.Index;
-//import jakarta.persistence.Table;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Index;
+import javax.persistence.Table;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import nonapi.io.github.classgraph.json.Id;
 
 @Data
-//@Entity(name = "API_ACCESS")
+@Entity(name = "API_ACCESS")
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-//@Table(indexes = {
-//  @Index(
-//    name = "apiaccess_handphoneid_carid_requesturl",
-//    columnList = "handphoneid,carid,requesturl"
-//  )
-//})
+@Table(indexes = {
+        @Index(
+                name = "apiaccess_handphoneid_carid_requesturl",
+                columnList = "handphoneid,carid,requesturl"
+        )
+})
 public class ApiAccess {
 
   @Id
-//  @GeneratedValue
+  @GeneratedValue
   private UUID id;
 
   private String handPhoneId;
@@ -38,7 +37,7 @@ public class ApiAccess {
 
   private String requestUrl;
 
-//  @Column(columnDefinition = "TIMESTAMP WITH TIME ZONE")
+  @Column(columnDefinition = "TIMESTAMP WITH TIME ZONE")
   private OffsetDateTime accessTime;
 
 }

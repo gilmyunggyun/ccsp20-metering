@@ -1,20 +1,19 @@
 package com.hkmc.ccs.metering.models.entity;
 
-//import jakarta.persistence.Column;
-//import jakarta.persistence.Entity;
-//import jakarta.persistence.Id;
-//import jakarta.persistence.IdClass;
+import java.time.OffsetDateTime;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.IdClass;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import nonapi.io.github.classgraph.json.Id;
-
-import java.time.OffsetDateTime;
 
 @Data
-//@Entity
-//@IdClass(BlockedTempId.class)
+@Entity
+@IdClass(BlockedTempId.class)
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -28,12 +27,12 @@ public class Unblocked {
 
   private String blockedRsonCd;
 
-//  @Column(columnDefinition = "TIMESTAMP WITH TIME ZONE")
+  @Column(columnDefinition = "TIMESTAMP WITH TIME ZONE")
   private OffsetDateTime blockedTime;
 
   private String requestId;
 
-//  @Column(columnDefinition = "TIMESTAMP WITH TIME ZONE")
+  @Column(columnDefinition = "TIMESTAMP WITH TIME ZONE")
   private OffsetDateTime requestTime;
 
 }

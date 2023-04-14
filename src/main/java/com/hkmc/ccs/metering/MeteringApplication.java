@@ -21,5 +21,9 @@ public class MeteringApplication {
     SpringApplication.run(MeteringApplication.class, args);
   }
 
+  @Bean
+  public Clock clock() {
+    return Clock.systemDefaultZone();
+  }
 
 }

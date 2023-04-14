@@ -1,12 +1,13 @@
 package com.hkmc.ccs.metering.config;
 
-import jakarta.servlet.Filter;
+//import jakarta.servlet.Filter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 //import jakarta.servlet.Filter;
+import javax.servlet.Filter;
 import java.util.Arrays;
 
 @Configuration
@@ -14,7 +15,7 @@ public class WebApplicationFilterConfig {
 
 	@Value("${validation.check:false}")
 	public String validationCheck;
-	
+
 	@Bean
 	public FilterRegistrationBean<Filter> validationFilter(){
 		FilterRegistrationBean<Filter> filterRegistrationBean = new FilterRegistrationBean<>();

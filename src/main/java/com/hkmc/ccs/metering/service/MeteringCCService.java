@@ -6,7 +6,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
@@ -27,9 +26,9 @@ import com.hkmc.ccs.metering.repository.UnblockedRepository;
 @Service
 public class MeteringCCService {
 
-    UnblockedRepository unblockedRepository;
+  private final UnblockedRepository unblockedRepository;
 
-    BlockedRepository blockedRepository;
+  private final BlockedRepository blockedRepository;
 
   private final Clock clock;
 
@@ -37,9 +36,9 @@ public class MeteringCCService {
 
   private final String BLOCKED_RSON_DAY = "1005";
 
-  public MeteringCCService(Clock clock) {
-//    this.unblockedRepository = unblockedRepository;
-//    this.blockedRepository = blockedRepository;
+  public MeteringCCService(UnblockedRepository unblockedRepository, BlockedRepository blockedRepository, Clock clock) {
+    this.unblockedRepository = unblockedRepository;
+    this.blockedRepository = blockedRepository;
     this.clock = clock;
   }
 
@@ -66,7 +65,7 @@ public class MeteringCCService {
         meteringCCBlockList.setCcid(blocked.getHandPhoneId());
         // 차단일시
         meteringCCBlockList.setBlockedDate(
-          blocked.getBlockedTime().format(DateTimeFormatter.ofPattern("yyyMMddHHmmss")));
+                blocked.getBlockedTime().format(DateTimeFormatter.ofPattern("yyyMMddHHmmss")));
         // 차단 사유
         if (blocked.getBlockedRsonCd().equals(BLOCKED_RSON_10MIN)) {
           meteringCCBlockList.setRsonCd("10분 한도초과");
@@ -104,10 +103,10 @@ public class MeteringCCService {
       // 삭제할 데이터 이력 저장
       for (Blocked blocked : list) {
         unblockRequest(blocked.getHandPhoneId()
-          , blocked.getCarId()
-          , blocked.getBlockedRsonCd()
-          , blocked.getBlockedTime()
-          , requestId);
+                , blocked.getCarId()
+                , blocked.getBlockedRsonCd()
+                , blocked.getBlockedTime()
+                , requestId);
 
         // 데이터 삭제할때, api 사용이력도 삭제
         blockedRepository.deleteApiAccessHist(blocked.getHandPhoneId(),carId);
@@ -131,15 +130,15 @@ public class MeteringCCService {
 
   @Async
   public void unblockRequest(String handPhoneId, String carId, String rsonCd, OffsetDateTime blockedTime,
-    String requestId) {
+                             String requestId) {
     unblockedRepository.save(Unblocked.builder()
-                               .handPhoneId(handPhoneId)
-                               .carId(carId)
-                               .blockedRsonCd(rsonCd)
-                               .blockedTime(blockedTime)
-                               .requestId(requestId)
-                               .requestTime(OffsetDateTime.now())
-                               .build());
+            .handPhoneId(handPhoneId)
+            .carId(carId)
+            .blockedRsonCd(rsonCd)
+            .blockedTime(blockedTime)
+            .requestId(requestId)
+            .requestTime(OffsetDateTime.now())
+            .build());
   }
 
 }

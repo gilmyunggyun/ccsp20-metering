@@ -1,33 +1,32 @@
 package com.hkmc.ccs.metering.models.entity;
 
 import java.util.UUID;
-//import jakarta.persistence.Entity;
-//import jakarta.persistence.GeneratedValue;
-//import jakarta.persistence.Id;
-//import jakarta.persistence.Index;
-//import jakarta.persistence.Table;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Index;
+import javax.persistence.Table;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import nonapi.io.github.classgraph.json.Id;
 
-//@Entity
+@Entity
 @Builder
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-//@Table(indexes = {
-//  @Index(
-//    name = "allowedapi_requesturl",
-//    columnList = "requesturl"
-//  )
-//})
+@Table(indexes = {
+        @Index(
+                name = "allowedapi_requesturl",
+                columnList = "requesturl"
+        )
+})
 public class AllowedApi {
 
-//  @Id
-//  @GeneratedValue
+  @Id
+  @GeneratedValue
   UUID id;
 
   String requestUrl;
