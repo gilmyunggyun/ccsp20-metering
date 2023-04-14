@@ -32,14 +32,16 @@ spring:
   jpa:
     show-sql: true
     generate-ddl: false
+
     hibernate:
       ddl-auto: none
-      database: postgresql
-      database-platform: org.hibernate.dialect.PostgreSQL10Dialect
+      dialect: org.hibernate.dialect.PostgreSQL10Dialect
+    database: postgresql
+#    database-platform: org.hibernate.dialect.PostgreSQL10Dialect
   datasource:
-    url: jdbc:postgresql://10.11.53.64:5432/meteringdb
-    username: meteringwas
-    password: devOps1!
+    url: jdbc:postgresql://localhost:5432/
+#    username: meteringwas
+#    password: devOps1!
     hikari:
       maximum-pool-size: 300
       minimum-idle: 80

@@ -5,10 +5,10 @@ buildscript {
 }
 
 plugins {
-  id 'org.springframework.boot' version '3.0.1'
+  id 'org.springframework.boot' version '3.0.5'
 
   id 'io.spring.dependency-management' version '1.1.0'
-  id "com.google.cloud.tools.jib" version "3.3.1"
+//  id "com.google.cloud.tools.jib" version "3.3.1"
   id 'org.graalvm.buildtools.native' version '0.9.20'
   id 'java'
 
@@ -33,9 +33,6 @@ repositories {
 
 
   mavenLocal()
-  maven {
-    url "https://package-int.hcloud.hmc.co.kr/repository/maven-public/"
-  }
   mavenCentral()
 }
 dependencies {
@@ -80,8 +77,8 @@ dependencies {
 //
 //  //jpa
 //
-  implementation "org.springframework.boot:spring-boot-starter-data-jpa"
-  implementation 'com.hkmc.ccs.commons:commons-jpa:1.0.2'
+//  implementation "org.springframework.boot:spring-boot-starter-data-jpa"
+//  implementation files('libs/commons-jpa-1.0.2.jar')
 //
 //
 //
@@ -185,9 +182,9 @@ dependencies {
 
 
 
-tasks.named("bootBuildImage") {
-  imageName = "registry-dev.hcloud.hmc.co.kr/ccssreteam20220616/graalvm"
-  builder = "registry-dev.hcloud.hmc.co.kr/ccssreteam20220616/paketobuildpacks/builder@sha256:24d4eecdb0d86973dfc7c1bdf26f6797960a26bd170a26e98c289627e37f5c15"
+//tasks.named("bootBuildImage") {
+//  imageName = "localhost:5000/ccssreteam20220616/graalvm"
+//  builder = "registry-dev.hcloud.hmc.co.kr/ccssreteam20220616/paketobuildpacks/builder@sha256:24d4eecdb0d86973dfc7c1bdf26f6797960a26bd170a26e98c289627e37f5c15"
 //  docker {
 ////    host = "tcp://docker.hub:2376"
 //    publish = true
@@ -203,7 +200,7 @@ tasks.named("bootBuildImage") {
 //
 //    }
 //  }
-}
+//}
 
 //buildscript {
 //  dependencies {
@@ -213,47 +210,51 @@ tasks.named("bootBuildImage") {
 
 
 
-jib {
-
-  from {
-
-    image = "registry.hcloud.hmc.co.kr/ccs/graalvm-ce:ol9-java17-22.3.0"
-
-  }
-
-  to {
-
-    allowInsecureRegistries = true
-
-    image = "localhost:5000/${project.name}"
-    auth {
-      username = "admin"
-      password = "admin"
-    }
-
-    tags = ["${project.version}"]
-  }
-
-  container {
-  }
-
-//  pluginExtensions {
-//    pluginExtension {
-//      implementation = 'com.google.cloud.tools.jib.gradle.extension.nativeimage.JibNativeImageExtension'
-//      properties = [
-//              imageName: 'localhost:5000/ccsp20-metering'
-//      ]
+//jib {
 //
+//  from {
 //
-//    }
+//    image = "registry.hcloud.hmc.co.kr/ccs/graalvm-ce:ol9-java17-22.3.0"
+//
 //  }
+//
+//  to {
+//
+//    allowInsecureRegistries = true
+//
+//    image = "localhost:5000/${project.name}"
+//    auth {
+//      username = "admin"
+//      password = "admin"
+//    }
+//
+//    tags = ["${project.version}"]
+//  }
+//
+//  container {
+//  }
+//
+////  pluginExtensions {
+////    pluginExtension {
+////      implementation = 'com.google.cloud.tools.jib.gradle.extension.nativeimage.JibNativeImageExtension'
+////      properties = [
+////              imageName: 'localhost:5000/ccsp20-metering'
+////      ]
+////
+////
+////    }
+////  }
+//
+//}
 
+bootBuildImage {
+  imageName = "localhost:5000/ccssreteam20220616/graalvm"
+//  builder = "localhost:5000/paketobuildpacks/builder:tiny"
+//  buildpacks = ["file://c:/buildpack.tar.gz", "urn:cnb:builder:paketo-buildpacks/java"]
 }
 
-//bootBuildImage {
-//  imageName = "localhost:5000/ccssreteam20220616/graalvm"
-//  builder = "localhost:5000/paketobuildpacks/builder:tiny"
-////  buildpacks = ["file://c:/buildpack.tar.gz", "urn:cnb:builder:paketo-buildpacks/java"]
+//test {
+//  exclude '**/*'
 //}
 
 

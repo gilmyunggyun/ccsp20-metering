@@ -1,9 +1,2 @@
-pluginManagement {
-  repositories {
-    mavenLocal()
-    maven {
-      url "https://package-int.hcloud.hmc.co.kr/repository/maven-public/"
-    }
-  }
-}
+
 rootProject.name = 'ccsp20-metering'
