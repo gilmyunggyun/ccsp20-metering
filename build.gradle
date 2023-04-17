@@ -246,6 +246,15 @@ dependencies {
 
 bootBuildImage {
   imageName = "localhost:5000/ccssreteam20220616/graalvm"
+  environment["BPE_APPEND_JAVA_TOOL_OPTIONS"] = "-XX:+UnlockExperimentalVMOptions"
+  environment["BPE_APPEND_JAVA_TOOL_OPTIONS"] = "-XX:+UseZGC"
+  environment["BPE_APPEND_JAVA_TOOL_OPTIONS"] = "-Xms256m"
+  environment["BPE_APPEND_JAVA_TOOL_OPTIONS"] = "-Xmx256m"
+  environment["BPE_APPEND_JAVA_TOOL_OPTIONS"] = "-XX:MaxDirectMemorySize=256m"
+  environment["BPE_APPEND_JAVA_TOOL_OPTIONS"] = "-Dspring.profiles.active=dev"
+
+
+
 //  builder = "localhost:5000/paketobuildpacks/builder:tiny"
 //  buildpacks = ["file://c:/buildpack.tar.gz", "urn:cnb:builder:paketo-buildpacks/java"]
 }
