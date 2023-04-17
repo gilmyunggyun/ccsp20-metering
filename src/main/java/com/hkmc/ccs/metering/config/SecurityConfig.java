@@ -1,11 +1,13 @@
 package com.hkmc.ccs.metering.config;
 
+import jakarta.servlet.DispatcherType;
 import java.time.Clock;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 
@@ -26,8 +28,15 @@ public class SecurityConfig {
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-    http.csrf().disable().httpBasic().and()
-            .authorizeHttpRequests().anyRequest().permitAll();
+    http
+        .authorizeHttpRequests(request->request
+            .dispatcherTypeMatchers(DispatcherType.FORWARD).permitAll()
+            .requestMatchers(SERVICE_PATH, "/login").permitAll()
+            .anyRequest().authenticated()
+        ).httpBasic(Customizer.withDefaults());
+
+//        .httpBasic().and()
+//            .authorizeHttpRequests().anyRequest().permitAll();
 
 
     return http.build();

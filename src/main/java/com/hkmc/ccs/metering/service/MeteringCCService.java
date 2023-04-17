@@ -27,9 +27,9 @@ import com.hkmc.ccs.metering.repository.UnblockedRepository;
 @Service
 public class MeteringCCService {
 
-    UnblockedRepository unblockedRepository;
+  private final UnblockedRepository unblockedRepository;
 
-    BlockedRepository blockedRepository;
+  private final BlockedRepository blockedRepository;
 
   private final Clock clock;
 
@@ -37,9 +37,9 @@ public class MeteringCCService {
 
   private final String BLOCKED_RSON_DAY = "1005";
 
-  public MeteringCCService(Clock clock) {
-//    this.unblockedRepository = unblockedRepository;
-//    this.blockedRepository = blockedRepository;
+  public MeteringCCService(UnblockedRepository unblockedRepository, BlockedRepository blockedRepository, Clock clock) {
+    this.unblockedRepository = unblockedRepository;
+    this.blockedRepository = blockedRepository;
     this.clock = clock;
   }
 

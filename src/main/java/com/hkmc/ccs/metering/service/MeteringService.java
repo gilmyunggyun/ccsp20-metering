@@ -21,13 +21,13 @@ import com.hkmc.ccs.metering.models.vo.MeteringCheckRequest;
 @Service
 public class MeteringService {
 
-  private  BlockedRepository blockedRepository;
+  private final BlockedRepository blockedRepository;
 
-  private  BlockedTempRepository blockedTempRepository;
+  private final BlockedTempRepository blockedTempRepository;
 
-  private  ApiAccessRepository apiAccessRepository;
+  private final ApiAccessRepository apiAccessRepository;
 
-  private  AllowedApiRepository allowedApiRepository;
+  private final AllowedApiRepository allowedApiRepository;
 
   private final Clock clock;
 
@@ -49,11 +49,12 @@ public class MeteringService {
   @Value("${metering.DATA_NOT_VALID}")
   private int DATA_NOT_VALID;
 
-  public MeteringService( Clock clock) {
-//    this.blockedRepository = blockedRepository;
-//    this.blockedTempRepository = blockedTempRepository;
-//    this.apiAccessRepository = apiAccessRepository;
-//    this.allowedApiRepository = allowedApiRepository;
+  public MeteringService(BlockedRepository blockedRepository, BlockedTempRepository blockedTempRepository,
+    ApiAccessRepository apiAccessRepository, AllowedApiRepository allowedApiRepository, Clock clock) {
+    this.blockedRepository = blockedRepository;
+    this.blockedTempRepository = blockedTempRepository;
+    this.apiAccessRepository = apiAccessRepository;
+    this.allowedApiRepository = allowedApiRepository;
     this.clock = clock;
   }
 

@@ -78,9 +78,6 @@ public class MeteringCCController {
                   .blockList(blockList)
                   .build());
     } catch (Exception e) {
-      LOGGER.error("[XTID : {}] carID[{}] " + e.getMessage(),
-              header.get("xtid"),
-              request.getCarId());
 
       return status(INTERNAL_SERVER_ERROR).body(MeteringCCResponse.builder()
                                                   .resultCode(result_fail)
@@ -121,9 +118,7 @@ public class MeteringCCController {
                   .carId(request.getCarId())
                   .build());
     } catch (Exception e) {
-      LOGGER.error("[XTID : {}] carID[{}] " + e.getMessage(),
-              header.get("xtid"),
-              request.getCarId());
+      e.printStackTrace();
       return status(INTERNAL_SERVER_ERROR).body(MeteringCCResponse.builder()
                                                   .resultCode(result_fail)
                                                   .resultMessage("Internal Server Error")
