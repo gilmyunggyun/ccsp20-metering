@@ -15,16 +15,46 @@ management:
     web:
       exposure:
         include: "*"
+---
+spring:
+  zipkin:
+    base-url: http://10.11.53.1:9411
+    httptag: true
+  kafka:
+    bootstrap-servers: 10.7.159.122:9092, 10.7.159.123:9092, 10.7.159.124:9092, 10.7.159.125:9092, 10.7.159.126:9092
+    max-poll-interval-ms: 600000
+    consumer:
+      auto-offset-reset: earliest
+      enable:
+        auto:
+          commit: true
+  redis:
 
+  mtgateway:
+    server:
+      url: http://10.11.52.58:9001
+      name: mtgateway
+    type1server:
+      url: http://10.11.52.58:9003
+      name: mtgatewaytype1
+  lifecycle:
+    timeout-per-shutdown-phase: 2m
+
+management:
+  health:
+    probes:
+      enabled: true
+server:
+  shutdown: graceful
+
+---
 spring:
   security:
     user:
       name: admin
       password: admin
-  profiles:
-    active: local
   application:
-    name: ccsp20-metering
+    name: ccsp20-metering-graalvm
 
   cloud:
     config:

@@ -9,6 +9,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
@@ -28,12 +29,17 @@ public class SecurityConfig {
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-    http
-        .authorizeHttpRequests(request->request
-            .dispatcherTypeMatchers(DispatcherType.FORWARD).permitAll()
-            .requestMatchers(SERVICE_PATH, "/login").permitAll()
-            .anyRequest().authenticated()
-        ).httpBasic(Customizer.withDefaults());
+    http.csrf().disable().cors().disable()
+        .authorizeHttpRequests()
+        .requestMatchers(SERVICE_PATH, "/login", ENV_PATH).permitAll()
+        .anyRequest().authenticated()
+        .and().httpBasic(Customizer.withDefaults());
+
+
+//  request->request
+//            .requestMatchers(SERVICE_PATH, "/login", ENV_PATH).permitAll()
+//            .anyRequest().authenticated()
+//        ).httpBasic(Customizer.withDefaults());
 
 //        .httpBasic().and()
 //            .authorizeHttpRequests().anyRequest().permitAll();
@@ -41,6 +47,12 @@ public class SecurityConfig {
 
     return http.build();
   }
+
+//  @Bean
+//  public WebSecurityCustomizer webSecurityCustomizer() {
+//    // antMatchers 부분도 deprecated 되어 requestMatchers로 대체
+////    return (web) -> web.ignoring().requestMatchers(ENV_PATH, SERVICE_PATH, "/login");
+//  }
 
 //  @Configuration
 //  public static class ApplicationConfiguration {
