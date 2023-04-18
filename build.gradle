@@ -1,3 +1,5 @@
+//import org.graalvm.buildtools.gradle.tasks.BuildNativeImageTask
+
 //buildscript {
 //  dependencies {
 //    classpath('com.google.cloud.tools:jib-native-image-extension-gradle:0.1.0')
@@ -99,9 +101,9 @@ dependencies {
   implementation 'com.google.code.gson:gson:2.10.1'
   implementation 'com.fasterxml.jackson.module:jackson-module-afterburner:2.14.2'
 //
-  implementation 'io.micrometer:micrometer-registry-statsd:1.9.2'
-  implementation 'co.elastic.apm:elastic-apm-agent:1.34.1'
-  testImplementation 'com.github.tomakehurst:wiremock:2.27.2'
+//  implementation 'io.micrometer:micrometer-registry-statsd:1.9.2'
+//  implementation 'co.elastic.apm:elastic-apm-agent:1.34.1'
+//  testImplementation 'com.github.tomakehurst:wiremock:2.27.2'
 //
 //  implementation 'org.springframework.experimental:spring-native:0.12.0'
 //  implementation 'org.springframework.experimental:spring-aot-gradle-plugin:0.9.1'
@@ -206,53 +208,55 @@ dependencies {
 //}
 
 
-
+//
 //jib {
-//
-//  from {
-//
-//    image = "registry.hcloud.hmc.co.kr/ccs/graalvm-ce:ol9-java17-22.3.0"
-//
-//  }
-//
+////
+////  from {
+////
+////    image = "registry.hcloud.hmc.co.kr/ccs/graalvm-ce:ol9-java17-22.3.0"
+////
+////  }
+////
 //  to {
-//
 //    allowInsecureRegistries = true
-//
-//    image = "localhost:5000/${project.name}"
-//    auth {
-//      username = "admin"
-//      password = "admin"
-//    }
-//
+//    image = "localhost:5000/ccsp20-metering-jib"
 //    tags = ["${project.version}"]
 //  }
-//
-//  container {
-//  }
-//
-////  pluginExtensions {
-////    pluginExtension {
-////      implementation = 'com.google.cloud.tools.jib.gradle.extension.nativeimage.JibNativeImageExtension'
-////      properties = [
-////              imageName: 'localhost:5000/ccsp20-metering'
-////      ]
 ////
-////
-////    }
+////  container {
 ////  }
-//
+////
+//  pluginExtensions {
+//    pluginExtension {
+//      implementation = 'com.google.cloud.tools.jib.gradle.extension.nativeimage.JibNativeImageExtension'
+//      properties = [
+//          imageName: 'com.hkmc.ccs.metering.MeteringApplication'
+//      ]
+//    }
+//  }
+////
 //}
 
 bootBuildImage {
-  imageName = "localhost:5000/ccssreteam20220616/graalvm"
-  environment["BPE_APPEND_JAVA_TOOL_OPTIONS"] = "-XX:+UnlockExperimentalVMOptions"
-  environment["BPE_APPEND_JAVA_TOOL_OPTIONS"] = "-XX:+UseZGC"
-  environment["BPE_APPEND_JAVA_TOOL_OPTIONS"] = "-Xms256m"
-  environment["BPE_APPEND_JAVA_TOOL_OPTIONS"] = "-Xmx256m"
-  environment["BPE_APPEND_JAVA_TOOL_OPTIONS"] = "-XX:MaxDirectMemorySize=256m"
-  environment["BPE_APPEND_JAVA_TOOL_OPTIONS"] = "-Dspring.profiles.active=dev"
+  imageName = "registry-dev.hcloud.hmc.co.kr/ccssreteam20220616/ccsp20-metering-graalvm"
+  tags = ['registry-dev.hcloud.hmc.co.kr/ccssreteam20220616/ccsp20-metering-graalvm:1.0.5']
+  environment = [
+          'JAVA_TOOL_OPTIONS' : '-XX:+UnlockExperimentalVMOptions' +
+                  ' -XX:+UseZGC' +
+                  ' -Xmx256m ' +
+                  ' -XX:MaxDirectMemorySize=256m ' +
+                  ' -Dspring.profiles.active=dev ' +
+                  ' -Delastic.apm.use_path_as_transaction_name=true ' +
+                  ' -Delastic.apm.capture_body_content_types=* ' +
+                  ' -Delastic.apm.capture_body=all ' +
+                  ' -Delastic.apm.capture_headers=true ' +
+                  ' -Delastic.apm.enable_experimental_instrumentations=true ' +
+                  ' -Delastic.apm.service_name=ccsp20-metering-graalvm ' +
+                  ' -Delastic.apm.server_urls=http://ccs-es-apm-apm-server.observability:8200 ' +
+                  ' -Delastic.apm.application_packages=com.hkmc'
 
+  ]
+  buildpacks = ["gcr.io/paketo-buildpacks/graalvm", "urn:cnb:builder:paketo-buildpacks/java"]
 
 
 //  builder = "localhost:5000/paketobuildpacks/builder:tiny"
@@ -267,4 +271,27 @@ bootBuildImage {
 
 //
 //
+//}
+//tasks.withType(BuildNativeImageTask).configureEach {
+//  disableToolchainDetection = true
+//}
+//
+//graalvmNative {
+//  binaries {
+//    configureEach {
+//      resources.autodetect()
+//    }
+//    main {
+//      imageName.set('meteringApplication')
+////      javaLauncher = javaToolchains.launcherFor {
+////        languageVersion = JavaLanguageVersion.of(17)
+////        vendor = JvmVendorSpec.matching("GraalVM Community")
+////      }
+//
+//      buildArgs.add('-H:-CheckToolchain')
+//      buildArgs.add('--enable-http')
+//      buildArgs.add('--enable-https')
+//    }
+//  }
+////  toolchainDetection = false
 //}

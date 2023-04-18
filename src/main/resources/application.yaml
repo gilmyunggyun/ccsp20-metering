@@ -1,4 +1,5 @@
-
+server:
+  port: 8080
 #  cloud:
 #    config:
 #      name: ccsp20-common,ccsp20-metering
@@ -11,6 +12,8 @@
 #    hibernate:
 #      database-platform:
 management:
+  elastic:
+    a
   endpoints:
     web:
       exposure:
@@ -68,11 +71,17 @@ spring:
     show-sql: true
     generate-ddl: false
 
+#    Unable to resolve name [org.hibernate.dialect.PostgreSQL95Dialect]
     hibernate:
       ddl-auto: none
-      dialect: org.hibernate.dialect.PostgreSQL10Dialect
+
+      dialect: org.hibernate.dialect.PostgreSQLDialect
     database: postgresql
-#    database-platform: org.hibernate.dialect.PostgreSQL10Dialect
+
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
   datasource:
     #url: jdbc:postgresql://localhost:5432/
     url: jdbc:postgresql://10.11.53.64:5432/meteringdb
