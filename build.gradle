@@ -101,9 +101,9 @@ dependencies {
   implementation 'com.google.code.gson:gson:2.10.1'
   implementation 'com.fasterxml.jackson.module:jackson-module-afterburner:2.14.2'
 //
-//  implementation 'io.micrometer:micrometer-registry-statsd:1.9.2'
-//  implementation 'co.elastic.apm:elastic-apm-agent:1.34.1'
-//  testImplementation 'com.github.tomakehurst:wiremock:2.27.2'
+  implementation 'io.micrometer:micrometer-registry-statsd:1.9.2'
+  implementation 'co.elastic.apm:elastic-apm-agent:1.34.1'
+  testImplementation 'com.github.tomakehurst:wiremock:2.27.2'
 //
 //  implementation 'org.springframework.experimental:spring-native:0.12.0'
 //  implementation 'org.springframework.experimental:spring-aot-gradle-plugin:0.9.1'
@@ -239,24 +239,13 @@ dependencies {
 
 bootBuildImage {
   imageName = "registry-dev.hcloud.hmc.co.kr/ccssreteam20220616/ccsp20-metering-graalvm"
-  tags = ['registry-dev.hcloud.hmc.co.kr/ccssreteam20220616/ccsp20-metering-graalvm:1.0.5']
+  tags = ['registry-dev.hcloud.hmc.co.kr/ccssreteam20220616/ccsp20-metering-graalvm:1.0.12']
   environment = [
-          'JAVA_TOOL_OPTIONS' : '-XX:+UnlockExperimentalVMOptions' +
-                  ' -XX:+UseZGC' +
-                  ' -Xmx256m ' +
-                  ' -XX:MaxDirectMemorySize=256m ' +
-                  ' -Dspring.profiles.active=dev ' +
-                  ' -Delastic.apm.use_path_as_transaction_name=true ' +
-                  ' -Delastic.apm.capture_body_content_types=* ' +
-                  ' -Delastic.apm.capture_body=all ' +
-                  ' -Delastic.apm.capture_headers=true ' +
-                  ' -Delastic.apm.enable_experimental_instrumentations=true ' +
-                  ' -Delastic.apm.service_name=ccsp20-metering-graalvm ' +
-                  ' -Delastic.apm.server_urls=http://ccs-es-apm-apm-server.observability:8200 ' +
-                  ' -Delastic.apm.application_packages=com.hkmc'
+          'JAVA_TOOL_OPTIONS' : '-XX:+UnlockExperimentalVMOptions',
+          'BP_NATIVE_IMAGE': 'true'
 
   ]
-  buildpacks = ["gcr.io/paketo-buildpacks/graalvm", "urn:cnb:builder:paketo-buildpacks/java"]
+  buildpacks = ["gcr.io/paketo-buildpacks/java-native-image", "urn:cnb:builder:paketo-buildpacks/java"]
 
 
 //  builder = "localhost:5000/paketobuildpacks/builder:tiny"

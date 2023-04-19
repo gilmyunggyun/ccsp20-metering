@@ -12,13 +12,25 @@ server:
 #    hibernate:
 #      database-platform:
 management:
-  elastic:
-    a
+
   endpoints:
     web:
       exposure:
         include: "*"
 
+  metrics:
+    tags:
+      org_name: CCS-DEV
+      space_name: automation
+      app_name: ccsp20-metering-graalvm
+      cf_instance_id: ccsp20-metering-graalvm
+  statsd:
+    metrics:
+      export:
+        enabled: true
+        flavor: telegraf
+        host: telegraf-java.hubble-telegraf.svc.cluster.local
+        port: 8125
 ---
 spring:
   zipkin:
