@@ -11,6 +11,18 @@ server:
 #        dialect: org.hibernate.dialect.PostgreSQLDialect
 #    hibernate:
 #      database-platform:
+elastic:
+  apm:
+    enabled: true
+    service-name: ccsp20-metering-graalvm
+    server-urls: http://ccs-es-apm-apm-server.observability:8200
+    use-path-as-transaction-name: true
+    capture-body: all
+    capture-body-content-types: "*"
+    capture-headers: true
+    enable-experimental-instrumentations: true
+    application-packages: com.hkmc
+
 management:
 
   endpoints:
@@ -95,8 +107,8 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
   datasource:
-    #url: jdbc:postgresql://localhost:5432/
-    url: jdbc:postgresql://10.11.53.64:5432/meteringdb
+    url: jdbc:postgresql://host.docker.internal:5432/postgres
+#    url: jdbc:postgresql://10.11.53.64:5432/meteringdb
     username: meteringwas
     password: devOps1!
     hikari:
