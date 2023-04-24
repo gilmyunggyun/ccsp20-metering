@@ -33,10 +33,6 @@ spring:
 
   application:
     name: ccsp20-metering
-  security:
-    user:
-      name: admin
-      password: admin
 
   cloud:
     config:
@@ -50,22 +46,17 @@ spring:
     show-sql: true
     generate-ddl: false
 
-
     database: postgresql
-
 #    dialect: org.hibernate.dialect.PostgreSQLDialect
 #    database-platform: org.hibernate.dialect.PostgreSQL10Dialect
     hibernate:
-
-#      dialect: org.hibernate.dialect.PostgreSQL10Dialect
-#      database-platform: org.hibernate.dialect.PostgreSQL10Dialect
+#      dialect: org.hibernate.dialect.PostgreSQLDialect
       ddl-auto: none
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQL10Dialect
   #      dialect: org.hibernate.dialect.PostgreSQLDialect
-        database-platform: org.hibernate.dialect.PostgreSQL10Dialect
-    database-platform: org.hibernate.dialect.PostgreSQL10Dialect
+      database-platform: org.hibernate.dialect.PostgreSQL10Dialect
   datasource:
 #    url: jdbc:postgresql://localhost:5432/postgres
     url: jdbc:postgresql://10.11.53.64:5432/meteringdb

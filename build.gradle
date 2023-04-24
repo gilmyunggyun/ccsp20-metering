@@ -119,6 +119,7 @@ dependencies {
 
 }
 
+
 //
 //cloudnative {
 //  microservice {
@@ -249,37 +250,38 @@ dependencies {
 //}
 
 bootBuildImage {
-  imageName = "kilmmk/ccsp20-metering-graalvm:1.1.7"
+  imageName = "localhost:5000/ccsp20-metering-graalvm:1.1.8"
 //  tags = ['kilmmk/ccsp20-metering-graalvm:1.1.6']
 
 //  args = ""
-
+//  bindings = ["${project.projectDir}/ca-certficates/binding:/platform/bindings/ca-certificates"]
   environment = [
+//          "BP_LOG_LEVEL": "debug",
           'BP_NATIVE_IMAGE': 'true',
-          'BP_NATIVE_IMAGE_BUILD_ARGUMENTS':
-                  '--initialize-at-build-time=' +
-                  'org.slf4j.impl.StaticLoggerBinder' +
-                  ',org.slf4j.LoggerFactory' +
-                  ',ch.qos.logback.classic.Logger' +
-                  ',ch.qos.logback.core.spi.AppenderAttachableImpl' +
-                  ',ch.qos.logback.core.status.StatusBase' +
-                  ',ch.qos.logback.classic.Level' +
-                  ',ch.qos.logback.core.status.InfoStatus' +
-                  ',ch.qos.logback.classic.PatternLayout' +
-                  ',ch.qos.logback.core.CoreConstants'+
-                  ',org.apache.commons.logging.impl.SLF4JLocationAwareLog '+
-          '--trace-object-instantiation=org.apache.commons.logging.impl.SLF4JLocationAwareLog -Dspring.profiles.active=dev ',
-          'BPE_DELIM_JAVA_TOOL_OPTIONS': ' ',
-          'BPE_APPEND_JAVA_TOOL_OPTIONS': '-javaagent=/workspace/BOOT-INF/lib/elastic-apm-agent-1.34.1.jar -Dspring.profiles.active=dev',
-//
-////          'ELASTIC_APM_SERVER_URLS':'http://ccs-es-apm-apm-server.observability:8200',
-          'JAVA_TOOL_OPTIONS' : '-javaagent=/workspace/BOOT-INF/lib/elastic-apm-agent-1.34.1.jar'
+//          'BP_NATIVE_IMAGE_BUILD_ARGUMENTS':
+//                  '--initialize-at-build-time=' +
+//                  'org.slf4j.impl.StaticLoggerBinder' +
+//                  ',org.slf4j.LoggerFactory' +
+//                  ',ch.qos.logback.classic.Logger' +
+//                  ',ch.qos.logback.core.spi.AppenderAttachableImpl' +
+//                  ',ch.qos.logback.core.status.StatusBase' +
+//                  ',ch.qos.logback.classic.Level' +
+//                  ',ch.qos.logback.core.status.InfoStatus' +
+//                  ',ch.qos.logback.classic.PatternLayout' +
+//                  ',ch.qos.logback.core.CoreConstants'+
+//                  ',org.apache.commons.logging.impl.SLF4JLocationAwareLog '+
+//          '--trace-object-instantiation=org.apache.commons.logging.impl.SLF4JLocationAwareLog -Dspring.profiles.active=dev ',
+//          'BPE_DELIM_JAVA_TOOL_OPTIONS': ' ',
+//          'BPE_APPEND_JAVA_TOOL_OPTIONS': '-javaagent=/workspace/BOOT-INF/lib/elastic-apm-agent-1.34.1.jar -Dspring.profiles.active=dev',
+
+//          'ELASTIC_APM_SERVER_URLS':'http://ccs-es-apm-apm-server.observability:8200',
+//          'JAVA_TOOL_OPTIONS' : '-javaagent=/workspace/BOOT-INF/lib/elastic-apm-agent-1.34.1.jar'
 
   ]
-//  buildpacks = ["gcr.io/paketo-buildpacks/java-native-image", "urn:cnb:builder:paketo-buildpacks/java"]
+  buildpacks = ["gcr.io/paketo-buildpacks/graalvm", "urn:cnb:builder:paketo-buildpacks/java"]
 
 
-//  builder = "paketobuildpacks/builder:tiny"
+  builder = "paketobuildpacks/builder:tiny"
 //  buildpacks = ["file://c:/buildpack.tar.gz", "urn:cnb:builder:paketo-buildpacks/java"]
 }
 
