@@ -28,10 +28,8 @@ repositories {
   gradlePluginPortal()
 //
   maven { url = uri("https://repo.spring.io/release") }
-
+  maven { url = uri("https://package-int.hcloud.hmc.co.kr/repository/maven-public") }
 //
-
-
 
   mavenLocal()
   mavenCentral()
@@ -79,7 +77,7 @@ dependencies {
 //  //jpa
 //
   implementation "org.springframework.boot:spring-boot-starter-data-jpa"
-  implementation files('libs/commons-jpa-1.0.2.jar')
+  implementation 'com.hkmc.ccs.commons:commons-jpa:1.0.2'
 //
 //
 //
@@ -254,78 +252,113 @@ dependencies {
 //}
 
 bootBuildImage {
-  imageName = "localhost:5000/ccsp20-metering-graalvm:1.1.8"
+  imageName = "kilmmk/ccsp20-metering-graalvm:1.1.9"
 //  tags = ['kilmmk/ccsp20-metering-graalvm:1.1.6']
 
 //  args = ""
-//  bindings = ["${project.projectDir}/ca-certficates/binding:/platform/bindings/ca-certificates"]
+
   environment = [
-//          "BP_LOG_LEVEL": "debug",
-          'BP_JVM_VERSION': '17.0.6',
           'BP_NATIVE_IMAGE': 'true',
           'BP_NATIVE_IMAGE_BUILD_ARGUMENTS':
-                  '-Djavax.net.ssl.trustStor --initialize-at-build-time=' +
-                  'org.slf4j.impl.StaticLoggerBinder' +
-                  ',org.slf4j.LoggerFactory' +
-                  ',ch.qos.logback.classic.Logger' +
-                  ',ch.qos.logback.core.spi.AppenderAttachableImpl' +
-                  ',ch.qos.logback.core.status.StatusBase' +
-                  ',ch.qos.logback.classic.Level' +
-                  ',ch.qos.logback.core.status.InfoStatus' +
-                  ',ch.qos.logback.classic.PatternLayout' +
-                  ',ch.qos.logback.core.CoreConstants'+
-                  ',org.apache.commons.logging.impl.SLF4JLocationAwareLog '+
-          '--trace-object-instantiation=org.apache.commons.logging.impl.SLF4JLocationAwareLog -Dspring.profiles.active=dev ',
+                  '--initialize-at-build-time=' +
+                          'org.slf4j.impl.StaticLoggerBinder' +
+                          ',org.slf4j.LoggerFactory' +
+                          ',ch.qos.logback.classic.Logger' +
+                          ',ch.qos.logback.core.spi.AppenderAttachableImpl' +
+                          ',ch.qos.logback.core.status.StatusBase' +
+                          ',ch.qos.logback.classic.Level' +
+                          ',ch.qos.logback.core.status.InfoStatus' +
+                          ',ch.qos.logback.classic.PatternLayout' +
+                          ',ch.qos.logback.core.CoreConstants'+
+                          ',org.apache.commons.logging.impl.SLF4JLocationAwareLog '+
+                          '--trace-object-instantiation=org.apache.commons.logging.impl.SLF4JLocationAwareLog -Dspring.profiles.active=dev ',
           'BPE_DELIM_JAVA_TOOL_OPTIONS': ' ',
-          'BPE_APPEND_JAVA_TOOL_OPTIONS': '-Dspring.aot.enabled=true -Dspring.profiles.active=dev',
-
-//          'ELASTIC_APM_SERVER_URLS':'http://ccs-es-apm-apm-server.observability:8200',
-          'JAVA_TOOL_OPTIONS' : 'Dspring.profiles.active=dev'
+          'BPE_APPEND_JAVA_TOOL_OPTIONS': '-javaagent=/workspace/BOOT-INF/lib/elastic-apm-agent-1.34.1.jar -Dspring.profiles.active=dev',
+//
+////          'ELASTIC_APM_SERVER_URLS':'http://ccs-es-apm-apm-server.observability:8200',
+          'JAVA_TOOL_OPTIONS' : '-javaagent=/workspace/BOOT-INF/lib/elastic-apm-agent-1.34.1.jar'
 
   ]
 //  buildpacks = ["gcr.io/paketo-buildpacks/java-native-image", "urn:cnb:builder:paketo-buildpacks/java"]
 
 
-  builder = "paketobuildpacks/builder:base"
+  builder = "paketobuildpacks/builder:tiny"
 //  buildpacks = ["file://c:/buildpack.tar.gz", "urn:cnb:builder:paketo-buildpacks/java"]
 }
+
+//bootBuildImage {
+//  imageName = "localhost:5000/ccsp20-metering-graalvm:1.1.8"
+////  tags = ['kilmmk/ccsp20-metering-graalvm:1.1.6']
+//
+////  args = ""
+////  bindings = ["${project.projectDir}/ca-certficates/binding:/platform/bindings/ca-certificates"]
+//  environment = [
+////          "BP_LOG_LEVEL": "debug",
+//'BP_NATIVE_IMAGE': 'true',
+////          'BP_NATIVE_IMAGE_BUILD_ARGUMENTS':
+////                  '--initialize-at-build-time=' +
+////                  'org.slf4j.impl.StaticLoggerBinder' +
+////                  ',org.slf4j.LoggerFactory' +
+////                  ',ch.qos.logback.classic.Logger' +
+////                  ',ch.qos.logback.core.spi.AppenderAttachableImpl' +
+////                  ',ch.qos.logback.core.status.StatusBase' +
+////                  ',ch.qos.logback.classic.Level' +
+////                  ',ch.qos.logback.core.status.InfoStatus' +
+////                  ',ch.qos.logback.classic.PatternLayout' +
+////                  ',ch.qos.logback.core.CoreConstants'+
+////                  ',org.apache.commons.logging.impl.SLF4JLocationAwareLog '+
+////          '--trace-object-instantiation=org.apache.commons.logging.impl.SLF4JLocationAwareLog -Dspring.profiles.active=dev ',
+////          'BPE_DELIM_JAVA_TOOL_OPTIONS': ' ',
+////          'BPE_APPEND_JAVA_TOOL_OPTIONS': '-javaagent=/workspace/BOOT-INF/lib/elastic-apm-agent-1.34.1.jar -Dspring.profiles.active=dev',
+//
+////          'ELASTIC_APM_SERVER_URLS':'http://ccs-es-apm-apm-server.observability:8200',
+////          'JAVA_TOOL_OPTIONS' : '-javaagent=/workspace/BOOT-INF/lib/elastic-apm-agent-1.34.1.jar'
+//
+//  ]
+//  buildpacks = ["gcr.io/paketo-buildpacks/graalvm", "urn:cnb:builder:paketo-buildpacks/java"]
+//
+//
+//  builder = "paketobuildpacks/builder:tiny"
+////  buildpacks = ["file://c:/buildpack.tar.gz", "urn:cnb:builder:paketo-buildpacks/java"]
+//}
+
 
 //test {
 //  exclude '**/*'
 //}
 
-graalvmNative {
-  binaries {
-    main {
-
-      imageName = "ccsp20-metering"
-      buildArgs = [
-              "--trace-object-instantiation=org.apache.commons.logging.impl.SLF4JLocationAwareLog"
-              ,"-H:-CheckToolchain"
-              ,"--initialize-at-build-time=org.slf4j.impl.StaticLoggerBinder,org.apache.commons.logging.impl.SLF4JLocationAwareLog,ch.qos.logback.core.CoreConstants,ch.qos.logback.classic.PatternLayout,ch.qos.logback.core.status.InfoStatus,ch.qos.logback.classic.Level,org.slf4j.LoggerFactory,ch.qos.logback.classic.Logger,ch.qos.logback.core.spi.AppenderAttachableImpl,ch.qos.logback.core.spi.AppenderAttachableImpl,ch.qos.logback.core.status.StatusBase"
-              ]
-
-      jvmArgs.add("-Delastic.apm.application_packages=com.hkmc -Delastic.apm.server_urls=http://host.docker.internal:8200 -Delastic.apm.service_name=ccsp20-metering-graalvm -javaagent:libs/elastic-apm-agent-1.34.1.jar -Delastic.apm.enable_experimental_instrumentations=true -Delastic.apm.capture_headers=true -Delastic.apm.capture_body=all -Delastic.apm.use_path_as_transaction_name=true -Delastic.apm.capture_body_content_types=* -Dspring.profiles.active=dev")
-//              " -XX:+UnlockExperimentalVMOptions"
-//              ," -XX:+UseZGC"
-//              ," -Xms256m"
-//              ," -Xmx256m"
-//              ," -XX:MaxDirectMemorySize=256m"
-//              ," -javaagent:libs/elastic-apm-agent-1.34.1.jar"
-//              ," -Dspring.profiles.active=dev"
-//              ," -Delastic.apm.use_path_as_transaction_name=true"
-//              ," -Delastic.apm.capture_body_content_types=*"
-//              ," -Delastic.apm.capture_body=all"
-//              ," -Delastic.apm.capture_headers=true"
-//              ," -Delastic.apm.enable_experimental_instrumentations=true"
-//              ," -Delastic.apm.service_name=ccsp20-metering-graalvm"
-//              ," -Delastic.apm.server_urls=http://localhost:8200"
-//              ," -Delastic.apm.application_packages=com.hkmc"
+//graalvmNative {
+//  binaries {
+//    main {
 //
-//      ]
-    }
-  }
-}
+//      imageName = "ccsp20-metering"
+//      buildArgs = [
+//              "--trace-object-instantiation=org.apache.commons.logging.impl.SLF4JLocationAwareLog"
+//              ,"-H:-CheckToolchain"
+//              ,"--initialize-at-build-time=org.slf4j.impl.StaticLoggerBinder,org.apache.commons.logging.impl.SLF4JLocationAwareLog,ch.qos.logback.core.CoreConstants,ch.qos.logback.classic.PatternLayout,ch.qos.logback.core.status.InfoStatus,ch.qos.logback.classic.Level,org.slf4j.LoggerFactory,ch.qos.logback.classic.Logger,ch.qos.logback.core.spi.AppenderAttachableImpl,ch.qos.logback.core.spi.AppenderAttachableImpl,ch.qos.logback.core.status.StatusBase"
+//              ]
+//
+//      jvmArgs.add("-Delastic.apm.application_packages=com.hkmc -Delastic.apm.server_urls=http://host.docker.internal:8200 -Delastic.apm.service_name=ccsp20-metering-graalvm -javaagent:libs/elastic-apm-agent-1.34.1.jar -Delastic.apm.enable_experimental_instrumentations=true -Delastic.apm.capture_headers=true -Delastic.apm.capture_body=all -Delastic.apm.use_path_as_transaction_name=true -Delastic.apm.capture_body_content_types=* -Dspring.profiles.active=dev")
+////              " -XX:+UnlockExperimentalVMOptions"
+////              ," -XX:+UseZGC"
+////              ," -Xms256m"
+////              ," -Xmx256m"
+////              ," -XX:MaxDirectMemorySize=256m"
+////              ," -javaagent:libs/elastic-apm-agent-1.34.1.jar"
+////              ," -Dspring.profiles.active=dev"
+////              ," -Delastic.apm.use_path_as_transaction_name=true"
+////              ," -Delastic.apm.capture_body_content_types=*"
+////              ," -Delastic.apm.capture_body=all"
+////              ," -Delastic.apm.capture_headers=true"
+////              ," -Delastic.apm.enable_experimental_instrumentations=true"
+////              ," -Delastic.apm.service_name=ccsp20-metering-graalvm"
+////              ," -Delastic.apm.server_urls=http://localhost:8200"
+////              ," -Delastic.apm.application_packages=com.hkmc"
+////
+////      ]
+//    }
+//  }
+//}
 
 
 

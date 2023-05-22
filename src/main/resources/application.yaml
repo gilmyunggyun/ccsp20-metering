@@ -88,6 +88,7 @@ spring:
 
 logging:
   level:
+    root: DEBUG
     com.hyundaiautoever.ccs.metering: DEBUG
 transaction:
   logger:
