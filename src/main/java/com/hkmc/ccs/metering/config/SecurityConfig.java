@@ -30,10 +30,14 @@ public class SecurityConfig {
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
     http.csrf().disable().cors().disable()
-        .authorizeHttpRequests()
-        .requestMatchers(SERVICE_PATH, "/login", ENV_PATH).permitAll()
-        .anyRequest().authenticated()
-        .and().httpBasic(Customizer.withDefaults());
+        .authorizeHttpRequests(request-> request
+            .requestMatchers(SERVICE_PATH, "/login", ENV_PATH).permitAll()
+            .anyRequest().authenticated())
+//        .authorizeHttpRequests(request-> request.anyRequest().authenticated())
+
+        //.requestMatchers(SERVICE_PATH, "/login", ENV_PATH).permitAll()
+//        .anyRequest().authenticated()
+        .httpBasic(Customizer.withDefaults());
 
 
 //  request->request

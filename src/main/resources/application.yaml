@@ -107,8 +107,8 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
   datasource:
-    url: jdbc:postgresql://host.docker.internal:5432/postgres
-#    url: jdbc:postgresql://10.11.53.64:5432/meteringdb
+#    url: jdbc:postgresql://host.docker.internal:5432/postgres
+    url: jdbc:postgresql://10.11.53.64:5432/meteringdb
     username: meteringwas
     password: devOps1!
     hikari:
