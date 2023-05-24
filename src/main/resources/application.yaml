@@ -10,6 +10,23 @@
 #        dialect: org.hibernate.dialect.PostgreSQLDialect
 #    hibernate:
 #      database-platform:
+elastic:
+  apm:
+    enabled: "true"
+    use_path_as_transaction_name: "true"
+    capture_body_content_types: "*"
+    capture_body: "all"
+    capture_headers: "true"
+    enable_experimental_instrumentations: "false"
+    service_name: "ccsp20-metering-graalvm"
+    server_urls: "http://localhost:7200"
+    application_packages: "com.hkmc"
+    log_level: "DEBUG"
+    environment: "dev"
+
+
+
+
 management:
   endpoints:
     web:
@@ -88,7 +105,7 @@ spring:
 
 logging:
   level:
-    root: DEBUG
+    root: info
     com.hyundaiautoever.ccs.metering: DEBUG
 transaction:
   logger:
